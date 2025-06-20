@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import {
@@ -390,7 +392,7 @@ export default function UploadFile({
         name="demo[]"
         id="file-upload"
         accept="image/*"
-        maxFileSize={3145728}
+        maxFileSize={6145728}
         onUpload={onTemplateUpload}
         onSelect={onTemplateSelect}
         onError={onTemplateClear}

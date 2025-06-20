@@ -5,7 +5,7 @@ export const compressImage = async (
   data: FormData
 ): Promise<ResponseApiType | undefined> => {
   try {
-    const response = await axiosInstance.post("/compress-images", data);
+    const response = await axiosInstance.post("/compress", data);
     return response.data;
   } catch (error) {
     console.log(error);

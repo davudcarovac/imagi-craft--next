@@ -2,12 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import resizeButtonImg from "../assets/button images/resolution.png";
-
-import { InputText } from "primereact/inputtext";
-import { ToggleButton } from "primereact/togglebutton";
-import { RadioButton } from "primereact/radiobutton";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { DropdownChangeEvent } from "primereact/dropdown";
 import {
   FileTypeResize,
   FitType,

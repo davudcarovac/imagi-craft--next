@@ -1,3 +1,4 @@
+import Image from "next/image";
 import downloadIcon from "../assets/button images/download-file2.png";
 
 type DownloadButtonType = {
@@ -25,7 +26,7 @@ const DownloadButton = ({
         const transformedLink = `${link}-${index}`;
         onClick && onClick(transformedLink);
       }}
-      href={`http://localhost:3000/download/${link}`}
+      href={`http://localhost:4000/download/${link}`}
       download
       className={`
       ${
@@ -42,7 +43,7 @@ const DownloadButton = ({
 
    `}
     >
-      <img src={downloadIcon} alt="download-icon" height={22} width={22} />
+      <Image src={downloadIcon} alt="download-icon" height={22} width={22} />
     </a>
   );
 };

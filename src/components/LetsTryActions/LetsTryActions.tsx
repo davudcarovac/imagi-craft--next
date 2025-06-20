@@ -9,7 +9,7 @@ const LetsTryActions = () => {
         <h2 className="text-lg font-semibold">Let's try</h2>
         <div className="py-5 grid gap-3 grid-cols-1 xs:grid-cols-2 md:grid-cols-3">
           {actions.map((item) => (
-            <ActionItem {...item} />
+            <ActionItem key={item.actionName} {...item} />
           ))}
         </div>
       </div>

@@ -5,6 +5,7 @@ import { Fade } from "react-awesome-reveal";
 import { TransformedDownloadLinks } from "../types/apiTypes";
 import DownloadCard from "./DownloadCard";
 import DownloadAllButton from "./DownloadAllButton";
+import Image from "next/image";
 
 type DownloadAreaType = {
   text: string;
@@ -39,7 +40,12 @@ const DownloadArea = ({
               </SingleDownloadButton>
             </div>
             <DeleteAllButton deleteAll={deleteAll} className="p-4.5">
-              <img src={trashIcon} alt="trash-icon" height={23} width={23} />
+              <Image
+                src={trashIcon.src}
+                alt="trash-icon"
+                height={23}
+                width={23}
+              />
             </DeleteAllButton>
           </div>
         ) : (
@@ -47,6 +53,7 @@ const DownloadArea = ({
             <div className="py-5 w-full flex flex-col gap-3">
               {downloadLinks?.map((item, index) => (
                 <DownloadCard
+                  key={item.id}
                   {...item}
                   index={index}
                   disabledLinks={disabledLinks}

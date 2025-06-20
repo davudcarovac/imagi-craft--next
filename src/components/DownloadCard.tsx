@@ -4,6 +4,7 @@ import { formatFileSize } from "../utils/formatFileSize";
 import DownloadButton from "./DownloadButton";
 import { isDisabledDownload } from "../utils/isDisabledDownload";
 import { Fade } from "react-awesome-reveal";
+import Image from "next/image";
 
 const DownloadCard = ({
   size,
@@ -24,7 +25,7 @@ const DownloadCard = ({
         className=" bg-[#f6fff8] border-[0.5px] border-solid border-[#E0F2E4] rounded-sm  p-3 pr-6 flex flex-row justify-between gap-5 items-center"
       >
         <div className="flex flex-row gap-4 items-center">
-          <img src={downloadFileImg} alt="file-img" height={50} width={50} />
+          <Image src={downloadFileImg} alt="file-img" height={50} width={50} />
           <div className="flex flex-col gap-1">
             <p className="text-sm">{link}</p>
             {size && <p className="text-xs">{formatFileSize(size)}</p>}

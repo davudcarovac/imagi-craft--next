@@ -3,6 +3,7 @@ import { ToggleButton } from "primereact/togglebutton";
 import { Dispatch, SetStateAction } from "react";
 import { SelectButton, SelectButtonChangeEvent } from "primereact/selectbutton";
 import sidebarArrow from "../../assets/button images/sidebar-arrow-left.png";
+import Image from "next/image";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -59,7 +60,7 @@ const Sidebar = ({
             onClick={toggleSidebar}
             className="lg2:hidden absolute right-0 bottom-5 cursor-pointer"
           >
-            <img
+            <Image
               src={sidebarArrow}
               alt="sidebar-close"
               height={25}
