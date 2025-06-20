@@ -1,3 +1,5 @@
+"use client";
+
 import { TransformedDownloadLinks } from "../types/apiTypes";
 import downloadFileImg from "../assets/button images/file-img1.png";
 import { formatFileSize } from "../utils/formatFileSize";

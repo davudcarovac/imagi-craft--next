@@ -1,3 +1,5 @@
+"use client";
+
 import SingleDownloadButton from "./SingleDownloadButton";
 import DeleteAllButton from "./DeleteAllButton";
 import trashIcon from "../assets/button images/trash-single.png";

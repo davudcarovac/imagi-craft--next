@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import UploadFile from "../../components/UploadFile";
+import UploadFile from "../UploadFile";
 import { FileUpload } from "primereact/fileupload";
 import "primereact/resources/themes/saga-blue/theme.css"; // ili tvoja tema
 import "primereact/resources/primereact.min.css";

@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import deleteIcon from "../assets/button images/delete.png";
 import DownloadButton from "./DownloadButton";
 
@@ -64,7 +67,7 @@ const ResizeImgCard = ({
               onClick={() => handleRemoveFile(id)}
               className="cursor-pointer"
             >
-              <img
+              <Image
                 src={deleteIcon}
                 height={20}
                 width={20}

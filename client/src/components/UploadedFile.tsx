@@ -1,3 +1,5 @@
+"use client";
+
 import deleteIcon from "../assets/button images/delete.png";
 import fileImage from "../assets/button images/file-img1.png";
 import { formatFileSize } from "../utils/formatFileSize";

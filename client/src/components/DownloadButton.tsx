@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import downloadIcon from "../assets/button images/download-file2.png";
 

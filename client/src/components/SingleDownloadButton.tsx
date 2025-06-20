@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 import downloadSingleIcon from "../assets/button images/download-single.png";
 import Image from "next/image";
