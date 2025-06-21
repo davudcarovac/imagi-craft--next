@@ -49,7 +49,7 @@ const CropClient = () => {
     CropperState["coordinates"] | null
   >(null);
   const [ratio, setRatio] = useState<number | boolean>(aspectRatios[1].value);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const formData = new FormData();
   const { mutate, isPending } = useCrop();
@@ -166,12 +166,14 @@ const CropClient = () => {
   return (
     // <div className="w-full ">
     <div>
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Crop"
-        titleAfterHighlight="your images precisely"
-        description="Trim your images to focus on the most important parts. Adjust the crop area with an intuitive interface to get the perfect framing."
-      />
+      {!image && (
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Crop"
+          titleAfterHighlight="your images precisely"
+          description="Trim your images to focus on the most important parts. Adjust the crop area with an intuitive interface to get the perfect framing."
+        />
+      )}
 
       {!image && !isCropped && (
         <UploadFile

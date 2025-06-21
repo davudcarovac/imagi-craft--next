@@ -75,7 +75,10 @@ const ResizeOptions = ({
           <div className="flex flex-col justify-between gap-4">
             {/* Aspect ratio */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 flex items-center justify-between">
+              <label
+                className="
+               text-sm font-medium text-gray-700 flex items-center justify-between"
+              >
                 <span>Maintain Aspect Ratio</span>
                 <ToggleButton
                   checked={isActiveAR}

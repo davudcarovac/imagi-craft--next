@@ -45,11 +45,11 @@ const Sidebar = ({
     <div
       className={`
               h-[90vh]   flex justify-between flex-col
-      fixed top-20 left-0 max-w-[350px] bg-gray-100 p-4 z-40 
+      fixed top-20 left-0 max-w-[350px] bg-white p-4 z-40 
       transform transition-transform duration-300 ease-in-out
       ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
       lg2:static lg2:transform-none lg2:translate-x-0
-       w-full lg2:w-[350px]
+       w-full lg2:w-[350px] border-r border-solid border-slate-200
     `}
     >
       <div className="flex flex-col gap-3">

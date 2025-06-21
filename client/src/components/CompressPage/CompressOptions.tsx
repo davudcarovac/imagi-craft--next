@@ -29,8 +29,8 @@ const CompressOptions = ({
   onReset,
 }: CompressOptionsProps) => {
   return (
-    <div className="max-w-[800px] mx-auto p-4 sm:p-6">
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 sm:p-6 space-y-6">
+    <div className="max-w-[800px] w-full p-4 sm:p-6">
+      <div className="w-full bg-white border border-gray-200 rounded-lg shadow-sm p-4 sm:p-6 space-y-6">
         {/* First row — Compression quality & Greyscale */}
         <div className="flex flex-col md:flex-row gap-8">
           {/* Compression Quality */}

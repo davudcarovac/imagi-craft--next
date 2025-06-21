@@ -267,7 +267,7 @@ export default function UploadFile({
             />
           )}
           {action === "resize" && (
-            <div className="w-full flex items-center justify-center">
+            <div className="w-full flex items-center justify-center flex-1">
               <p className="text-sm text-gray-600 whitespace-nowrap">
                 {imageDimensions[typedFile.name]?.width} ×{" "}
                 {imageDimensions[typedFile.name]?.height} px
