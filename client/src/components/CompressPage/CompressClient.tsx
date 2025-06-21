@@ -9,9 +9,11 @@ import { useCompress } from "@/hooks/useCompress";
 import { FileType, TransformedDownloadLinks } from "@/types/apiTypes";
 import { deleteAllFiles } from "@/api/deleteAllApi";
 import UploadFile from "@/components/UploadFile";
-import SidebarCompress from "@/components/CompressPage/SidebarCompress";
 import DownloadArea from "@/components/DownloadArea";
 import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
+import CompressOptions from "./CompressOptions";
+import { formats } from "@/utils/selectData";
+import ServiceIntro from "../ServiceIntro";
 
 const greyscaleOptions = ["Off", "On"];
 
@@ -76,10 +78,52 @@ const CompressClient = () => {
     }
   };
 
+  const onSliderChange = (value: number) => {
+    setSliderValue(value);
+  };
+
+  const onFormatChange = (value: string | null) => {
+    setSelectedFormat(value);
+  };
+
+  const onGreyscaleChange = (value: string) => {
+    setGreyscaleValue(value);
+  };
+
+  const onReset = () => {
+    setSliderValue(30);
+    setSelectedFormat(null);
+    setGreyscaleValue(greyscaleOptions[0]);
+  };
+
   return (
-    <div>
-      {downloadLinks && downloadLinks?.length === 0 && (
-        <form onSubmit={submitCompression}>
+    <div className="flex flex-col items-center w-full px-4">
+      {/* Introductory text */}
+      <ServiceIntro
+        titleBeforeHighlight=""
+        highlightedWord="Compress"
+        titleAfterHighlight="your images easily and quickly"
+        description="Upload one or more images and reduce their file size with adjustable quality, format, and greyscale options. Once compressed, you can download your images directly from here."
+      />
+
+      {/* Options section */}
+      {files.length > 0 && downloadLinks && downloadLinks.length === 0 && (
+        <CompressOptions
+          sliderValue={sliderValue}
+          selectedFormat={selectedFormat}
+          greyscaleValue={greyscaleValue}
+          greyscaleOptions={greyscaleOptions}
+          formats={formats}
+          onSliderChange={onSliderChange}
+          onFormatChange={onFormatChange}
+          onGreyscaleChange={onGreyscaleChange}
+          onReset={onReset}
+        />
+      )}
+
+      {/* Upload section */}
+      {downloadLinks && downloadLinks.length === 0 && (
+        <form onSubmit={submitCompression} className="w-full">
           <UploadFile
             isPending={isPending}
             setIsOpenCompressionSb={setIsOpen}
@@ -89,34 +133,21 @@ const CompressClient = () => {
             files={files}
             setFiles={setFiles}
           />
-          <SidebarCompress
-            selectedFormat={selectedFormat}
-            isOpen={isOpen}
-            sliderValue={sliderValue}
-            greyscaleValue={greyscaleValue}
-            greyscaleOptions={greyscaleOptions}
-            setSelectedFormat={setSelectedFormat}
-            setIsOpen={setIsOpen}
-            handleSliderValue={handleSliderValue}
-            setGreyscaleValue={setGreyscaleValue}
-          />
         </form>
       )}
 
+      {/* Download section */}
       {downloadLinks && downloadLinks.length > 0 && (
-        <div>
-          <div className="max-w-[700px] mx-auto flex justify-center flex-col py-10  ">
-            <DownloadArea
-              isSingle={false}
-              text="Your images have been compressed. Download them!"
-              resetAll={resetAll}
-              deleteAll={deleteAll}
-              downloadLinks={downloadLinks}
-              disabledLinks={disabledLinks}
-              handleDisableLink={handleDisableLink}
-            />
-            {/* Let's try */}
-          </div>
+        <div className="max-w-[700px] w-full flex justify-center flex-col py-10">
+          <DownloadArea
+            isSingle={false}
+            text="Your images have been compressed. Download them!"
+            resetAll={resetAll}
+            deleteAll={deleteAll}
+            downloadLinks={downloadLinks}
+            disabledLinks={disabledLinks}
+            handleDisableLink={handleDisableLink}
+          />
           <LetsTryActions />
         </div>
       )}

@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Providers from "./providers";
-import "../index.css";
+import "@/app/global.css";
 
 export const metadata = {
   title: "Next.js",

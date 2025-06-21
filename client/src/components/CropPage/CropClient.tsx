@@ -16,6 +16,7 @@ import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
 import DownloadArea from "@/components/DownloadArea";
 import UploadFile from "@/components/UploadFile";
 import Sidebar from "@/components/CropPage/Sidebar";
+import ServiceIntro from "../ServiceIntro";
 
 const aspectRatios = [
   { value: 1 / 1, name: "1/1" },
@@ -165,6 +166,13 @@ const CropClient = () => {
   return (
     // <div className="w-full ">
     <div>
+      <ServiceIntro
+        titleBeforeHighlight=""
+        highlightedWord="Crop"
+        titleAfterHighlight="your images precisely"
+        description="Trim your images to focus on the most important parts. Adjust the crop area with an intuitive interface to get the perfect framing."
+      />
+
       {!image && !isCropped && (
         <UploadFile
           tooltip="crop image"

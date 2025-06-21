@@ -15,6 +15,7 @@ import UploadFile from "@/components/UploadFile";
 import ResizeOptions from "@/components/ResizePage/ResizeOptions";
 import DownloadArea from "@/components/DownloadArea";
 import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
+import ServiceIntro from "../ServiceIntro";
 
 const ResizeClient = () => {
   const [files, setFiles] = useState<FileTypeResize[]>([]);
@@ -170,6 +171,13 @@ const ResizeClient = () => {
 
   return (
     <div>
+      <ServiceIntro
+        titleBeforeHighlight=""
+        highlightedWord="Resize"
+        titleAfterHighlight="your images quickly"
+        description="Scale your images up or down to fit your desired dimensions without losing quality."
+      />
+
       {files.length > 0 && downloadLinks && downloadLinks.length === 0 && (
         <ResizeOptions
           imageOptions={imageOptions}

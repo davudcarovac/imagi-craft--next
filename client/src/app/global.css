@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+/* Osnovni stilovi za ceo sajt */
+html,
+body {
+  background-color: #f0f4f8; /* Svetla pozadina */
+  color: #333; /* Tamno siva za tekst */
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* a {
+  color: #4a90e2;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #357abd;
+}
+
+h1,
+h2,
+h3 {
+  color: #4a90e2;
+} */
+
+/* Promene za PrimeReact komponente */
+
+/* Slider */
+.p-slider .p-slider-range {
+  background-color: #1aac83;
+}
+
+.p-slider .p-slider-handle {
+  background-color: white;
+  border-color: #1aac83;
+}
+
+.p-slider .p-slider-handle:hover {
+  background-color: #1aac83;
+}
+
+/* Dropdown */
+.p-dropdown:hover {
+  border-color: #1aac83 !important;
+}
+
+.p-dropdown.p-focus {
+  border-color: #1aac83;
+}
+
+/* Upload component */
+.p-fileupload-content {
+  padding: 14px;
+}
+
+/* Progress bar */
+.p-progressbar-value-animate {
+  background-color: #1aac83;
+}
+
+/* SelectButton */
+.p-selectbutton .p-button.p-highlight {
+  background: #1aac83 !important;
+  border-color: #1aac83 !important;
+}
+
+.p-selectbutton .p-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* ToggleButton */
+.p-togglebutton.my-custom-toggle.p-highlight .p-button {
+  background: #1aac83 !important;
+  border-color: #1aac83 !important;
+}
+
+/* Sidebar */
+.p-sidebar-content {
+  padding: 0;
+}
+
+/* Input number bez strelica */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Custom file upload i cancel dugme */
+.custom-file-upload .p-button {
+  background: #1aac83;
+  border: none;
+  color: white;
+}
+
+.custom-file-upload .p-button:hover {
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.custom-cancel-upload {
+  background: #f44336;
+  border: none;
+  color: white;
+}

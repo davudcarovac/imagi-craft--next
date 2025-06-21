@@ -19,10 +19,8 @@ import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import arrowRightIcon from "../assets/button images/right-arrow green.png";
-import compressOptionsIcon from "../assets/button images/compress-options-1.png";
 import { FileType } from "../types/apiTypes";
 import { v4 as uuidv4 } from "uuid";
-// import { set } from "lodash";
 
 type UploadFileType = {
   tooltip: string;
@@ -30,13 +28,15 @@ type UploadFileType = {
   isMultiple: boolean;
   files?: FileType[];
   isPending?: boolean;
+  globalFormat?: string | null;
+  formatOptions?: { name: string; value: string }[];
 
+  handleGlobalFormatChange?: (newFormat: string | null) => void;
   setErrorMessage?: Dispatch<SetStateAction<string | null>>;
   setIsOpenCompressionSb?: React.Dispatch<React.SetStateAction<boolean>>;
   setImage?: (image: string) => void;
   setFile?: (file: File) => void;
   setFiles?: React.Dispatch<React.SetStateAction<FileType[]>>;
-  setBackground?: React.Dispatch<React.SetStateAction<string | null>>;
   setBackgroundOptions?: (url: string) => void;
 };
 
@@ -46,6 +46,9 @@ export default function UploadFile({
   files,
   action,
   isPending,
+  formatOptions,
+  globalFormat,
+  handleGlobalFormatChange,
   setErrorMessage,
   setIsOpenCompressionSb,
   setImage,
@@ -60,11 +63,13 @@ export default function UploadFile({
     Record<string, { width: number; height: number }>
   >({});
 
+  // NEW: Global format state
+
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
     let _totalSize = totalSize;
 
     if (!isMultiple && setErrorMessage && e.files.length > 0) {
-      if (e.files[0]?.size > 3145728) {
+      if (e.files[0]?.size > 6145728) {
         setErrorMessage("File size exceeds the maximum limit of 3 MB.");
         return;
       }
@@ -89,9 +94,8 @@ export default function UploadFile({
         const transformed = Array.from(e.files).map((item) => ({
           id: uuidv4(),
           file: item,
-          format: "png",
+          format: globalFormat || "png",
         }));
-
         setFiles(transformed);
       }
 
@@ -106,7 +110,7 @@ export default function UploadFile({
   const handleFormatChange = (fileName: string, newFormat: string) => {
     if (setFiles) {
       setFiles((prevFiles) =>
-        prevFiles?.map((item) =>
+        prevFiles.map((item) =>
           item.file.name === fileName ? { ...item, format: newFormat } : item
         )
       );
@@ -130,19 +134,15 @@ export default function UploadFile({
 
   const onTemplateRemove = (file: File, callback: () => void) => {
     setTotalSize(totalSize - file.size);
-
     if (setFiles) {
       setFiles((prev) => prev.filter((item) => item.file.name !== file.name));
     }
-
     callback();
   };
 
   const onTemplateClear = () => {
     setTotalSize(0);
-    if (setFiles) {
-      setFiles([]);
-    }
+    if (setFiles) setFiles([]);
   };
 
   const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
@@ -152,9 +152,9 @@ export default function UploadFile({
 
     return (
       <div className={`${className} p-4`}>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4">
-          {/* Left section with buttons */}
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center w-full gap-4">
+          {/* Leva strana — dugmad i progress */}
+          <div className="flex-1 flex flex-wrap items-center gap-3">
             {chooseButton}
             {isPending ? (
               <ProgressSpinner
@@ -167,65 +167,41 @@ export default function UploadFile({
                 "aria-label": "Cancel upload",
               })
             )}
-            {isMultiple && totalSize > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                {action === "compress" && (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 py-2 px-3 bg-[#6466f1] rounded-md text-white border-2 border-solid border-[#6466f1] cursor-pointer"
-                    onClick={() => setIsOpenCompressionSb?.(true)}
-                  >
-                    {/* Options */}
-                    <img
-                      src={compressOptionsIcon.src}
-                      alt="compress-options-icon"
-                      width={20}
-                      height={20}
-                    />
-                  </button>
-                )}
 
-                <button
-                  disabled={isPending}
-                  type="submit"
-                  className={`${
-                    isPending ? "opacity-50 cursor-not-allowed" : ""
-                  } custom-upload-btn bg-white py-2 px-3 text-[#1aac83] border border-[#1aac83] rounded-md flex items-center gap-2 font-semibold cursor-pointer`}
-                >
-                  Submit
-                  <img
-                    src={arrowRightIcon.src}
-                    alt="next-icon"
-                    height={15}
-                    width={15}
-                  />
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-2 ">
+              <span>{formatedValue} / 15 MB</span>
+              <ProgressBar
+                value={value}
+                showValue={false}
+                style={{ width: "10rem", height: "12px" }}
+              />
+            </div>
           </div>
 
-          {/* Right section with progress */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 ml-auto">
-            <span>{formatedValue} / 15 MB</span>
-            <ProgressBar
-              value={value}
-              showValue={false}
-              style={{ width: "10rem", height: "12px" }}
-            />
+          {/* Desna strana — samo Submit dugme */}
+          <div className="flex-shrink-0">
+            {isMultiple && totalSize > 0 && (
+              <button
+                disabled={isPending}
+                type="submit"
+                className={`${
+                  isPending ? "opacity-50 cursor-not-allowed" : ""
+                } custom-upload-btn bg-white py-2 px-3 text-[#1aac83] border border-[#1aac83] rounded-md flex items-center gap-2 font-semibold cursor-pointer`}
+              >
+                Submit
+                <img
+                  src={arrowRightIcon.src}
+                  alt="next-icon"
+                  height={15}
+                  width={15}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>
     );
   };
-
-  const formatOptions = [
-    { name: "PNG", value: "png" },
-    { name: "WEBP", value: "webp" },
-    { name: "JPG", value: "jpg" },
-    { name: "HEIF", value: "heif" },
-    { name: "AVIF", value: "avif" },
-    { name: "GIF", value: "gif" },
-  ];
 
   const loadImageDimensions = (file: File) => {
     const reader = new FileReader();
@@ -245,18 +221,15 @@ export default function UploadFile({
   const itemTemplate = (file: object, options: ItemTemplateOptions) => {
     const typedFile = file as File & { objectURL?: string };
     let currentFile;
-
-    if (files) {
+    if (files)
       currentFile = files.find((item) => item.file.name === typedFile.name);
-    }
 
     if (action === "resize") {
       files?.forEach((item) => loadImageDimensions(item.file));
     }
 
     return (
-      <div className="flex flex-col sm:flex-row w-full items-stretch sm:items-center gap-3 p-4 rounded-lg  ">
-        {/* Slika i ime fajla - 50% širine */}
+      <div className="flex flex-col sm:flex-row w-full items-stretch sm:items-center gap-3 p-4 rounded-lg">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <img
             alt={typedFile.name}
@@ -264,7 +237,7 @@ export default function UploadFile({
             src={typedFile.objectURL}
             className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md flex-shrink-0"
           />
-          <div className="flex flex-col items-start  min-w-0">
+          <div className="flex flex-col items-start min-w-0">
             <span className="text-sm font-medium text-gray-800 truncate">
               {typedFile.name}
             </span>
@@ -273,13 +246,11 @@ export default function UploadFile({
             </small>
           </div>
         </div>
-
-        {/* Tag i dropdown - 40% širine */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <Tag
             value={options.formatSize}
             severity="success"
-            className="px-2 py-1 text-xs sm:text-sm text-black bg-[#1aac83] whitespace-nowrap"
+            className="px-2 py-1 text-xs sm:text-sm bg-[#1aac83]"
           />
           {action === "convert" && (
             <Dropdown
@@ -304,20 +275,11 @@ export default function UploadFile({
             </div>
           )}
         </div>
-
-        {/* Dugme za uklanjanje - 10% širine */}
         <div className="flex justify-end sm:justify-center flex-shrink-0">
           <Button
-            onClick={(e) => {
-              onTemplateRemove(typedFile, () => {
-                options.onRemove(e);
-                // if (setFiles) {
-                //   setFiles((prev) =>
-                //     prev.filter((item) => item.file.name !== typedFile.name)
-                //   );
-                // }
-              });
-            }}
+            onClick={(e) =>
+              onTemplateRemove(typedFile, () => options.onRemove(e))
+            }
             type="button"
             icon="pi pi-times"
             disabled={isPending}
@@ -332,7 +294,7 @@ export default function UploadFile({
 
   const emptyTemplate = () => {
     return (
-      <div className="flex justify-center items-center flex-col    px-2 py-3">
+      <div className="flex justify-center items-center flex-col px-2 py-3">
         <i
           className="pi pi-image mt-3 p-5"
           style={{
@@ -342,7 +304,7 @@ export default function UploadFile({
             color: "var(--surface-d)",
           }}
         />
-        <span className="pb-5 pt-2 ">Drag and Drop Image Here</span>
+        <span className="pb-5 pt-2">Drag and Drop Image Here</span>
       </div>
     );
   };
@@ -364,33 +326,26 @@ export default function UploadFile({
     className:
       "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
     root: {
-      "aria-hidden": "false", // Eksplicitno postavite
-      "aria-label": "Cancel upload", // Obavezno za pristupačnost
+      "aria-hidden": "false",
+      "aria-label": "Cancel upload",
     },
   };
 
   return (
-    <div
-      className={`max-w-[800px] mx-auto px-5 ${
-        action === "resize" ? "pt-5" : "py-10"
-      }`}
-    >
+    <div className={`max-w-[800px] mx-auto px-5 py-5`}>
       <Toast ref={toast} />
-
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip
         target=".custom-upload-btn"
         content={tooltip}
         position="bottom"
       />
-      {/* <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" /> */}
 
       <FileUpload
         customUpload={true}
         ref={fileUploadRef}
         multiple={isMultiple}
         name="demo[]"
-        id="file-upload"
         accept="image/*"
         maxFileSize={6145728}
         onUpload={onTemplateUpload}

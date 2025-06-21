@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import UploadFile from "../UploadFile";
 import { FileUpload } from "primereact/fileupload";
-import "primereact/resources/themes/saga-blue/theme.css"; // ili tvoja tema
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import { Button } from "primereact/button";
 import dynamic from "next/dynamic";
+import ServiceIntro from "../ServiceIntro";
+
 const WatermarkKonva = dynamic(
   () => import("@/components/WatermarkPage/WatermarkKonva"),
   {
@@ -57,6 +56,13 @@ const WatermarkClient = () => {
 
   return (
     <div>
+      <ServiceIntro
+        titleBeforeHighlight="Add a custom"
+        highlightedWord="Watermark"
+        titleAfterHighlight="to your images"
+        description="Upload an image and apply a personalized watermark to protect your content. Adjust position, opacity, and size with ease."
+      />
+
       {!backgroundSrc && (
         <UploadFile
           setErrorMessage={setErrorMessage}
