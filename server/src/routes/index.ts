@@ -20,7 +20,7 @@ router.post("/convert", uploadsMiddleware, postConvertImage);
 router.post("/resize", uploadsMiddleware, postResizeImage);
 router.post("/crop", uploadsMiddleware, postCropImage);
 router.post("/compress", uploadsMiddleware, postCompressImage);
-router.post("/watermarking", uploadsWmMiddleware, postWatermarkingImage);
+router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 
 router.get("/download/:fileId", getDownloadFileById);
 router.get("/download-all", getDownloadAllFiles);

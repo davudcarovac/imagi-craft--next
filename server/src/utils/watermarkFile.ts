@@ -33,8 +33,6 @@ export default async function watermarkFile(
   // const overlayInfo: ImageMetadata =
   //   (await overlay.metadata()) as ImageMetadata;
 
-  console.log("Watermarking options ===> ", compositeOptions);
-
   try {
     const resizedWatermarkBuffer = await sharp(inputImgPath)
       .resize({

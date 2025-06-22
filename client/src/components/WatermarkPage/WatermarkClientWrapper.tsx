@@ -7,7 +7,7 @@ const WatermarkClient = dynamic(
   () => import("@/components/WatermarkPage/WatermarkClient"),
   {
     ssr: false,
-    loading: () => <p>Loading...</p>,
+    // loading: () => <p>Loading...</p>,
   }
 );
 

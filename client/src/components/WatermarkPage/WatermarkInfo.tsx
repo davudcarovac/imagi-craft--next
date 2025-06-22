@@ -1,0 +1,65 @@
+"use client";
+
+import React from "react";
+import SubmitButton from "../SubmitButton";
+
+type WatermarkInfoProps = {
+  watermarkSrc?: string | null;
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+};
+
+const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
+  watermarkSrc,
+  position,
+  size,
+}) => {
+  if (!watermarkSrc) return null;
+
+  return (
+    <div className="my-6 p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+      <h2 className="text-base font-semibold text-[#333] mb-4 border-b border-slate-100 pb-2">
+        Watermark Details
+      </h2>
+
+      <div className="grid grid-cols-2 gap-4 text-sm text-slate-700">
+        <div className="space-y-1">
+          <p className="font-medium text-slate-600">Position (original):</p>
+          <p>
+            X:{" "}
+            <span className="font-mono text-slate-900">
+              {Math.round(position.x)}
+            </span>
+          </p>
+          <p>
+            Y:{" "}
+            <span className="font-mono text-slate-900">
+              {Math.round(position.y)}
+            </span>
+          </p>
+        </div>
+        <div className="space-y-1">
+          <p className="font-medium text-slate-600">Dimensions (original):</p>
+          <p>
+            Width:{" "}
+            <span className="font-mono text-slate-900">
+              {Math.round(size.width)} px
+            </span>
+          </p>
+          <p>
+            Height:{" "}
+            <span className="font-mono text-slate-900">
+              {Math.round(size.height)} px
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <SubmitButton className="my-0">Apply Watermark</SubmitButton>
+      </div>
+    </div>
+  );
+};
+
+export default WatermarkInfo;

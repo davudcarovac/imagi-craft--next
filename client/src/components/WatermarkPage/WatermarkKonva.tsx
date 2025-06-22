@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
 import useImage from "use-image";
+import WatermarkInfo from "./WatermarkInfo";
 
 type WatermarkKonvaProps = {
   backgroundSrc: string | null;
@@ -143,6 +144,11 @@ const WatermarkKonva = ({
     <div ref={containerRef} className="w-full py-1">
       {backgroundSrc && (
         <div className="mt-4">
+          <WatermarkInfo
+            watermarkSrc={watermarkSrc}
+            position={watermarkPos}
+            size={watermarkSize}
+          />
           <Stage
             width={stageSize.width}
             height={stageSize.height}
@@ -241,35 +247,6 @@ const WatermarkKonva = ({
               )}
             </Layer>
           </Stage>
-
-          {watermarkSrc && (
-            <div className="mt-4 p-4 bg-gray-100 rounded-xl shadow-sm text-sm text-gray-800 space-y-2">
-              <div>
-                <span className="font-semibold">
-                  Watermark Position (original):
-                </span>
-                <br />
-                X:{" "}
-                <span className="font-mono">{Math.round(watermarkPos.x)}</span>,
-                Y:{" "}
-                <span className="font-mono">{Math.round(watermarkPos.y)}</span>
-              </div>
-              <div>
-                <span className="font-semibold">
-                  Watermark Dimensions (original):
-                </span>
-                <br />
-                Width:{" "}
-                <span className="font-mono">
-                  {Math.round(watermarkSize.width)} px
-                </span>
-                , Height:{" "}
-                <span className="font-mono">
-                  {Math.round(watermarkSize.height)} px
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

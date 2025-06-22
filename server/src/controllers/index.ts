@@ -514,8 +514,8 @@ export async function postWatermarkingImage(
       throw new ErrorResponse("Watermark image is missing.", 400);
     }
 
-    const compositeOptions = req.body.compositeCoords; // Pozicija vodeniog žiga
-    const parsedOptions = JSON.parse(compositeOptions);
+    const watermarkOptions = req.body.watermarkOptions; // Pozicija vodeniog žiga
+    const parsedOptions = JSON.parse(watermarkOptions);
     const downloadLinks: string[] = [];
 
     for (const file of files) {
@@ -540,6 +540,7 @@ export async function postWatermarkingImage(
 
     //return
     res.status(200).json({
+      success: true,
       message: "Watermarking successful",
       downloadLinks: downloadLinks,
     });
