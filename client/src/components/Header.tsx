@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import frostyImg from "../assets/frostyImg-transparent.png";
 
 const navItems = [
   { href: "/compress-image", label: "compress image" },
@@ -17,10 +19,7 @@ const Header = () => {
   return (
     <div className="px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
       <Link href="/">
-        <h1 className="text-3xl font-bold cursor-pointer">
-          <span style={{ color: "#22C7A8" }}>Imagi</span>
-          <span style={{ color: "#333" }}>Craft</span>
-        </h1>
+        <Image src={frostyImg} alt="frosty-img-logo" height={70} width={160} />
       </Link>
 
       <nav className="hidden lg:block">
@@ -40,6 +39,8 @@ const Header = () => {
           ))}
         </ul>
       </nav>
+
+      <div></div>
     </div>
   );
 };

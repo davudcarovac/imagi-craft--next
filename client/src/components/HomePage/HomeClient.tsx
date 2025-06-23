@@ -10,7 +10,7 @@ const HomeClient = () => {
       <div className="max-w-[1280px] w-full">
         <ServiceIntro
           titleBeforeHighlight="Transform your images effortlessly with"
-          highlightedWord="ImagiCraft"
+          highlightedWord="Frosty Image"
           titleAfterHighlight=""
           description=" Our all-in-one image processing platform lets you compress, convert, crop, resize, and watermark your images — fast, easy, and right in your browser.
         Whether you’re a professional designer, photographer, or just need quick edits, ImagiCraft delivers high-quality results with minimal effort.
