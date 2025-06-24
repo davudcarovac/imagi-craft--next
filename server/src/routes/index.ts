@@ -6,6 +6,7 @@ import {
   getHomePage,
   postCompressImage,
   postConvertImage,
+  postCropFace,
   postCropImage,
   postResizeImage,
   postWatermarkingImage,
@@ -21,6 +22,9 @@ router.post("/resize", uploadsMiddleware, postResizeImage);
 router.post("/crop", uploadsMiddleware, postCropImage);
 router.post("/compress", uploadsMiddleware, postCompressImage);
 router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
+
+// premium
+router.post("/crop-face", uploadsMiddleware, postCropFace);
 
 router.get("/download/:fileId", getDownloadFileById);
 router.get("/download-all", getDownloadAllFiles);

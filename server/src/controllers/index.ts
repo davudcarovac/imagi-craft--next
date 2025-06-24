@@ -7,12 +7,15 @@ import cropFile from "../utils/cropFile.ts";
 import compressFile from "../utils/compressFile.ts";
 import watermarkFile from "../utils/watermarkFile.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
-import express from "express";
 import fs from "fs";
 import archiver from "archiver";
+import canvas from "canvas";
+import faceapi from "face-api.js";
 import type { Request, Response, NextFunction } from "express";
 import type { FormatEnum } from "sharp";
 import type { DownloadLinksType } from "../types/output.ts";
+import cropfaceFile from "../utils/cropfaceFile.ts";
+import sharp from "sharp";
 
 const { __dirname } = fileDirName(import.meta);
 
@@ -491,7 +494,7 @@ export async function postWatermarkingImage(
 ): Promise<void> {
   try {
     // Provera da li je req.files definisano i da li je objekat sa nizovima fajlova
-    if (!req.files) {
+    if (!req.files || req.files.length === 0) {
       throw new ErrorResponse("No files were uploaded.", 400);
     }
 
@@ -550,7 +553,81 @@ export async function postWatermarkingImage(
   }
 }
 
-// brisanje svih fajlova iz outputs prilikom skidanja zipa
+export async function postCropFace(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      throw new ErrorResponse("No files were uploaded.", 400);
+    }
+
+    const downloadLinks: DownloadLinksType[] = [];
+
+    for (const file of files) {
+      const outputFileDir = path.join(
+        __dirname,
+        "..",
+        "outputs",
+        file.originalname
+      );
+
+      // Preprocesiraj sliku
+      const preprocessedBuffer = await sharp(file.path)
+        .rotate()
+        .resize({ width: 800, withoutEnlargement: true })
+        .normalize()
+        .toBuffer();
+
+      const preprocessedPath = path.join(
+        __dirname,
+        "..",
+        "outputs",
+        `pre_${file.originalname}`
+      );
+
+      await sharp(preprocessedBuffer).toFile(preprocessedPath);
+
+      // Učitaj i detektuj lice
+      const img = await canvas.loadImage(preprocessedBuffer);
+      const detections = await faceapi.detectSingleFace(img);
+      if (!detections) {
+        await deleteFile(file.path);
+        await deleteFile(preprocessedPath);
+        throw new ErrorResponse(
+          `No face detected in ${file.originalname}`,
+          400
+        );
+      }
+
+      const { x, y, width, height } = detections.box;
+
+      // Cropuj sa preprocesirane slike
+      const croppedFace = await cropfaceFile(preprocessedPath, outputFileDir, {
+        x,
+        y,
+        width,
+        height,
+      });
+
+      downloadLinks.push({ name: file.originalname, ...croppedFace });
+
+      await deleteFile(file.path);
+      await deleteFile(preprocessedPath); // obriši preprocesiranu verziju
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Faces cropped successfully",
+      downloadLinks,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export function deleteAllFilesInDirectory(directory: string) {
   fs.readdir(directory, (err, files) => {
     if (err) {
@@ -558,7 +635,6 @@ export function deleteAllFilesInDirectory(directory: string) {
       return;
     }
 
-    // Prolazak kroz svaki fajl u direktorijumu
     files.forEach((file) => {
       if (file !== ".gitkeep") {
         const filePath = path.join(directory, file);
