@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import frostyImg from "../assets/frostyImg-transparent.png";
+import "primeicons/primeicons.css";
+import { useState, useEffect } from "react";
+import useUserId from "@/hooks/useUserID";
+import { addUserLike } from "@/lib/getUserIP";
 
 const navItems = [
   { href: "/compress-image", label: "compress image" },
@@ -14,7 +18,18 @@ const navItems = [
 ];
 
 const Header = () => {
+  const [message, setMessage] = useState<string | undefined>("");
   const pathname = usePathname();
+  const userId = useUserId();
+
+  const handleLike = async () => {
+    if (!userId) {
+      setMessage("Loading user info...");
+      return;
+    }
+    const res = await addUserLike(userId);
+    setMessage(res.success ? "Thanks for liking!" : res.message);
+  };
 
   return (
     <div className="px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
@@ -40,7 +55,11 @@ const Header = () => {
         </ul>
       </nav>
 
-      <div></div>
+      <div className="flex items-center gap-2">
+        {message}
+        <i className="pi pi-thumbs-up cursor-pointer" onClick={handleLike}></i>
+        <i className="pi pi-thumbs-down"></i>
+      </div>
     </div>
   );
 };
