@@ -4,4 +4,4 @@ export type DownloadLinksType = {
   height: number;
   width: number;
   format: string;
-};
+} & { error?: string };

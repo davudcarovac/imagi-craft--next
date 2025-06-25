@@ -30,6 +30,7 @@ type UploadFileType = {
   isPending?: boolean;
   globalFormat?: string | null;
   formatOptions?: { name: string; value: string }[];
+  errorMessage?: string | null;
 
   handleGlobalFormatChange?: (newFormat: string | null) => void;
   setErrorMessage?: Dispatch<SetStateAction<string | null>>;
@@ -48,6 +49,7 @@ export default function UploadFile({
   isPending,
   formatOptions,
   globalFormat,
+  errorMessage,
   handleGlobalFormatChange,
   setErrorMessage,
   setIsOpenCompressionSb,
@@ -68,9 +70,27 @@ export default function UploadFile({
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
     let _totalSize = totalSize;
 
+    let newFiles = [...e.files];
+    if (action === "crop-face" && newFiles.length > 5) {
+      newFiles = newFiles.slice(0, 5);
+      toast.current?.show({
+        severity: "warn",
+        summary: "Warning",
+        detail: (
+          <span style={{ fontSize: "13px" }}>
+            You can only upload up to 5 files at a time.
+          </span>
+        ),
+        life: 4000,
+      });
+
+      fileUploadRef?.current?.setFiles(newFiles);
+      return;
+    }
+
     if (!isMultiple && setErrorMessage && e.files.length > 0) {
-      if (e.files[0]?.size > 6145728) {
-        setErrorMessage("File size exceeds the maximum limit of 3 MB.");
+      if (e.files[0]?.size > 2145728) {
+        setErrorMessage("File size exceeds the maximum limit of 6 MB.");
         return;
       }
     }

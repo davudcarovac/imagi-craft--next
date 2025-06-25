@@ -596,10 +596,15 @@ export async function postCropFace(
       if (!detections) {
         await deleteFile(file.path);
         await deleteFile(preprocessedPath);
-        throw new ErrorResponse(
-          `No face detected in ${file.originalname}`,
-          400
-        );
+        downloadLinks.push({
+          name: file.originalname,
+          error: "No face detected",
+        } as DownloadLinksType); // Ako nije detektovano lice, dodaj prazan objekat
+        continue;
+        // throw new ErrorResponse(
+        //   `No face detected in ${file.originalname}`,
+        //   400
+        // ); // Ako nije detektovano lice, preskoči ovaj fajl
       }
 
       const { x, y, width, height } = detections.box;
@@ -616,6 +621,15 @@ export async function postCropFace(
 
       await deleteFile(file.path);
       await deleteFile(preprocessedPath); // obriši preprocesiranu verziju
+    }
+
+    const allErrors = downloadLinks.every((item) => item.error);
+
+    if (allErrors) {
+      throw new ErrorResponse(
+        "No faces detected in any of the uploaded files.",
+        400
+      );
     }
 
     res.status(200).json({
