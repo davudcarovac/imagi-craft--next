@@ -10,7 +10,7 @@ export type DownloadLinksType = {
   height: number;
   width: number;
   format: string;
-};
+} & { error?: string };
 
 // api
 
@@ -65,3 +65,10 @@ export type OriginalImageSizeType = {
 //   width: number;
 //   height: number;
 // };
+
+// crop face
+
+export type NoDetectedFacesType = {
+  name: string;
+  error: string;
+};
