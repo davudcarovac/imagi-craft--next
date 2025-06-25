@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <div className="px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
+    <div className="sticky top-0 z-50 px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
       <Link href="/">
         <Image src={frostyImg} alt="frosty-img-logo" height={70} width={160} />
       </Link>

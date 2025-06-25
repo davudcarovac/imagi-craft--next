@@ -35,7 +35,7 @@ const options: string[] = ["On", "Off"];
 const CropClient = () => {
   const cropperRef = useRef<CropperRef<CropperState>>(null);
   const [isCropped, setIsCropped] = useState(false);
-  const [isGridActive, setIsGridActive] = useState(false);
+  const [isGridActive, setIsGridActive] = useState(true);
   const [file, setFile] = useState<File>();
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
@@ -166,7 +166,7 @@ const CropClient = () => {
   return (
     // <div className="w-full ">
     <div>
-      {!image && (
+      {!image && !downloadItem && (
         <ServiceIntro
           titleBeforeHighlight=""
           highlightedWord="Crop"
@@ -235,7 +235,7 @@ const CropClient = () => {
 
           {/* Crop Area */}
           <div className=" flex-1  flex justify-center items-center flex-col p-4 h-[90vh] overflow-y-scroll ">
-            <div className="h-full  w-full  flex justify-center items-center   max-w-[750px] ">
+            <div className="h-full  w-full  flex justify-center items-center   max-w-[900px] ">
               <Cropper
                 ref={cropperRef}
                 src={image}
