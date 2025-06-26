@@ -49,7 +49,6 @@ export default function UploadFile({
   isPending,
   formatOptions,
   globalFormat,
-  handleGlobalFormatChange,
   setErrorMessage,
   setImage,
   setFile,

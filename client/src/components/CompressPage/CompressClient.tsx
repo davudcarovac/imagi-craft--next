@@ -4,7 +4,6 @@ import React, { useState } from "react";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { SliderChangeEvent } from "primereact/slider";
 import { useCompress } from "@/hooks/useCompress";
 import { FileType, TransformedDownloadLinks } from "@/types/apiTypes";
 import { deleteAllFiles } from "@/api/deleteAllApi";

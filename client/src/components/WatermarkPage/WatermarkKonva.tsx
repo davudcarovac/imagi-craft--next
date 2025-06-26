@@ -8,37 +8,40 @@ import React, {
   useState,
 } from "react";
 import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
+
+import type { Transformer as TransformerType } from "konva/lib/shapes/Transformer";
+import type { Node as KonvaNode } from "konva/lib/Node"; // ako želiš tip za Node
+import type { KonvaEventObject } from "konva/lib/Node"; // tip za evente
+import { KonvaEventListener } from "konva/lib/Node";
+
+import { Node, NodeConfig } from "konva/lib/Node";
+import type { Image as KonvaImageType } from "konva/lib/shapes/Image";
+
 import useImage from "use-image";
 import WatermarkInfo from "./WatermarkInfo";
+import Konva from "konva";
 
 type WatermarkKonvaProps = {
   backgroundSrc: string | null;
   watermarkSrc: string | null;
   watermarkPos: { x: number; y: number };
-  watermarkSize: {
-    width: number;
-    height: number;
-  };
+  watermarkSize: { width: number; height: number };
   selected: boolean;
   setSelected: Dispatch<SetStateAction<boolean>>;
   setWatermarkPos: (pos: { x: number; y: number }) => void;
   setWatermarkSize: (size: { width: number; height: number }) => void;
 };
 
-const UploadedImage = React.forwardRef(
-  (
-    {
-      src,
-      onLoad,
-      onClick,
-      ...props
-    }: {
-      src: string;
-      onLoad?: (img: HTMLImageElement) => void;
-      onClick?: () => void;
-    } & any,
-    ref: React.Ref<any>
-  ) => {
+type UploadedImageProps = {
+  src: string;
+  onLoad?: (img: HTMLImageElement) => void;
+  onClick?: (evt: KonvaEventObject<MouseEvent>) => void;
+  onTap?: (evt: KonvaEventObject<TouchEvent>) => void;
+} & Omit<Konva.ImageConfig, "image">;
+
+// UploadedImage component with typed ref and props
+const UploadedImage = React.forwardRef<KonvaImageType, UploadedImageProps>(
+  ({ src, onLoad, onClick, onTap, ...props }, ref) => {
     const [image] = useImage(src, "anonymous");
     const hasLoaded = useRef(false);
 
@@ -48,7 +51,7 @@ const UploadedImage = React.forwardRef(
 
     useEffect(() => {
       if (image && onLoad && !hasLoaded.current) {
-        onLoad(image);
+        onLoad(image as HTMLImageElement);
         hasLoaded.current = true;
       }
     }, [image, onLoad]);
@@ -58,7 +61,7 @@ const UploadedImage = React.forwardRef(
         image={image}
         ref={ref}
         onClick={onClick}
-        onTap={onClick}
+        onTap={onTap}
         {...props}
       />
     ) : null;
@@ -67,7 +70,7 @@ const UploadedImage = React.forwardRef(
 
 UploadedImage.displayName = "UploadedImage";
 
-const WatermarkKonva = ({
+const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
   backgroundSrc,
   watermarkSrc,
   watermarkPos,
@@ -76,7 +79,7 @@ const WatermarkKonva = ({
   setSelected,
   setWatermarkPos,
   setWatermarkSize,
-}: WatermarkKonvaProps) => {
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const fixedWidth = 900;
 
@@ -84,14 +87,13 @@ const WatermarkKonva = ({
     width: fixedWidth,
     height: 600,
   });
-
   const [naturalSize, setNaturalSize] = useState({
     width: fixedWidth,
     height: 600,
   });
 
-  const watermarkRef = useRef<any>(null);
-  const transformerRef = useRef<any>(null);
+  const watermarkRef = useRef<KonvaImageType>(null);
+  const transformerRef = useRef<TransformerType>(null);
 
   const updateStageSize = () => {
     if (!containerRef.current) return;
@@ -121,18 +123,12 @@ const WatermarkKonva = ({
   };
 
   const handleWatermarkLoad = (img: HTMLImageElement) => {
-    if (setWatermarkSize) {
-      setWatermarkSize({
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-      });
-    }
+    setWatermarkSize({ width: img.naturalWidth, height: img.naturalHeight });
 
-    // Aktiviraj transformer odmah po učitavanju
     setTimeout(() => {
       if (transformerRef.current && watermarkRef.current) {
         transformerRef.current.nodes([watermarkRef.current]);
-        transformerRef.current.getLayer().batchDraw();
+        transformerRef.current.getLayer()?.batchDraw();
       }
     }, 0);
   };
@@ -154,16 +150,12 @@ const WatermarkKonva = ({
           <Stage
             width={stageSize.width}
             height={stageSize.height}
-            onMouseDown={(e) => {
-              if (e.target === e.target.getStage()) {
-                setSelected(false);
-              }
-            }}
-            onTouchStart={(e) => {
-              if (e.target === e.target.getStage()) {
-                setSelected(false);
-              }
-            }}
+            onMouseDown={(e) =>
+              e.target === e.target.getStage() && setSelected(false)
+            }
+            onTouchStart={(e) =>
+              e.target === e.target.getStage() && setSelected(false)
+            }
           >
             <Layer>
               <UploadedImage
@@ -189,46 +181,34 @@ const WatermarkKonva = ({
                     }
                     draggable
                     onLoad={handleWatermarkLoad}
-                    onDragEnd={(e: any) => {
-                      const x =
-                        (e.target.x() / stageSize.width) * naturalSize.width;
-                      const y =
-                        (e.target.y() / stageSize.height) * naturalSize.height;
-
-                      if (setWatermarkPos) {
-                        setWatermarkPos({ x, y });
-                      }
+                    onDragEnd={(e: KonvaEventObject<DragEvent>) => {
+                      const node = e.target;
+                      setWatermarkPos({
+                        x: (node.x() / stageSize.width) * naturalSize.width,
+                        y: (node.y() / stageSize.height) * naturalSize.height,
+                      });
                     }}
-                    onTransformEnd={(e: any) => {
+                    onTransformEnd={() => {
                       const node = watermarkRef.current;
+                      if (!node) return;
                       const scaleX = node.scaleX();
                       const scaleY = node.scaleY();
-
                       node.scaleX(1);
                       node.scaleY(1);
 
-                      const newWidth =
-                        ((node.width() * scaleX) / stageSize.width) *
-                        naturalSize.width;
-                      const newHeight =
-                        ((node.height() * scaleY) / stageSize.height) *
-                        naturalSize.height;
+                      setWatermarkSize({
+                        width:
+                          ((node.width() * scaleX) / stageSize.width) *
+                          naturalSize.width,
+                        height:
+                          ((node.height() * scaleY) / stageSize.height) *
+                          naturalSize.height,
+                      });
 
-                      if (setWatermarkSize) {
-                        setWatermarkSize({
-                          width: newWidth,
-                          height: newHeight,
-                        });
-                      }
-
-                      const newX =
-                        (node.x() / stageSize.width) * naturalSize.width;
-                      const newY =
-                        (node.y() / stageSize.height) * naturalSize.height;
-
-                      if (setWatermarkPos) {
-                        setWatermarkPos({ x: newX, y: newY });
-                      }
+                      setWatermarkPos({
+                        x: (node.x() / stageSize.width) * naturalSize.width,
+                        y: (node.y() / stageSize.height) * naturalSize.height,
+                      });
                     }}
                     onClick={() => setSelected(true)}
                     onTap={() => setSelected(true)}
@@ -238,9 +218,8 @@ const WatermarkKonva = ({
                       ref={transformerRef}
                       rotateEnabled={false}
                       boundBoxFunc={(oldBox, newBox) => {
-                        if (newBox.width < 20 || newBox.height < 20) {
+                        if (newBox.width < 20 || newBox.height < 20)
                           return oldBox;
-                        }
                         return newBox;
                       }}
                     />

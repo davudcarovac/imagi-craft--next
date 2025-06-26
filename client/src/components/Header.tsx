@@ -18,9 +18,8 @@ const navItems = [
 ];
 
 const Header = () => {
-  const [, setMessage] = useState<string | undefined>("");
   const pathname = usePathname();
-  const userId = useUserId();
+  // const userId = useUserId();
 
   // const handleLike = async () => {
   //   if (!userId) {
