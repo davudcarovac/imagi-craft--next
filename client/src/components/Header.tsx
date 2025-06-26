@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import frostyImg from "../assets/frostyImg-transparent.png";
 import "primeicons/primeicons.css";
-import { useState } from "react";
-import useUserId from "@/hooks/useUserID";
-import { addUserLike } from "@/lib/getUserIP";
+// import { useState } from "react";
+// import useUserId from "@/hooks/useUserID";
+// import { addUserLike } from "@/lib/getUserIP";
 
 const navItems = [
   { href: "/compress-image", label: "compress image" },

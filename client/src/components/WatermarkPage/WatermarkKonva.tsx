@@ -10,11 +10,8 @@ import React, {
 import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
 
 import type { Transformer as TransformerType } from "konva/lib/shapes/Transformer";
-import type { Node as KonvaNode } from "konva/lib/Node"; // ako želiš tip za Node
 import type { KonvaEventObject } from "konva/lib/Node"; // tip za evente
-import { KonvaEventListener } from "konva/lib/Node";
 
-import { Node, NodeConfig } from "konva/lib/Node";
 import type { Image as KonvaImageType } from "konva/lib/shapes/Image";
 
 import useImage from "use-image";
