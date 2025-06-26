@@ -24,16 +24,12 @@ const CompressClient = () => {
     TransformedDownloadLinks[] | undefined
   >([]);
   const [disabledLinks, setDisabledLinks] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [, setIsOpen] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [greyscaleValue, setGreyscaleValue] = useState(greyscaleOptions[0]);
   const formData = new FormData();
 
   const { mutate, isPending } = useCompress();
-
-  const handleSliderValue = (e: SliderChangeEvent) => {
-    setSliderValue(e.value as number);
-  };
 
   const submitCompression = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

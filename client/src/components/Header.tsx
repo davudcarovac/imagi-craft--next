@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import frostyImg from "../assets/frostyImg-transparent.png";
 import "primeicons/primeicons.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useUserId from "@/hooks/useUserID";
 import { addUserLike } from "@/lib/getUserIP";
 
@@ -18,18 +18,18 @@ const navItems = [
 ];
 
 const Header = () => {
-  const [message, setMessage] = useState<string | undefined>("");
+  const [, setMessage] = useState<string | undefined>("");
   const pathname = usePathname();
   const userId = useUserId();
 
-  const handleLike = async () => {
-    if (!userId) {
-      setMessage("Loading user info...");
-      return;
-    }
-    const res = await addUserLike(userId);
-    setMessage(res.success ? "Thanks for liking!" : res.message);
-  };
+  // const handleLike = async () => {
+  //   if (!userId) {
+  //     setMessage("Loading user info...");
+  //     return;
+  //   }
+  //   const res = await addUserLike(userId);
+  //   setMessage(res.success ? "Thanks for liking!" : res.message);
+  // };
 
   return (
     <div className="sticky top-0 z-50 px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">

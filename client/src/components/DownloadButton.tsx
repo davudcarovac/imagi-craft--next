@@ -25,7 +25,7 @@ const DownloadButton = ({
     <a
       onClick={() => {
         const transformedLink = `${link}-${index}`;
-        onClick && onClick(transformedLink);
+        onClick?.(transformedLink);
       }}
       href={`http://localhost:4000/download/${link}`}
       download
@@ -40,7 +40,7 @@ const DownloadButton = ({
           ? "opacity-50"
           : "opacity-100"
       }
-      ${isDisabledDownload(link, index, disabledLinks) && "pointer-events-none"}
+${isDisabledDownload(link, index, disabledLinks) ? "pointer-events-none" : ""}
 
    `}
     >

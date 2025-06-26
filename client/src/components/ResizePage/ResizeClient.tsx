@@ -30,7 +30,7 @@ const ResizeClient = () => {
   const [downloadLinks, setDownloadLinks] = useState<
     TransformedDownloadLinks[] | undefined
   >([]);
-  const [isResized, setIsResized] = useState<boolean>(false);
+  const [, setIsResized] = useState<boolean>(false);
   const [disabledLinks, setDisabledLinks] = useState<string[]>([]);
   const formData = new FormData();
   const { mutate, isPending } = useResize();
@@ -196,6 +196,7 @@ const ResizeClient = () => {
             setFiles={setFiles}
             tooltip="resize images"
             isMultiple={true}
+            isPending={isPending}
             files={files}
           />
         </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UploadFile from "../UploadFile";
 import { FileUpload } from "primereact/fileupload";
 import { Button } from "primereact/button";
@@ -29,13 +29,13 @@ const WatermarkClient = () => {
     width: 100,
     height: 100,
   });
-  const [isWatermarking, setIsWatermarking] = useState(false);
+  const [, setIsWatermarking] = useState(false);
   const [selected, setSelected] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [, setErrorMessage] = useState<string | null>(null);
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
 
   const formData = new FormData();
-  const { mutate, isPending } = useWatermark();
+  const { mutate } = useWatermark();
 
   const setBackgroundOptions = (url: string) => {
     setBackgroundSrc(url);

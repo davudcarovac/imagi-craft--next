@@ -6,7 +6,6 @@ import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
 import UploadFile from "@/components/UploadFile";
 import { useConvert } from "@/hooks/useConvert";
 import { FileType, TransformedDownloadLinks } from "@/types/apiTypes";
-import { Dropdown } from "primereact/dropdown";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ConvertOptions from "./ConvertOptions";
@@ -32,7 +31,7 @@ const ConvertClient = () => {
 
   const formData = new FormData();
 
-  const { mutate, isPending, data } = useConvert();
+  const { mutate, isPending } = useConvert();
 
   const submitConversion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

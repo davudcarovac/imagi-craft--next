@@ -17,6 +17,7 @@ import DownloadArea from "@/components/DownloadArea";
 import UploadFile from "@/components/UploadFile";
 import Sidebar from "@/components/CropPage/Sidebar";
 import ServiceIntro from "../ServiceIntro";
+import Image from "next/image";
 
 const aspectRatios = [
   { value: 1 / 1, name: "1/1" },
@@ -32,6 +33,8 @@ const aspectRatios = [
 
 const options: string[] = ["On", "Off"];
 
+type StencilComponentType = typeof RectangleStencil | typeof CircleStencil;
+
 const CropClient = () => {
   const cropperRef = useRef<CropperRef<CropperState>>(null);
   const [isCropped, setIsCropped] = useState(false);
@@ -44,7 +47,7 @@ const CropClient = () => {
     "rectangle"
   );
   const [currentStencil, setCurrentStencil] =
-    useState<React.ComponentType<any>>(RectangleStencil);
+    useState<StencilComponentType>(RectangleStencil);
   const [coordinates, setCoordinates] = useState<
     CropperState["coordinates"] | null
   >(null);
@@ -207,7 +210,7 @@ const CropClient = () => {
             onClick={toggleSidebar}
             className="lg2:hidden absolute top-3 left-5 text-white p-1 rounded-full cursor-pointer hover:opacity-50 transition duration-150"
           >
-            <img
+            <Image
               src={sidebarIcon.src}
               height={30}
               width={30}

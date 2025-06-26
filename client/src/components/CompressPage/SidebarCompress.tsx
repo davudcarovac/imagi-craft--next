@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Sidebar } from "primereact/sidebar";
 import { SelectButton, SelectButtonChangeEvent } from "primereact/selectbutton";
 import { Slider, SliderChangeEvent } from "primereact/slider";

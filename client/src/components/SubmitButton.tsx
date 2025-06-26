@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ReactNode } from "react";
 
 type SubmitButtonProps = {
@@ -24,7 +25,7 @@ const SubmitButton = ({
     >
       {children}
       {imageSrc && alt && (
-        <img src={imageSrc} alt={alt} height={16} width={16} />
+        <Image src={imageSrc} alt={alt} height={16} width={16} />
       )}
     </button>
   );

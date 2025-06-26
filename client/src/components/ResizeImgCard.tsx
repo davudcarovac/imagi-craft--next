@@ -42,7 +42,7 @@ const ResizeImgCard = ({
       key={id}
       className="border border-solid border-gray-200 p-2.5 rounded-md"
     >
-      <img
+      <Image
         src={imageUrl}
         alt={name}
         className="w-[150px] h-[150px] object-contain"

@@ -65,6 +65,8 @@ const UploadedImage = React.forwardRef(
   }
 );
 
+UploadedImage.displayName = "UploadedImage";
+
 const WatermarkKonva = ({
   backgroundSrc,
   watermarkSrc,

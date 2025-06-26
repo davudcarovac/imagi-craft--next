@@ -18,9 +18,9 @@ import { Dropdown } from "primereact/dropdown";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import arrowRightIcon from "../assets/button images/right-arrow green.png";
 import { FileType } from "../types/apiTypes";
 import { v4 as uuidv4 } from "uuid";
+import NextImage from "next/image";
 
 type UploadFileType = {
   tooltip: string;
@@ -49,10 +49,8 @@ export default function UploadFile({
   isPending,
   formatOptions,
   globalFormat,
-  errorMessage,
   handleGlobalFormatChange,
   setErrorMessage,
-  setIsOpenCompressionSb,
   setImage,
   setFile,
   setFiles,
@@ -251,10 +249,10 @@ export default function UploadFile({
     return (
       <div className="flex flex-col sm:flex-row w-full items-stretch sm:items-center gap-3 p-4 rounded-lg">
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <img
+          <NextImage
             alt={typedFile.name}
             role="presentation"
-            src={typedFile.objectURL}
+            src={typedFile.objectURL || ""}
             className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md flex-shrink-0"
           />
           <div className="flex flex-col items-start min-w-0">
