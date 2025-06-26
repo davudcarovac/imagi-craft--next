@@ -5,7 +5,7 @@ const HomePageVideo = () => {
     <main className="relative w-[85%]">
       {/* Video */}
       <video
-        src="/snimak-za-pocetnu.mp4"
+        src="/intro-video.mp4"
         autoPlay
         muted
         playsInline
