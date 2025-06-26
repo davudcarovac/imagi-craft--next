@@ -206,15 +206,15 @@ export default function UploadFile({
                 type="submit"
                 className={`${
                   isPending ? "opacity-50 cursor-not-allowed" : ""
-                } custom-upload-btn bg-white py-2 px-3 text-[#1aac83] border border-[#1aac83] rounded-md flex items-center gap-2 font-semibold cursor-pointer`}
+                } custom-upload-btn bg-[#1aac83] py-2 px-3 text-[#ffffff] border border-[#1aac83] rounded-md flex items-center gap-2 font-semibold cursor-pointer saira-font`}
               >
                 Submit
-                <img
+                {/* <img
                   src={arrowRightIcon.src}
                   alt="next-icon"
                   height={15}
                   width={15}
-                />
+                /> */}
               </button>
             )}
           </div>

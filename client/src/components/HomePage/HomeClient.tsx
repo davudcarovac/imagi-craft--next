@@ -10,8 +10,8 @@ const HomeClient = () => {
   return (
     <div className="min-h-screen w-full  flex justify-center flex-col">
       <div className="flex justify-center py-10 flex-col items-center">
-        <div className="max-w-5xl mx-auto px-6 py-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#22C7A8] mb-4 drop-shadow-lg">
+        <div className="max-w-6xl mx-auto px-6 py-10 text-center">
+          <h1 className="text-4xl text-[68px] leading-[76px] font-extrabold  text-[#22C7A8] mb-4 drop-shadow-lg saira-font">
             Transform your images effortlessly with Frosty Image
           </h1>
           <p className="text-gray-700 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed mb-8">
@@ -20,7 +20,8 @@ const HomeClient = () => {
             FrostyImg.
           </p>
           <button
-            className="bg-[#22C7A8] hover:bg-[#1a9a82] text-white font-semibold px-8 py-3 rounded-md text-lg transition-shadow shadow-md hover:shadow-lg"
+            className="bg-[#22C7A8] hover:bg-[#1a9a82] text-white font-semibold px-8 py-3 text-lg shadow-md hover:shadow-lg saira-font 
+             transition-all duration-300 transform hover:scale-105 cursor-pointer"
             onClick={() => alert("Get Started clicked!")}
           >
             Get Started
@@ -33,7 +34,7 @@ const HomeClient = () => {
         <div className="flex justify-center ">
           <div className="max-w-[1290px] w-full space-y-12">
             <ServiceIntro
-              titleBeforeHighlight="Transform your images effortlessly with"
+              titleBeforeHighlight="Powerful Image Tools, All in One Place."
               highlightedWord="Frosty Image"
               titleAfterHighlight=""
               description="Our all-in-one image processing platform lets you compress, convert, crop, resize, and watermark your images — fast, easy, and right in your browser.

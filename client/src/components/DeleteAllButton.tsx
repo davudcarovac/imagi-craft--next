@@ -16,7 +16,7 @@ const DeleteAllButton = ({
   return (
     <button
       onClick={deleteAll}
-      className={`bg-[#e7195a] flex items-center flex-row gap-2 ${className} cursor-pointer text-white  text-lg rounded-md`}
+      className={`bg-[#e7195a] flex items-center flex-row gap-2 ${className} cursor-pointer text-white  text-lg rounded-md saira-font`}
     >
       {children}
     </button>

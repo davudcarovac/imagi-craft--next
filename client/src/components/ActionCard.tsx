@@ -12,12 +12,20 @@ const ActionCard = ({ actionName, description, icon, to }: ActionCardProps) => {
   return (
     <Link
       href={to}
-      className="p-6 bg-white border border-[#E0E7EE] rounded-xl shadow-sm hover:shadow-md hover:border-[#22C7A8] hover:scale-[1.02] transition-all"
+      className="relative p-6 bg-white/80 backdrop-blur border border-white/20 rounded-xl shadow-md hover:shadow-xl  hover:scale-[1.03] transition-transform duration-200"
     >
-      <div>
-        <Image src={icon} alt={actionName} className="h-12 w-12 mb-3" />
-        <h2 className="text-lg font-semibold text-[#333]">{actionName}</h2>
-        <p className="text-sm text-[#555] mt-1">{description}</p>
+      <div className="flex flex-col items-center text-center">
+        {/* Icon with background */}
+        <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#22C7A8]/10 mb-4">
+          <Image src={icon} alt={actionName} className="h-7 w-7" />
+        </div>
+
+        <h2 className="text-xl font-semibold text-[#222] tracking-tight saira-font">
+          {actionName}
+        </h2>
+        <p className="text-sm text-[#555]/90 mt-1 leading-snug">
+          {description}
+        </p>
       </div>
     </Link>
   );

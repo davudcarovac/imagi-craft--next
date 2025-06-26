@@ -55,10 +55,19 @@ const Header = () => {
         </ul>
       </nav>
 
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         {message}
         <i className="pi pi-thumbs-up cursor-pointer" onClick={handleLike}></i>
         <i className="pi pi-thumbs-down"></i>
+      </div> */}
+
+      <div className="flex items-center gap-2 flex-row">
+        <button className="py-2 px-4 bg-[#1aac83] text-white saira-font border border-solid border-[#1aac83] cursor-pointer  transition-all duration-300 transform hover:scale-105 ">
+          Log In
+        </button>
+        <button className="py-2 px-4  border border-solid border-[#1aac83] bg-white text-[#1aac83] saira-font cursor-pointer  transition-all duration-300 transform hover:scale-105 ">
+          Sign Up
+        </button>
       </div>
     </div>
   );

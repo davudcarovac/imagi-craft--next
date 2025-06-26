@@ -18,15 +18,17 @@ export default function ServiceIntro({
   return (
     <div
       className={`text-center my-8 ${
-        page === "home" ? "max-w-4xl" : "max-w-2xl"
+        page === "home" ? "max-w-4xl" : "max-w-4xl"
       } mx-auto`}
     >
-      <h1 className="text-3xl font-bold text-[#333] mb-2">
+      <h1 className="text-4xl font-bold text-[#333] mb-2 saira-font">
         {titleBeforeHighlight}{" "}
-        <span className="text-[#1aac83]">{highlightedWord}</span>{" "}
+        <span className="text-[#1aac83] saira-font">{highlightedWord}</span>{" "}
         {titleAfterHighlight}
       </h1>
-      <p className="text-[#555] text-base">{description}</p>
+      <p className={`text-[#555] text-base ${page === "home" && "py-3"}`}>
+        {description}
+      </p>
     </div>
   );
 }

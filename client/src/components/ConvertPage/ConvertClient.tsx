@@ -90,13 +90,16 @@ const ConvertClient = () => {
       />
 
       {/* Global format dropdown — samo kad je action "convert" */}
-      {files && files.length > 0 && (
-        <ConvertOptions
-          globalFormat={globalFormat}
-          formatOptions={formatOptions}
-          handleGlobalFormatChange={handleGlobalFormatChange}
-        />
-      )}
+      {files &&
+        files.length > 0 &&
+        downloadLinks &&
+        downloadLinks.length < 0 && (
+          <ConvertOptions
+            globalFormat={globalFormat}
+            formatOptions={formatOptions}
+            handleGlobalFormatChange={handleGlobalFormatChange}
+          />
+        )}
 
       {downloadLinks && downloadLinks?.length === 0 && (
         <form onSubmit={submitConversion}>
