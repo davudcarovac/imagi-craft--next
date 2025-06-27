@@ -86,7 +86,7 @@ export default function UploadFile({
     }
 
     if (!isMultiple && setErrorMessage && e.files.length > 0) {
-      if (e.files[0]?.size > 2145728) {
+      if (e.files[0]?.size > 6145728) {
         setErrorMessage("File size exceeds the maximum limit of 6 MB.");
         return;
       }
@@ -351,7 +351,7 @@ export default function UploadFile({
   };
 
   return (
-    <div className={`max-w-[800px] mx-auto px-5 py-5`}>
+    <div className={`max-w-[800px] mx-auto    px-8 lg:px-0 py-5`}>
       <Toast ref={toast} />
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip

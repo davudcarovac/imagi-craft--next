@@ -19,7 +19,7 @@ export default function ServiceIntro({
     <div
       className={`text-center my-8 ${
         page === "home" ? "max-w-4xl" : "max-w-4xl"
-      } mx-auto`}
+      } mx-auto   px-8 lg:px-0`}
     >
       <h1 className="text-3xl  md:text-4xl font-bold text-[#333] mb-2 saira-font">
         {titleBeforeHighlight}{" "}

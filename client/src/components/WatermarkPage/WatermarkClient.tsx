@@ -115,7 +115,7 @@ const WatermarkClient = () => {
   };
 
   return (
-    <div>
+    <div className="mx-5">
       {/* Faza 1: Uvod i Upload */}
       {!backgroundSrc && !downloadItem && (
         <>
@@ -143,7 +143,7 @@ const WatermarkClient = () => {
             <div className="pt-5 flex items-center gap-2 ">
               <FileUpload
                 chooseLabel="Add Watermark"
-                className="custom-file-upload"
+                className="custom-file-upload "
                 mode="basic"
                 name="demo[]"
                 accept="image/*"
@@ -161,7 +161,7 @@ const WatermarkClient = () => {
               />
               <Button
                 label="Cancel"
-                className="custom-cancel-upload"
+                className="custom-cancel-upload saira-font"
                 onClick={handleCancel}
               />
             </div>

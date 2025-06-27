@@ -136,7 +136,7 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="w-full py-1">
+    <div ref={containerRef} className="w-full py-1 ">
       {backgroundSrc && (
         <div className="mt-4">
           <WatermarkInfo
