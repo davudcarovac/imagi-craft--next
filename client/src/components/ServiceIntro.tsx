@@ -21,7 +21,7 @@ export default function ServiceIntro({
         page === "home" ? "max-w-4xl" : "max-w-4xl"
       } mx-auto`}
     >
-      <h1 className="text-4xl font-bold text-[#333] mb-2 saira-font">
+      <h1 className="text-3xl  md:text-4xl font-bold text-[#333] mb-2 saira-font">
         {titleBeforeHighlight}{" "}
         <span className="text-[#1aac83] saira-font">{highlightedWord}</span>{" "}
         {titleAfterHighlight}

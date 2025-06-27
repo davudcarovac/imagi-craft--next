@@ -1,9 +1,7 @@
 import { Dropdown } from "primereact/dropdown";
 import { ToggleButton } from "primereact/togglebutton";
 import { Dispatch, SetStateAction } from "react";
-import { SelectButton, SelectButtonChangeEvent } from "primereact/selectbutton";
-import sidebarArrow from "../../assets/button images/sidebar-arrow-left.png";
-import Image from "next/image";
+import { SelectButton } from "primereact/selectbutton";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -52,125 +50,105 @@ const Sidebar = ({
        w-full lg2:w-[350px] border-r border-solid border-slate-200
     `}
     >
-      <div className="flex flex-col gap-3">
-        <div className="w-full flex items-center justify-center relative">
-          <h2 className="font-semibold text-2xl  mb-4 ">Options</h2>
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="lg2:hidden absolute right-0 bottom-5 cursor-pointer"
-          >
+      <div className="flex flex-col gap-10 text-[#1aac83]">
+        {/* Header */}
+        <div className="w-full flex items-center justify-between">
+          <h2 className="font-bold text-3xl saira-font">Options</h2>
+          <button onClick={toggleSidebar}>
+            <i
+              className="pi pi-arrow-left cursor-pointer"
+              style={{ color: "#1aac83", fontSize: "20px" }}
+            ></i>
+          </button>
+          {/* <button type="button" onClick={toggleSidebar} className="lg2:hidden">
             <Image
               src={sidebarArrow}
-              alt="sidebar-close"
-              height={25}
-              width={25}
+              alt="toggle-sidebar"
+              height={24}
+              width={24}
             />
-          </button>
+          </button> */}
         </div>
-        {/* Aspect ratio */}
-        <div>
-          <div>
-            <h2 className="text-[#1aac83] text-lg">Aspect ratio</h2>
 
-            <div className="pt-2">
-              <Dropdown
-                value={ratio}
-                onChange={(e) => setRatio(e.value)}
-                options={aspectRatios}
-                optionLabel="name"
-                placeholder="Select a City"
-                className="w-full md:w-14rem"
-                style={{ width: "240px" }}
-              />
-            </div>
-          </div>
-        </div>
-        {/* Stencil */}
-        <div className="py-5">
-          <h2 className="text-[#1aac83] text-lg">Stencil </h2>
-          <div className="flex items-center flex-row gap-5 pt-2">
-            <button
-              onClick={toggleStencil}
-              type="button"
-              className={`
-                        
-                        ${
-                          stencilValue !== "rectangle" &&
-                          " border borde-solid border-[#1aac83] "
-                        }  ${
-                stencilValue === "rectangle" ? "bg-[#1aac83]" : "bg-transparent"
-              }  
-                       ${
-                         stencilValue === "rectangle"
-                           ? "text-white"
-                           : "text-[#1aac83]"
-                       }
-                      py-2 px-4 cursor-pointer rounded-sm`}
-            >
-              Rectangle
-            </button>
-            <button
-              onClick={toggleStencil}
-              type="button"
-              className={`${
-                stencilValue !== "circle" &&
-                "border border-solid border-[#1aac83]"
-              }   ${
-                stencilValue === "circle" ? "bg-[#1aac83]" : "bg-transparent"
-              }
-                      
-                       ${
-                         stencilValue === "circle"
-                           ? "text-white"
-                           : "text-[#1aac83]"
-                       }
-                      py-2 px-4  cursor-pointer rounded-sm  `}
-            >
-              {" "}
-              Circle
-            </button>
-          </div>
-        </div>
+        {/* Aspect Ratio */}
+        <section>
+          <label className="block font-medium text-lg mb-2 saira-font">
+            Aspect Ratio
+          </label>
+          <Dropdown
+            value={ratio}
+            onChange={(e) => setRatio(e.value)}
+            options={aspectRatios}
+            optionLabel="name"
+            placeholder="Select Ratio"
+            className="w-full"
+          />
+        </section>
+
+        {/* Stencil Selection */}
+        <section>
+          <label className="block font-medium text-lg mb-2 saira-font">
+            Stencil Shape
+          </label>
+          <SelectButton
+            value={stencilValue}
+            onChange={toggleStencil}
+            options={[
+              { label: "Rectangle", value: "rectangle" },
+              { label: "Circle", value: "circle" },
+            ]}
+            optionLabel="label"
+            className="w-full"
+          />
+        </section>
 
         {/* Coordinates */}
-        <div>
-          <h2 className="text-[#1aac83] text-lg">Coordinates</h2>
-          <div className="w-[240px] flex flex-col  gap-2 p-3 bg-white rounded-lg mt-2 border border-solid border-gray-300">
-            <div>
-              <p>Width: {rounded?.width}</p>
+        <section>
+          <label className="block font-medium text-lg mb-3 text-[#1aac83] saira-font">
+            Coordinates
+          </label>
+          <div className="bg-white border border-gray-300 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-gray-800">
+            <div className="flex flex-col items-center">
+              <span className="text-gray-500 text-[17px] font-medium">
+                Width
+              </span>
+              <span className="text-sm font-semibold">{rounded?.width}px</span>
             </div>
-            <div>
-              <p>Height: {rounded?.height}</p>
+            <div className="flex flex-col items-center">
+              <span className="text-gray-500 text-[17px] font-medium">
+                Height
+              </span>
+              <span className="text-sm font-semibold">{rounded?.height}px</span>
             </div>
-            <div>
-              <p>X: {rounded?.left}</p>
-            </div>{" "}
-            <div>
-              <p>Y: {rounded?.top}</p>
+            <div className="flex flex-col items-center">
+              <span className="text-gray-500 text-[17px] font-medium">X</span>
+              <span className="text-sm font-semibold">{rounded?.left}px</span>
             </div>
-          </div>
-        </div>
-
-        <div className="flex items-center flex-row gap-5">
-          {/* Handlers */}
-          <div className="py-3">
-            <h2 className="text-[#1aac83] text-lg">Handlers</h2>
-            <div className="flex align-items-center py-2">
-              <SelectButton
-                value={handlersValue}
-                onChange={(e: SelectButtonChangeEvent) =>
-                  setHandlersValue(e.value)
-                }
-                options={options}
-              />
+            <div className="flex flex-col items-center">
+              <span className="text-gray-500 text-[17px] font-medium">Y</span>
+              <span className="text-sm font-semibold">{rounded?.top}px</span>
             </div>
           </div>
+        </section>
 
-          {/* Grid */}
+        {/* Handlers & Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h2 className="text-[#1aac83] text-lg">Grid</h2>
+            <label className="block font-medium text-lg mb-2 saira-font">
+              Handlers
+            </label>
+            <SelectButton
+              value={handlersValue}
+              onChange={(e) => setHandlersValue(e.value)}
+              options={options}
+              className="w-full"
+            />
+          </div>
 
+          <div>
+            <label className="block font-medium text-lg mb-2 saira-font">
+              Grid
+            </label>
             <ToggleButton
               onLabel="On"
               offLabel="Off"
@@ -178,16 +156,17 @@ const Sidebar = ({
               offIcon="pi pi-times"
               checked={isGridActive}
               onChange={(e) => setIsGridActive(e.value)}
-              className="w-9rem py-3 my-custom-toggle"
+              className="w-full"
             />
           </div>
+        </section>
+
+        {/* Crop Button */}
+        <div className="flex justify-center pt-4">
+          <button className="bg-[#1aac83] hover:bg-[#169b76] transition-colors duration-200 text-white text-lg font-semibold py-3 px-10 rounded-lg shadow-md saira-font">
+            Crop Image
+          </button>
         </div>
-      </div>
-      <div className="flex items-center justify-center">
-        <button className="className={`mt-4 py-5 px-16 bg-[#1aac83] text-white rounded-lg text-xl cursor-pointer">
-          {" "}
-          Crop Image
-        </button>
       </div>
     </div>
   );

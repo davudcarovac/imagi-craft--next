@@ -205,18 +205,21 @@ const CropClient = () => {
         </div>
       )}
       {image && (
-        <div className="flex w-full flex-col lg2:flex-row relative h-[90vh] overflow-hidden">
-          <button
-            onClick={toggleSidebar}
-            className="lg2:hidden absolute top-3 left-5 text-white p-1 rounded-full cursor-pointer hover:opacity-50 transition duration-150"
-          >
-            <Image
-              src={sidebarIcon.src}
-              height={30}
-              width={30}
-              alt="option-button"
-            />
-          </button>
+        <div className="flex w-full flex-col lg2:flex-row  h-[90vh] overflow-hidden">
+          <div className="p-5">
+            {!sidebarOpen && (
+              <button
+                onClick={toggleSidebar}
+                className="flex text-lg font-semibold items-center flex-row gap-2 text-[#1aac83] lg2:hidden p-1 rounded-full cursor-pointer hover:opacity-50 transition duration-150 saira-font"
+              >
+                Options
+                <i
+                  className="pi pi-arrow-right text-[#1aac83]"
+                  style={{ fontSize: "18px" }}
+                ></i>
+              </button>
+            )}
+          </div>
           <form onSubmit={submitCropping}>
             {/* Sidebar */}
             <Sidebar
@@ -237,7 +240,7 @@ const CropClient = () => {
           </form>
 
           {/* Crop Area */}
-          <div className=" flex-1  flex justify-center items-center flex-col p-4 h-[90vh] overflow-y-scroll ">
+          <div className=" flex-1  flex justify-center items-center flex-col   p-4 h-[90vh] overflow-y-scroll ">
             <div className="h-full  w-full  flex justify-center items-center   max-w-[900px] ">
               <Cropper
                 ref={cropperRef}

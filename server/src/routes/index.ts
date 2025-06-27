@@ -3,7 +3,7 @@ import {
   deleteAll,
   getDownloadAllFiles,
   getDownloadFileById,
-  getHomePage,
+  // getHomePage,
   postCompressImage,
   postConvertImage,
   postCropFace,
@@ -16,7 +16,7 @@ import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
 
 const router = Router();
 
-router.get("/", getHomePage);
+// router.get("/", getHomePage);
 router.post("/convert", uploadsMiddleware, postConvertImage);
 router.post("/resize", uploadsMiddleware, postResizeImage);
 router.post("/crop", uploadsMiddleware, postCropImage);
