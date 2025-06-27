@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import sidebarIcon from "../../assets/button images/sidebar-icon.png";
 import type { Coordinates, CropperRef } from "react-advanced-cropper";
 import {
   Cropper,
@@ -17,7 +16,6 @@ import DownloadArea from "@/components/DownloadArea";
 import UploadFile from "@/components/UploadFile";
 import Sidebar from "@/components/CropPage/Sidebar";
 import ServiceIntro from "../ServiceIntro";
-import Image from "next/image";
 
 const aspectRatios = [
   { value: 1 / 1, name: "1/1" },
