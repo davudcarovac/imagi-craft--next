@@ -11,10 +11,10 @@ const HomeClient = () => {
     <div className="min-h-screen w-full  flex justify-center flex-col">
       <div className="flex justify-center py-10 flex-col items-center">
         <div className="max-w-6xl mx-auto px-6 py-10 text-center">
-          <h1 className="text-4xl lg2:text-[68px] lg2:leading-[76px] font-extrabold  text-[#22C7A8] mb-4 drop-shadow-lg saira-font">
+          <h1 className="text-4xl md:text-[68px] md:leading-[76px] font-extrabold  text-[#22C7A8] mb-4 drop-shadow-lg saira-font">
             Transform your images effortlessly with Frosty Image
           </h1>
-          <p className="text-gray-700 max-w-3xl mx-auto  text-md md:text-xl md:leading-relaxed mb-8">
+          <p className="text-gray-700 max-w-3xl mx-auto  text-md md:text-xl  mb-8">
             If you want to create quality images, choosing the right software is
             the first step. Unlock your image processing potential with
             FrostyImg.

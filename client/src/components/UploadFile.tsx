@@ -169,7 +169,7 @@ export default function UploadFile({
 
     return (
       <div className={`${className} p-4`}>
-        <div className="flex flex-col md:flex-row items-center w-full gap-4">
+        <div className="flex flex-col md:flex-row  w-full gap-4">
           {/* Leva strana — dugmad i progress */}
           <div className="flex-1 flex flex-wrap items-center gap-3">
             {chooseButton}
@@ -249,6 +249,8 @@ export default function UploadFile({
       <div className="flex flex-col sm:flex-row w-full items-stretch sm:items-center gap-3 p-4 rounded-lg">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <NextImage
+            width={64} // npr. neka poznata/fiksna vrednost ili dinamička
+            height={64}
             alt={typedFile.name}
             role="presentation"
             src={typedFile.objectURL || ""}
