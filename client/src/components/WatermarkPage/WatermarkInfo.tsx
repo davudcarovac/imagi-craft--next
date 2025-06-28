@@ -5,6 +5,7 @@ import SubmitButton from "../SubmitButton";
 
 type WatermarkInfoProps = {
   watermarkSrc?: string | null;
+  isPending: boolean;
   position: { x: number; y: number };
   size: { width: number; height: number };
 };
@@ -13,12 +14,13 @@ const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
   watermarkSrc,
   position,
   size,
+  isPending,
 }) => {
   if (!watermarkSrc) return null;
 
   return (
     <div className="my-6 p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
-      <h2 className="text-base font-semibold text-[#333] mb-4 border-b border-slate-100 pb-2">
+      <h2 className="text-2xl font-semibold text-[#1aac83] mb-4 border-b border-slate-100 pb-2 saira-font">
         Watermark Details
       </h2>
 
@@ -56,7 +58,9 @@ const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
       </div>
 
       <div className="mt-6 flex justify-end">
-        <SubmitButton className="my-0">Apply Watermark</SubmitButton>
+        <SubmitButton isPending={isPending} className={`my-0`}>
+          Apply Watermark
+        </SubmitButton>
       </div>
     </div>
   );

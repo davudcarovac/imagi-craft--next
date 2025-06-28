@@ -8,12 +8,9 @@ import React, {
   useState,
 } from "react";
 import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
-
 import type { Transformer as TransformerType } from "konva/lib/shapes/Transformer";
-import type { KonvaEventObject } from "konva/lib/Node"; // tip za evente
-
+import type { KonvaEventObject } from "konva/lib/Node";
 import type { Image as KonvaImageType } from "konva/lib/shapes/Image";
-
 import useImage from "use-image";
 import WatermarkInfo from "./WatermarkInfo";
 import Konva from "konva";
@@ -24,6 +21,7 @@ type WatermarkKonvaProps = {
   watermarkPos: { x: number; y: number };
   watermarkSize: { width: number; height: number };
   selected: boolean;
+  isPending: boolean;
   setSelected: Dispatch<SetStateAction<boolean>>;
   setWatermarkPos: (pos: { x: number; y: number }) => void;
   setWatermarkSize: (size: { width: number; height: number }) => void;
@@ -73,6 +71,7 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
   watermarkPos,
   watermarkSize,
   selected,
+  isPending,
   setSelected,
   setWatermarkPos,
   setWatermarkSize,
@@ -143,6 +142,7 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
             watermarkSrc={watermarkSrc}
             position={watermarkPos}
             size={watermarkSize}
+            isPending={isPending}
           />
           <Stage
             width={stageSize.width}

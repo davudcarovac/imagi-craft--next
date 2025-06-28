@@ -63,12 +63,18 @@ const Header = () => {
 
       {/* Buttons for large screens */}
       <div className="hidden lg2:flex items-center gap-2">
-        <button className="py-2 px-4 bg-[#1aac83] text-white saira-font border border-solid border-[#1aac83] cursor-pointer transition-all duration-300 transform hover:scale-105">
+        <Link
+          href="/login"
+          className="py-2 px-4 bg-[#1aac83] text-white saira-font border border-solid border-[#1aac83] cursor-pointer transition-all duration-300 transform hover:scale-105"
+        >
           Log In
-        </button>
-        <button className="py-2 px-4 border border-solid border-[#1aac83] bg-white text-[#1aac83] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105">
+        </Link>
+        <Link
+          href="/signup"
+          className="py-2 px-4 border border-solid border-[#1aac83] bg-white text-[#1aac83] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
+        >
           Sign Up
-        </button>
+        </Link>
       </div>
 
       {/* Mobile hamburger */}

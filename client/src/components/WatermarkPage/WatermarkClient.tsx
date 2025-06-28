@@ -15,7 +15,11 @@ const WatermarkKonva = dynamic(
   () => import("@/components/WatermarkPage/WatermarkKonva"),
   {
     ssr: false,
-    loading: () => <p>Loading...</p>,
+    loading: () => (
+      <div className="  max-w-[900px] h-[600px] flex items-center justify-center my-5 mx-auto">
+        <p className="text-[#1aac83] text-lg">Loading...</p>
+      </div>
+    ),
   }
 );
 
@@ -35,7 +39,7 @@ const WatermarkClient = () => {
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
 
   const formData = new FormData();
-  const { mutate } = useWatermark();
+  const { mutate, isPending } = useWatermark();
 
   const setBackgroundOptions = (url: string) => {
     setBackgroundSrc(url);
@@ -101,7 +105,6 @@ const WatermarkClient = () => {
   };
 
   const resetAll = () => {
-    console.log("Resetting all state variables");
     setIsWatermarking(false);
     setDownloadItem(null);
     setBackgroundSrc(null);
@@ -143,11 +146,11 @@ const WatermarkClient = () => {
             <div className="pt-5 flex items-center gap-2 ">
               <FileUpload
                 chooseLabel="Add Watermark"
-                className="custom-file-upload "
+                className="custom-file-upload font-medium "
                 mode="basic"
                 name="demo[]"
                 accept="image/*"
-                maxFileSize={1048576}
+                maxFileSize={3048576}
                 auto
                 customUpload
                 uploadHandler={(e) => {
@@ -161,7 +164,7 @@ const WatermarkClient = () => {
               />
               <Button
                 label="Cancel"
-                className="custom-cancel-upload saira-font"
+                className="custom-cancel-upload saira-font font-medium-"
                 onClick={handleCancel}
               />
             </div>
@@ -174,6 +177,7 @@ const WatermarkClient = () => {
               watermarkPos={watermarkPos}
               watermarkSize={watermarkSize}
               selected={selected}
+              isPending={isPending}
               setSelected={setSelected}
               setWatermarkPos={setWatermarkPos}
               setWatermarkSize={setWatermarkSize}
