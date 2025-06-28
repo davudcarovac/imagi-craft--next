@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { Menu } from "primereact/menu";
+import { useEffect, useState } from "react";
+// import { Menu } from "primereact/menu";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import frostyImg from "../assets/frostyImg-transparent.png";
