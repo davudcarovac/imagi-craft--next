@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import frostyImg from "../../assets/frostyImg-transparent.png";
+import InputComponent from "./components/InputComponent";
 
 const SignupClient = () => {
   return (
@@ -27,59 +28,54 @@ const SignupClient = () => {
           </p>
 
           <form className="space-y-4">
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1aac83]"
-                placeholder="Your name"
-              />
-            </div>
+            <InputComponent
+              type="text"
+              labelName="Name"
+              placeholder="Your name"
+              icon={
+                <i className="pi pi-user text-xl " style={{ color: "gray" }} />
+              }
+            />
 
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1aac83]"
-                placeholder="you@example.com"
-              />
-            </div>
+            <InputComponent
+              type="text"
+              labelName="Email"
+              placeholder="you@example.com"
+              icon={
+                <i
+                  className="pi pi-envelope text-xl "
+                  style={{ color: "gray" }}
+                />
+              }
+            />
 
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1aac83]"
-                placeholder="••••••••"
-              />
-            </div>
+            <InputComponent
+              type="password"
+              labelName="Password"
+              placeholder="••••••••"
+              icon={
+                <i className="pi pi-lock text-xl " style={{ color: "gray" }} />
+              }
+            />
 
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Confirm password
-              </label>
-              <input
-                type="password"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1aac83]"
-                placeholder="••••••••"
-              />
-            </div>
+            <InputComponent
+              type="password"
+              labelName="Confirm Password"
+              placeholder="••••••••"
+              icon={
+                <i className="pi pi-check text-xl " style={{ color: "gray" }} />
+              }
+            />
 
             <button
               type="submit"
-              className="w-full bg-[#1aac83] text-white py-2 rounded-md hover:bg-[#159a74] transition-colors"
+              className="w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
             >
               Sign Up
             </button>
           </form>
 
-          <p className="text-sm text-center mt-6 text-gray-600">
+          <p className="text-sm text-center mt-2 text-gray-600">
             Already have an account?{" "}
             <Link href="/login" className="text-[#1aac83] hover:underline">
               Log in
