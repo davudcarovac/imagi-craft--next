@@ -22,7 +22,7 @@ const navItems = [
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const menuRef = useRef<Menu>(null);
+  // const menuRef = useRef<Menu>(null);
   const { width } = useWindowSize();
 
   const toggleSidebar = () => {
