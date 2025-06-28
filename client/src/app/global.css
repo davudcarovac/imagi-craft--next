@@ -146,3 +146,7 @@ h3 {
 .p-fileupload-cancel {
   font-family: "Saira", sans-serif !important;
 }
+
+.p-sidebar-header {
+  display: none;
+}
