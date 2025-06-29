@@ -13,6 +13,12 @@ import {
 } from "../controllers/index.ts";
 import { uploadsMiddleware } from "../middlewares/uploads.ts";
 import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
+import {
+  getUsers,
+  loginUser,
+  signupUser,
+} from "../controllers/userController.ts";
+import { verifyToken } from "../middlewares/verifyToken.ts";
 
 const router = Router();
 
@@ -30,5 +36,11 @@ router.get("/download/:fileId", getDownloadFileById);
 router.get("/download-all", getDownloadAllFiles);
 
 router.get("/convert-image/delete-all", deleteAll);
+
+// users
+
+router.get("/users", getUsers);
+router.post("/signup", signupUser);
+router.post("/login", loginUser);
 
 export default router;
