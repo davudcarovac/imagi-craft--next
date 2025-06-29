@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import frostyImg from "../../assets/frostyImg-transparent.png";
-import { Formik, Form, ErrorMessage, Field } from "formik";
+import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import InputComponent from "../InputComponent";
 
@@ -46,7 +46,7 @@ const LoginClient = () => {
             onSubmit={(values) => console.log(values)}
             className="space-y-4"
           >
-            {({ values, errors, touched, handleChange, handleBlur }) => (
+            {({ values, handleChange, handleBlur }) => (
               <Form>
                 <div className="mb-3">
                   <InputComponent
