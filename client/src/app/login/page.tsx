@@ -1,7 +1,8 @@
+import LoginClient from "@/components/LoginPage/LoginClient";
 import React from "react";
 
 const LoginPage = () => {
-  return <div>page</div>;
+  return <LoginClient />;
 };
 
 export default LoginPage;

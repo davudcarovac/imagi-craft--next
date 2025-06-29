@@ -2,19 +2,27 @@ import React, { ReactNode } from "react";
 
 type InputComponentProps = {
   labelName: string;
+  name: string;
+  value: string;
   icon: ReactNode;
   placeholder: string;
   type: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 const InputComponent = ({
   labelName,
+  name,
   icon,
+  value,
   placeholder,
   type,
+  onChange,
+  onBlur,
 }: InputComponentProps) => {
   return (
-    <div className="mb-5">
+    <div className="mb-2">
       <label className="block text-gray-700 font-semibold mb-2">
         {labelName}
       </label>
@@ -24,6 +32,10 @@ const InputComponent = ({
         </div>
         <input
           type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
           placeholder={placeholder}
           className="flex-1  py-2 px-4 text-gray-900 placeholder-gray-400 focus:outline-none"
         />
