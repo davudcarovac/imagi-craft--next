@@ -1,5 +1,3 @@
-import { use } from "react";
-
 interface Props {
   params: { token: string };
 }

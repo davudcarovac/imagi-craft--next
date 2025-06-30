@@ -118,6 +118,7 @@ interface UserWithResetFields {
 
 export function generateResetPasswordToken(user: UserWithResetFields) {
   const resetToken = crypto.randomBytes(20).toString("hex");
+
   const hashedResetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
@@ -152,6 +153,8 @@ export async function forgotPassword(
     };
 
     const resetPasswordToken = generateResetPasswordToken(userWithResetFields);
+
+    console.log(" Token iz forgot pass ===> ", resetPasswordToken);
 
     await prisma.user.update({
       where: { id: user.id },
@@ -195,6 +198,63 @@ export async function forgotPassword(
       }
     }
 
+    next(error);
+  }
+}
+
+export async function resetPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { newPassword, confirmNewPassword } = req.body;
+  const { resetToken } = req.params;
+  try {
+    if (!resetToken) {
+      throw new ErrorResponse("Reset token is missing", 400);
+    }
+
+    console.log("Token from params ===> ", resetToken);
+
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    // console.log("Ulazni reset token", resetToken);
+    // console.log("Izlazni reset token", resetPasswordToken);
+
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: resetPasswordToken,
+        resetPasswordExpire: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      throw new ErrorResponse("Invalid token", 400);
+    }
+
+    if (confirmNewPassword !== confirmNewPassword) {
+      throw new ErrorResponse("Password does not match", 400);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedNewPassword,
+        resetPasswordToken: null,
+        resetPasswordExpire: null,
+      },
+    });
+
+    res.status(200).json({ message: "Password updated successfully", user });
+  } catch (error) {
     next(error);
   }
 }

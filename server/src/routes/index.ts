@@ -17,6 +17,7 @@ import {
   forgotPassword,
   getUsers,
   loginUser,
+  resetPassword,
   signupUser,
 } from "../controllers/userController.ts";
 import { verifyToken } from "../middlewares/verifyToken.ts";
@@ -44,5 +45,6 @@ router.get("/users", getUsers);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:resetToken", resetPassword);
 
 export default router;
