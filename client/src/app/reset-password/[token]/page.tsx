@@ -4,10 +4,15 @@ interface PageProps {
   };
 }
 
-export default function ResetPasswordPage({ params }: PageProps) {
+export default async function ResetPasswordPage({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const token = (await params).token;
   return (
     <div>
-      <h1>Reset Token: {params.token}</h1>
+      <h1>Reset Token: {token}</h1>
     </div>
   );
 }
