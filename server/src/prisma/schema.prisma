@@ -17,5 +17,9 @@ model user {
   createdat      DateTime? @default(now()) @db.Timestamp(6)
   updatedat      DateTime? @default(now()) @db.Timestamp(6)
 
+
+   resetPasswordToken     String?  
+  resetPasswordExpire    DateTime?
+
   @@map("user")
 }

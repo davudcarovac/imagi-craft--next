@@ -7,6 +7,8 @@ import prisma from "../lib/prisma.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
 import { z } from "zod";
 import { comparePasswords } from "../utils/comparePasswords.ts";
+import crypto from "crypto";
+import { sendEmail } from "../utils/sendEmail.ts";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -105,6 +107,94 @@ export async function loginUser(
       user: user,
     });
   } catch (error) {
+    next(error);
+  }
+}
+
+interface UserWithResetFields {
+  resetPasswordToken?: string | null;
+  resetPasswordExpire?: Date | null;
+}
+
+export function generateResetPasswordToken(user: UserWithResetFields) {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  const hashedResetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  user.resetPasswordToken = hashedResetPasswordToken;
+  user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minuta od sada
+
+  return resetToken;
+}
+
+export async function forgotPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { email } = req.body;
+  let user = null;
+
+  try {
+    // 1. Nađi korisnika
+    user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new ErrorResponse("User with that email does not exist.", 404);
+    }
+
+    const userWithResetFields = {
+      ...user,
+      resetPasswordToken: null,
+      resetPasswordExpire: null,
+    };
+
+    const resetPasswordToken = generateResetPasswordToken(userWithResetFields);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: userWithResetFields.resetPasswordToken,
+        resetPasswordExpire: userWithResetFields.resetPasswordExpire,
+      },
+    });
+
+    const resetURL = `http://localhost:3000/reset-password/${resetPasswordToken}`;
+    const message = `
+      <h1>You have requested a password reset</h1>
+      <p>Click the link below to reset your password:</p>
+      <a href="${resetURL}" target="_blank">${resetURL}</a>
+    `;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Password Reset Request",
+      text: message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent. Check your inbox.",
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+
+    if (user) {
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            resetPasswordToken: null,
+            resetPasswordExpire: null,
+          },
+        });
+      } catch (cleanupError) {
+        console.error("Failed to clean up reset token:", cleanupError);
+      }
+    }
+
     next(error);
   }
 }
