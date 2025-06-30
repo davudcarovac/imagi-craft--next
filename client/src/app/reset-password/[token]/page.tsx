@@ -1,9 +1,3 @@
-interface PageProps {
-  params: {
-    token: string;
-  };
-}
-
 export default async function ResetPasswordPage({
   params,
 }: {
