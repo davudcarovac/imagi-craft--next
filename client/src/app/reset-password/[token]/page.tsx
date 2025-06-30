@@ -1,12 +1,15 @@
-interface Props {
-  params: { token: string };
+import { FC } from "react";
+
+interface PageProps {
+  params: {
+    token: string;
+  };
 }
 
-const ResetPasswordPage = ({ params }: Props) => {
+const ResetPasswordPage: FC<PageProps> = ({ params }) => {
   return (
     <div>
-      {" "}
-      <h1>User ID: {params.token}</h1>
+      <h1>Token: {params.token}</h1>
     </div>
   );
 };
