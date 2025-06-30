@@ -1,17 +1,13 @@
-import { FC } from "react";
-
 interface PageProps {
   params: {
     token: string;
   };
 }
 
-const ResetPasswordPage: FC<PageProps> = ({ params }) => {
+export default function ResetPasswordPage({ params }: PageProps) {
   return (
     <div>
-      <h1>Token: {params.token}</h1>
+      <h1>Reset Token: {params.token}</h1>
     </div>
   );
-};
-
-export default ResetPasswordPage;
+}
