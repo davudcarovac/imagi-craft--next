@@ -259,6 +259,41 @@ export async function resetPassword(
   }
 }
 
+export async function changePassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+  const { email } = req.userData;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!comparePasswords(currentPassword, user?.password!)) {
+      throw new ErrorResponse("Passwords do not match", 400);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { id: user?.id },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    const token = createToken(user?.id!);
+
+    res
+      .status(200)
+      .json({ success: true, message: "Password changed", token: token });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getUsers(req: Request, res: Response) {
   try {
     const result = pool.query('SELECT * FROM "user"');

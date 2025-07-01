@@ -18,6 +18,7 @@ export const verifyToken = async (
 
   if (!authorization) {
     res.status(401).json({ message: "Authorization token required." });
+    return;
   }
 
   const token = authorization?.split(" ")[1];
@@ -27,11 +28,16 @@ export const verifyToken = async (
       throw new ErrorResponse("Request is not authorized", 401);
     }
     const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
-    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    console.log("Decoded ===> ", decoded);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+    });
+
+    // console.log("User verifyToken ===> ", user);
+
     req.userData = user;
     next();
   } catch (error) {
-    console.log("Ovo je error iz auth ===> ", error);
     res.status(401).json({
       error: "Request is not authorized.",
     });

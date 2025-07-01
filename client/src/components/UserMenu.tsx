@@ -68,7 +68,7 @@ const UserMenu = () => {
       icon: "pi pi-sign-out",
       command: () => {
         dispatch({ type: "LOGOUT" });
-        // localStorage.removeItem("user");
+        localStorage.removeItem("user");
         router.push("/login");
       },
       template: (item, options) => (

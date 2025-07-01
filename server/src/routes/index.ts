@@ -14,6 +14,7 @@ import {
 import { uploadsMiddleware } from "../middlewares/uploads.ts";
 import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
 import {
+  changePassword,
   forgotPassword,
   getUsers,
   loginUser,
@@ -46,5 +47,6 @@ router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
+router.post("/change-password/", verifyToken, changePassword);
 
 export default router;
