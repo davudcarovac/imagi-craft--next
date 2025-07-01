@@ -7,7 +7,7 @@ import userImg from "@/assets/button images/user.png";
 import Image from "next/image";
 
 const UserMenu = () => {
-  const menuRef = useRef<any>(null);
+  const menuRef = useRef<TieredMenu | null>(null);
   const router = useRouter();
   const { dispatch } = useAuthContext();
 
@@ -92,7 +92,7 @@ const UserMenu = () => {
         className="w-52 rounded-lg shadow-lg border border-gray-200"
       />
       <button
-        onClick={(e) => menuRef.current.toggle(e)}
+        onClick={(e) => menuRef.current?.toggle(e)}
         aria-haspopup
         aria-controls="tiered_menu"
         className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#1aac83]/10 text-[#1aac83] hover:bg-[#1aac83]/20 transition"

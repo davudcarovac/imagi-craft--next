@@ -37,8 +37,6 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const toast = useRef<Toast>(null);
-  const menuRef = useRef<Menu>(null);
-  const router = useRouter();
   const { user, isLoading } = useAuthContext();
   const { width } = useWindowSize();
 
@@ -51,31 +49,6 @@ const Header = () => {
     }
   }, [width, pathname]);
 
-  // Menu items za korisnički meni
-  const menuItems = [
-    {
-      label: "Profile",
-      icon: "pi pi-user",
-      command: () => router.push("/profile"),
-    },
-    {
-      label: "Premium",
-      icon: "pi pi-crown",
-      command: () => router.push("/pricing"),
-    },
-    {
-      label: "Logout",
-      icon: "pi pi-sign-out",
-      command: () => {
-        // TODO: implementiraj logout logiku, npr:
-        // dispatch({ type: "LOGOUT" });
-        // localStorage.removeItem("user");
-        // router.push("/login");
-      },
-    },
-  ];
-
-  // Render korisničkog dela zaglavlja
   const renderUser = () => {
     if (isLoading) return <div className="w-10 h-10" />; // može i loader ako hoćeš
 
@@ -97,19 +70,9 @@ const Header = () => {
         </div>
       );
 
-    // Kada je user logovan
     return (
       <div className="relative hidden lg2:block">
         <UserMenu />
-        {/* <button
-          aria-controls="popup_menu"
-          aria-haspopup="true"
-          onClick={(e) => menuRef.current?.toggle(e)}
-          className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#1aac83]/10 text-[#1aac83] hover:bg-[#1aac83]/20 transition"
-          type="button"
-        >
-          <Image src={userImg} height={45} width={45} alt="user-img" />
-        </button> */}
       </div>
     );
   };
