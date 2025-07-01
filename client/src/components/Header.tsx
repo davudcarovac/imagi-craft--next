@@ -10,6 +10,7 @@ import "primeicons/primeicons.css";
 import frostyImg from "../assets/frostyImg-transparent.png";
 import MenuSidebar from "./MenuSidebar";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const navItems = [
   { href: "/compress-image", label: "compress Image" },
@@ -22,6 +23,8 @@ const navItems = [
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { user, isLoading } = useAuthContext();
+
   // const menuRef = useRef<Menu>(null);
   const { width } = useWindowSize();
 
@@ -37,6 +40,29 @@ const Header = () => {
       setIsOpen(false);
     }
   }, [width, pathname]);
+
+  const renderUser = () => {
+    if (isLoading) return <div></div>;
+    if (!user)
+      return (
+        <div className="hidden lg2:flex items-center gap-2">
+          <Link
+            href="/login"
+            className="py-2 px-4 bg-[#1aac83] text-white saira-font border border-solid border-[#1aac83] cursor-pointer transition-all duration-300 transform hover:scale-105"
+          >
+            Log In
+          </Link>
+          <Link
+            href="/signup"
+            className="py-2 px-4 border border-solid border-[#1aac83] bg-white text-[#1aac83] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
+          >
+            Sign Up
+          </Link>
+        </div>
+      );
+
+    return <p>{user.name}</p>;
+  };
 
   return (
     <div className="sticky top-0 z-50 px-6 sm:px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
@@ -62,20 +88,7 @@ const Header = () => {
       </nav>
 
       {/* Buttons for large screens */}
-      <div className="hidden lg2:flex items-center gap-2">
-        <Link
-          href="/login"
-          className="py-2 px-4 bg-[#1aac83] text-white saira-font border border-solid border-[#1aac83] cursor-pointer transition-all duration-300 transform hover:scale-105"
-        >
-          Log In
-        </Link>
-        <Link
-          href="/signup"
-          className="py-2 px-4 border border-solid border-[#1aac83] bg-white text-[#1aac83] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
-        >
-          Sign Up
-        </Link>
-      </div>
+      {renderUser()}
 
       {/* Mobile hamburger */}
       <div className="lg2:hidden flex items-center">

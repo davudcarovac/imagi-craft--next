@@ -7,6 +7,7 @@ type InputComponentProps = {
   icon: ReactNode;
   placeholder: string;
   type: string;
+  isPending: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
@@ -18,6 +19,7 @@ const InputComponent = ({
   value,
   placeholder,
   type,
+  isPending,
   onChange,
   onBlur,
 }: InputComponentProps) => {
@@ -31,6 +33,7 @@ const InputComponent = ({
           {icon}
         </div>
         <input
+          disabled={isPending}
           type={type}
           name={name}
           value={value}

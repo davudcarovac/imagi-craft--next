@@ -2,11 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useRef } from "react";
 import frostyImg from "../../assets/frostyImg-transparent.png";
 import InputComponent from "../InputComponent";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useSignup } from "@/hooks/useSignup";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { User } from "@/context/AuthContext";
+import { Toast } from "primereact/toast";
 
 const signupSchema = Yup.object({
   name: Yup.string()
@@ -27,7 +31,16 @@ const signupSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords must match"),
 });
 
+type initalValuesType = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const SignupClient = () => {
+  const toast = useRef<Toast | null>(null);
+
   const initialValues = {
     name: "",
     email: "",
@@ -35,11 +48,15 @@ const SignupClient = () => {
     confirmPassword: "",
   };
 
+  const { dispatch, user } = useAuthContext();
+  const { mutate, isPending } = useSignup();
+
   return (
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center px-4">
+      <Toast ref={toast} />
       <div className="w-full max-w-6xl bg-white shadow-lg rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
         {/* LEFT - Sign Up Form */}
-        <div className="p-10">
+        <div className={`p-10 ${isPending ? "opacity-70" : "opacity-100"}`}>
           <Image
             src={frostyImg}
             alt="signup-logo"
@@ -58,13 +75,43 @@ const SignupClient = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={signupSchema}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values, { resetForm }) => {
+              mutate(values, {
+                onSuccess: (response) => {
+                  console.log("Response from signup ===> ", response);
+
+                  const { name, email, id, ispremium, role } = response.user;
+                  const user: User = {
+                    name,
+                    email,
+                    id,
+                    isPremium: ispremium,
+                    token: response.token,
+                    role,
+                  };
+                  localStorage.setItem("user", JSON.stringify(user));
+                  dispatch({ type: "LOGIN", payload: user });
+                  toast.current?.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: response.message,
+                    life: 4000,
+                  });
+
+                  resetForm();
+                },
+                onError: (error) => {
+                  console.log("Error from signup ===> ", error);
+                },
+              });
+            }}
             className="space-y-4"
           >
             {({ values, handleChange, handleBlur }) => (
               <Form>
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="text"
                     name="name"
                     labelName="Name"
@@ -89,6 +136,7 @@ const SignupClient = () => {
 
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="text"
                     name="email"
                     labelName="Email"
@@ -112,6 +160,7 @@ const SignupClient = () => {
 
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="password"
                     name="password"
                     labelName="Password"
@@ -135,6 +184,7 @@ const SignupClient = () => {
 
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="password"
                     name="confirmPassword"
                     labelName="Confirm Password"
@@ -158,7 +208,10 @@ const SignupClient = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
+                  disabled={isPending}
+                  className={` ${
+                    isPending ? "opacity-65" : "opacity-100"
+                  } w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
                 >
                   Sign Up
                 </button>

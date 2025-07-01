@@ -72,3 +72,41 @@ export type NoDetectedFacesType = {
   name: string;
   error: string;
 };
+
+// user
+
+// Input podaci za signup
+export type SignupUserData = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+};
+
+// User objekat iz backend responsa
+export type User = {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  ispremium: boolean;
+  premiumexpires: string | null;
+  createdat: string;
+  updatedat: string;
+  resetPasswordToken: string | null;
+  resetPasswordExpire: string | null;
+  role: "user" | "admin";
+};
+
+// Povratni tip od /signup rute
+export type SignupResponse = {
+  success: boolean;
+  message: string;
+  token: string;
+  user: User;
+};
+
+export type ErrorResponse = {
+  success: boolean;
+  message: string;
+};

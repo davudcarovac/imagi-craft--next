@@ -24,8 +24,10 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body className={`${saira.variable} ${inter.variable}`}>
-        <Header />
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );
