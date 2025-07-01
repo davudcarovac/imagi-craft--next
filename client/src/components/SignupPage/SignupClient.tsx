@@ -11,6 +11,7 @@ import { useSignup } from "@/hooks/useSignup";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { User } from "@/context/AuthContext";
 import { Toast } from "primereact/toast";
+import { useRouter } from "next/navigation";
 
 const signupSchema = Yup.object({
   name: Yup.string()
@@ -40,15 +41,15 @@ type initalValuesType = {
 
 const SignupClient = () => {
   const toast = useRef<Toast | null>(null);
-
-  const initialValues = {
+  const router = useRouter();
+  const initialValues: initalValuesType = {
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   };
 
-  const { dispatch, user } = useAuthContext();
+  const { dispatch } = useAuthContext();
   const { mutate, isPending } = useSignup();
 
   return (
@@ -99,9 +100,15 @@ const SignupClient = () => {
                   });
 
                   resetForm();
+
+                  router.push("/");
                 },
                 onError: (error) => {
-                  console.log("Error from signup ===> ", error);
+                  toast.current?.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: error.message,
+                  });
                 },
               });
             }}

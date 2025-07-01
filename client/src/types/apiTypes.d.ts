@@ -106,6 +106,12 @@ export type SignupResponse = {
   user: User;
 };
 
+export type LoginResponse = SignupResponse;
+export type LoginUserData = {
+  email: string;
+  password: string;
+};
+
 export type ErrorResponse = {
   success: boolean;
   message: string;

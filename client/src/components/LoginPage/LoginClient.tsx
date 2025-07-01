@@ -2,11 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useRef } from "react";
 import frostyImg from "../../assets/frostyImg-transparent.png";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import InputComponent from "../InputComponent";
+import { useLogin } from "@/hooks/useLogin";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { Toast } from "primereact/toast";
+import { useRouter } from "next/navigation";
 
 const loginSchema = Yup.object({
   email: Yup.string()
@@ -15,14 +19,25 @@ const loginSchema = Yup.object({
   password: Yup.string().required("Password is required"),
 });
 
+type InitialValuesType = {
+  email: string;
+  password: string;
+};
+
 const LoginClient = () => {
-  const initialValues = {
+  const toast = useRef<Toast | null>(null);
+  const router = useRouter();
+  const { isPending, mutate } = useLogin();
+  const { dispatch } = useAuthContext();
+
+  const initialValues: InitialValuesType = {
     email: "",
     password: "",
   };
 
   return (
     <div className="min-h-[80vh] bg-[#f0f4f8] flex items-center justify-center px-4">
+      <Toast ref={toast} />
       <div className="w-full max-w-6xl bg-white shadow-lg rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
         <div className="p-10">
           <Image
@@ -43,13 +58,49 @@ const LoginClient = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={loginSchema}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values: InitialValuesType, { resetForm }) => {
+              mutate(values, {
+                onSuccess: (response) => {
+                  console.log("Response from signup ===> ", response);
+
+                  const { name, email, id, ispremium, role } = response.user;
+                  const user = {
+                    name,
+                    email,
+                    id,
+                    isPremium: ispremium,
+                    token: response.token,
+                    role,
+                  };
+                  localStorage.setItem("user", JSON.stringify(user));
+                  dispatch({ type: "LOGIN", payload: user });
+                  toast.current?.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: response.message,
+                    life: 4000,
+                  });
+
+                  resetForm();
+                  router.push("/");
+                },
+                onError: (error) => {
+                  toast.current?.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: error.message,
+                    // life: 4000,
+                  });
+                },
+              });
+            }}
             className="space-y-4"
           >
             {({ values, handleChange, handleBlur }) => (
               <Form>
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="text"
                     name="email"
                     labelName="Email"
@@ -74,6 +125,7 @@ const LoginClient = () => {
 
                 <div className="mb-3">
                   <InputComponent
+                    isPending={isPending}
                     type="password"
                     name="password"
                     labelName="Password"
@@ -97,7 +149,10 @@ const LoginClient = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-5 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105"
+                  disabled={isPending}
+                  className={` ${
+                    isPending ? "opacity-65" : "opacity-100"
+                  } w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
                 >
                   Log In
                 </button>

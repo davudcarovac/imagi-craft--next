@@ -50,6 +50,6 @@ export const errorHandler = (
   // Slanje odgovora sa status kodom greške i porukom
   res.status((error as ErrorResponse).statusCode || 500).json({
     success: false,
-    error: (error as ErrorResponse).message || "Server error",
+    message: (error as ErrorResponse).message || "Server error",
   });
 };
