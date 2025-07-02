@@ -18,6 +18,7 @@ import {
   forgotPassword,
   getUsers,
   loginUser,
+  logoutUser,
   resetPassword,
   signupUser,
 } from "../controllers/userController.ts";
@@ -45,6 +46,8 @@ router.get("/convert-image/delete-all", deleteAll);
 router.get("/users", getUsers);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
+router.post("/logout", logoutUser);
+
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
 router.post("/change-password", verifyToken, changePassword);

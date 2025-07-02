@@ -1,5 +1,4 @@
-import axios, { AxiosError } from "axios"; // importuj axios i AxiosError
-
+import axios, { AxiosError } from "axios";
 import { SignupResponse, SignupUserData } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
 
@@ -7,7 +6,9 @@ export const signupUser = async (
   data: SignupUserData
 ): Promise<SignupResponse> => {
   try {
-    const response = await axiosInstance.post<SignupResponse>("/signup", data);
+    const response = await axiosInstance.post<SignupResponse>("/signup", data, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

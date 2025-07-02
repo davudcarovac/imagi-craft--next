@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import userImg from "@/assets/button images/user.png";
 import Image from "next/image";
+import { useLogout } from "@/hooks/useLogout";
+import { Toast } from "primereact/toast";
 
 const UserMenu = () => {
   const menuRef = useRef<TieredMenu | null>(null);
+  // const toast = useRef<Toast>(null);
   const router = useRouter();
   const { dispatch } = useAuthContext();
+
+  const { mutate } = useLogout();
 
   const items: MenuItem[] = [
     {
@@ -68,6 +73,21 @@ const UserMenu = () => {
       icon: "pi pi-sign-out",
       command: () => {
         dispatch({ type: "LOGOUT" });
+        mutate(undefined, {
+          onSuccess: (response) => {
+            console.log(response);
+
+            // toast.current?.show({
+            //   severity: "success",
+            //   summary: "Success",
+            //   detail: response.message,
+            //   life: 4000,
+            // });
+          },
+          onError: (error) => {
+            console.log(error);
+          },
+        });
         localStorage.removeItem("user");
         router.push("/login");
       },
@@ -85,6 +105,7 @@ const UserMenu = () => {
 
   return (
     <>
+      <Toast />
       <TieredMenu
         model={items}
         popup

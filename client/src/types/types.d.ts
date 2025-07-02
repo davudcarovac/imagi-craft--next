@@ -16,3 +16,20 @@ export type ResizeOptionsType = {
   resetOptions: () => void;
   toggleAspectRatio: () => void;
 };
+
+// types.ts (novi fajl za bolju organizaciju)
+export type Role = "user" | "admin";
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  isPremium: boolean;
+  token: string;
+}
+
+export type AuthStatus =
+  | { state: "loading" }
+  | { state: "authenticated"; user: User }
+  | { state: "unauthenticated" };

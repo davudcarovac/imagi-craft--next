@@ -1,14 +1,21 @@
 import axios, { AxiosError } from "axios";
-import { LoginResponse, LoginUserData } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
 
-export const loginUser = async (
-  data: LoginUserData
-): Promise<LoginResponse> => {
+export const logoutUser = async (): Promise<{
+  success: boolean;
+  message: string;
+}> => {
   try {
-    const response = await axiosInstance.post<LoginResponse>("/login", data, {
-      withCredentials: true,
-    });
+    const response = await axiosInstance.post<{
+      success: boolean;
+      message: string;
+    }>(
+      "/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

@@ -8,6 +8,7 @@ import faceapi from "face-api.js";
 import { Canvas, Image, ImageData } from "canvas";
 import { errorHandler } from "./middlewares/error.ts";
 import { fileURLToPath } from "url";
+import cookieParser from "cookie-parser";
 
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
@@ -32,9 +33,11 @@ app.use(
     },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
+app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(router);

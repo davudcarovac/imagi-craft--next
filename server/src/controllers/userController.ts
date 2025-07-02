@@ -12,6 +12,7 @@ import { sendEmail } from "../utils/sendEmail.ts";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
+const NODE_ENV = process.env.NODE_ENV;
 
 const createToken = (userId: string) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "3d" });
@@ -64,6 +65,13 @@ export async function signupUser(
 
     const token = createToken(user.id);
 
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 dan
+    });
+
     res.status(201).json({
       success: true,
       message: "User created!",
@@ -99,6 +107,13 @@ export async function loginUser(
     }
 
     const token = createToken(user.id);
+
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 dan
+    });
 
     res.status(200).json({
       sucess: true,
@@ -305,6 +320,20 @@ export async function changePassword(
   } catch (error) {
     next(error);
   }
+}
+
+export async function logoutUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  res.cookie("auth_token", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    sameSite: "lax",
+    secure: false,
+  });
+  res.json({ success: true, message: "Logged out" });
 }
 
 export async function getUsers(req: Request, res: Response) {
