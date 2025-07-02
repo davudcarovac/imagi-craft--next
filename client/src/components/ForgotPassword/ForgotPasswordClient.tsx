@@ -57,7 +57,7 @@ const ForgotPasswordClient = () => {
             Forgot Your Password?
           </h1>
           <p className="text-gray-600 mb-6">
-            Enter your email address below and we'll send you a link to reset
+            Enter your email address below and we will send you a link to reset
             your password.
           </p>
           <form onSubmit={submitForgotPassword}>
