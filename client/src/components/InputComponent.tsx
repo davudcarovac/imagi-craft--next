@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 type InputComponentProps = {
-  labelName: string;
+  labelName?: string;
   name: string;
   value: string;
   icon: ReactNode;
@@ -9,7 +9,7 @@ type InputComponentProps = {
   type: string;
   isPending: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 const InputComponent = ({

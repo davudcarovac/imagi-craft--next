@@ -143,7 +143,7 @@ export async function forgotPassword(
     user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      throw new ErrorResponse("User with that email does not exist.", 404);
+      throw new ErrorResponse("No user found with this email address.", 404);
     }
 
     const userWithResetFields = {
@@ -179,7 +179,8 @@ export async function forgotPassword(
 
     res.status(200).json({
       success: true,
-      message: "Email sent. Check your inbox.",
+      message:
+        "If an account with that email exists, a reset link has been sent.",
     });
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -253,7 +254,14 @@ export async function resetPassword(
       },
     });
 
-    res.status(200).json({ message: "Password updated successfully", user });
+    const token = createToken(user?.id!);
+
+    res.status(200).json({
+      success: true,
+      token,
+      message: "Password updated successfully",
+      user,
+    });
   } catch (error) {
     next(error);
   }
@@ -270,7 +278,12 @@ export async function changePassword(
   try {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!comparePasswords(currentPassword, user?.password!)) {
+    const match = await comparePasswords(currentPassword, user?.password!);
+    if (!match) {
+      throw new ErrorResponse("Incorrect current password", 400);
+    }
+
+    if (newPassword !== confirmNewPassword) {
       throw new ErrorResponse("Passwords do not match", 400);
     }
 

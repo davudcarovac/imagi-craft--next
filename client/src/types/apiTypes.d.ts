@@ -107,9 +107,23 @@ export type SignupResponse = {
 };
 
 export type LoginResponse = SignupResponse;
+export type ForgotPasswordResponse = SignupResponse;
+export type ResetPasswordResponse = {
+  success: boolean;
+  token: string;
+  message: string;
+  user: User;
+};
+
 export type LoginUserData = {
   email: string;
   password: string;
+};
+
+export type ResetPasswordUserData = {
+  resetToken: string;
+  newPassword: string;
+  confirmNewPassword: string;
 };
 
 export type ErrorResponse = {

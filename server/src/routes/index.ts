@@ -47,6 +47,6 @@ router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
-router.post("/change-password/", verifyToken, changePassword);
+router.post("/change-password", verifyToken, changePassword);
 
 export default router;

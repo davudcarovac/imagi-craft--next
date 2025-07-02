@@ -33,9 +33,10 @@ export const verifyToken = async (
       where: { id: decoded.userId },
     });
 
-    // console.log("User verifyToken ===> ", user);
+    console.log("user from verify ===> ", user);
 
     req.userData = user;
+
     next();
   } catch (error) {
     res.status(401).json({
