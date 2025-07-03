@@ -17,6 +17,7 @@ import {
   changePassword,
   forgotPassword,
   getCsrfToken,
+  getGeo,
   getUsers,
   loginUser,
   logoutUser,
@@ -50,6 +51,7 @@ router.post("/signup", csrfProtection, signupUser);
 router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);
 router.get("/csrf-token", csrfProtection, getCsrfToken);
+router.get("/geo", getGeo);
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);

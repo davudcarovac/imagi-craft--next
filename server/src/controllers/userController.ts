@@ -9,6 +9,7 @@ import { z } from "zod";
 import { comparePasswords } from "../utils/comparePasswords.ts";
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.ts";
+import geoip from "geoip-lite";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -373,6 +374,38 @@ export async function logoutUser(
 
 export async function getCsrfToken(req: Request, res: Response) {
   res.status(200).json({ status: "CSRF token set in cookies." });
+}
+
+export async function getGeo(req: Request, res: Response, next: NextFunction) {
+  try {
+    let ip =
+      req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
+      req.socket?.remoteAddress ||
+      null;
+
+    if (!ip) {
+      throw new ErrorResponse("Ip not available", 400);
+    }
+
+    if (!ip || ip === "::1" || ip === "127.0.0.1") {
+      ip = "93.86.114.32"; // ili neka IP iz Srbije npr. "93.86.114.32"
+    }
+
+    const geo = geoip.lookup(ip);
+
+    if (!geo) {
+      throw new ErrorResponse("Location not found", 400);
+    }
+
+    res.status(200).json({
+      ip,
+      country: geo.country,
+      region: geo.region,
+      city: geo.city,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function getUsers(req: Request, res: Response) {

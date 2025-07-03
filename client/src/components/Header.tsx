@@ -23,12 +23,12 @@ const navItems = [
 
 const profileMenuItems = [
   {
-    label: "Account",
-    href: "/user/account",
+    label: "Profile",
+    href: "/profile",
   },
   {
     label: "Security",
-    href: "/user/security",
+    href: "/profile/security",
   },
 ];
 
