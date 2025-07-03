@@ -87,14 +87,11 @@ export type SignupUserData = {
 export type User = {
   id: string;
   email: string;
-  password: string;
   name: string;
-  ispremium: boolean;
-  premiumexpires: string | null;
-  createdat: string;
-  updatedat: string;
-  resetPasswordToken: string | null;
-  resetPasswordExpire: string | null;
+  isPremium: boolean;
+  premiumExpires: string | null;
+  createdAt: string;
+  updatedAt: string;
   role: "user" | "admin";
 };
 
@@ -102,7 +99,7 @@ export type User = {
 export type SignupResponse = {
   success: boolean;
   message: string;
-  token: string;
+  // token: string;
   user: User;
 };
 
@@ -110,14 +107,25 @@ export type LoginResponse = SignupResponse;
 export type ForgotPasswordResponse = SignupResponse;
 export type ResetPasswordResponse = {
   success: boolean;
-  token: string;
+  // token: string;
   message: string;
   user: User;
+};
+export type ChangePasswordResponse = {
+  success: boolean;
+  message: string;
+  token: string;
 };
 
 export type LoginUserData = {
   email: string;
   password: string;
+};
+
+export type ChangePasswordData = {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 };
 
 export type ResetPasswordUserData = {

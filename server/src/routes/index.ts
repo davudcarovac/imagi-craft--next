@@ -16,6 +16,7 @@ import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
 import {
   changePassword,
   forgotPassword,
+  getCsrfToken,
   getUsers,
   loginUser,
   logoutUser,
@@ -23,6 +24,7 @@ import {
   signupUser,
 } from "../controllers/userController.ts";
 import { verifyToken } from "../middlewares/verifyToken.ts";
+import { csrfProtection } from "../middlewares/csrfProtection.ts";
 
 const router = Router();
 
@@ -44,9 +46,10 @@ router.get("/convert-image/delete-all", deleteAll);
 // users
 
 router.get("/users", getUsers);
-router.post("/signup", signupUser);
-router.post("/login", loginUser);
+router.post("/signup", csrfProtection, signupUser);
+router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);
+router.get("/csrf-token", csrfProtection, getCsrfToken);
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);

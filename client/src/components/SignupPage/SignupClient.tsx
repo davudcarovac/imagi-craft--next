@@ -81,17 +81,17 @@ const SignupClient = () => {
                 onSuccess: (response) => {
                   console.log("Response from signup ===> ", response);
 
-                  const { name, email, id, ispremium, role } = response.user;
-                  const user: User = {
-                    name,
-                    email,
-                    id,
-                    isPremium: ispremium,
-                    token: response.token,
-                    role,
-                  };
-                  localStorage.setItem("user", JSON.stringify(user));
-                  dispatch({ type: "LOGIN", payload: user });
+                  // const { name, email, id, ispremium, role } = response.user;
+                  // const user: User = {
+                  //   name,
+                  //   email,
+                  //   id,
+                  //   isPremium: ispremium,
+                  //   token: response.token,
+                  //   role,
+                  // };
+                  localStorage.setItem("user", JSON.stringify(response.user));
+                  dispatch({ type: "LOGIN", payload: response.user });
                   toast.current?.show({
                     severity: "success",
                     summary: "Success",

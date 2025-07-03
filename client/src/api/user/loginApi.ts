@@ -1,14 +1,26 @@
 import axios, { AxiosError } from "axios";
 import { LoginResponse, LoginUserData } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
+import { getCsrfToken } from "./csrfTokenApi";
 
 export const loginUser = async (
   data: LoginUserData
 ): Promise<LoginResponse> => {
   try {
+    await getCsrfToken();
+
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("XSRF-TOKEN="))
+      ?.split("=")[1];
+
     const response = await axiosInstance.post<LoginResponse>("/login", data, {
+      headers: {
+        "x-xsrf-token": csrfToken || "",
+      },
       withCredentials: true,
     });
+
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

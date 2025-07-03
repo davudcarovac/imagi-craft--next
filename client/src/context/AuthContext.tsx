@@ -14,7 +14,7 @@ export interface User {
   name: string;
   role: Role;
   isPremium: boolean;
-  token: string;
+  // token: string;
 }
 
 interface AuthState {

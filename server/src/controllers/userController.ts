@@ -72,11 +72,22 @@ export async function signupUser(
       maxAge: 24 * 60 * 60 * 1000, // 1 dan
     });
 
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isPremium: user.ispremium,
+      premiumExpires: user.premiumexpires,
+      createdAt: user.createdat,
+      updatedAt: user.updatedat,
+      role: user.role,
+    };
+
     res.status(201).json({
       success: true,
       message: "User created!",
-      token: token,
-      user: user,
+      // token: token,
+      user: safeUser,
     });
   } catch (error) {
     next(error);
@@ -91,35 +102,39 @@ export async function loginUser(
   try {
     const { email, password } = req.body;
 
-    if (!email) {
-      throw new ErrorResponse("Email is required field", 400);
-    }
-    if (!password) {
-      throw new ErrorResponse("Password is required field", 400);
-    }
+    if (!email) throw new ErrorResponse("Email is required", 400);
+    if (!password) throw new ErrorResponse("Password is required", 400);
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new ErrorResponse("User does not exist", 400);
+    if (!user) throw new ErrorResponse("User not found", 404);
 
-    const passwordMatching = await comparePasswords(password, user.password);
-    if (!passwordMatching) {
-      throw new ErrorResponse("Incorrect password", 400);
-    }
+    const isMatch = await comparePasswords(password, user.password);
+    if (!isMatch) throw new ErrorResponse("Invalid credentials", 401);
 
-    const token = createToken(user.id);
-
-    res.cookie("auth_token", token, {
+    const authToken = createToken(user.id);
+    res.cookie("auth_token", authToken, {
       httpOnly: true,
-      secure: NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 dan
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isPremium: user.ispremium,
+      premiumExpires: user.premiumexpires,
+      createdAt: user.createdat,
+      updatedAt: user.updatedat,
+      role: user.role,
+    };
+
     res.status(200).json({
-      sucess: true,
+      success: true,
       message: "Logged in",
-      token,
-      user: user,
+      user: safeUser,
     });
   } catch (error) {
     next(error);
@@ -302,6 +317,18 @@ export async function changePassword(
       throw new ErrorResponse("Passwords do not match", 400);
     }
 
+    if (!user) {
+      throw new ErrorResponse("User not found", 400);
+    }
+
+    const isSamePassword = await comparePasswords(newPassword, user.password);
+    if (isSamePassword) {
+      throw new ErrorResponse(
+        "Nova lozinka ne može biti ista kao trenutna",
+        400
+      );
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedNewPassword = await bcrypt.hash(newPassword, salt);
 
@@ -312,7 +339,14 @@ export async function changePassword(
       },
     });
 
-    const token = createToken(user?.id!);
+    const token = createToken(user.id);
+
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res
       .status(200)
@@ -327,13 +361,18 @@ export async function logoutUser(
   res: Response,
   next: NextFunction
 ) {
-  res.cookie("auth_token", "", {
+  res.clearCookie("auth_token", {
     httpOnly: true,
-    expires: new Date(0),
-    sameSite: "lax",
-    secure: false,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    domain: process.env.DOMAIN || "localhost",
   });
   res.json({ success: true, message: "Logged out" });
+}
+
+export async function getCsrfToken(req: Request, res: Response) {
+  res.status(200).json({ status: "CSRF token set in cookies." });
 }
 
 export async function getUsers(req: Request, res: Response) {

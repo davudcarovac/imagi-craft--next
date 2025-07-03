@@ -61,19 +61,18 @@ const LoginClient = () => {
             onSubmit={(values: InitialValuesType, { resetForm }) => {
               mutate(values, {
                 onSuccess: (response) => {
-                  console.log("Response from signup ===> ", response);
+                  console.log("Response from login ===> ", response.message);
 
-                  const { name, email, id, ispremium, role } = response.user;
-                  const user = {
-                    name,
-                    email,
-                    id,
-                    isPremium: ispremium,
-                    token: response.token,
-                    role,
-                  };
-                  localStorage.setItem("user", JSON.stringify(user));
-                  dispatch({ type: "LOGIN", payload: user });
+                  // const { name, email, id, isPremium, role } = response.user;
+                  // const user = {
+                  //   name,
+                  //   email,
+                  //   id,
+                  //   isPremium: isPremium,
+                  //   role,
+                  // };
+                  localStorage.setItem("user", JSON.stringify(response.user));
+                  dispatch({ type: "LOGIN", payload: response.user });
                   toast.current?.show({
                     severity: "success",
                     summary: "Success",
