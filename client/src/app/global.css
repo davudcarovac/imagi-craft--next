@@ -3,6 +3,7 @@
 
 @theme {
   --breakpoint-lg2: 1170px;
+  --breakpoint-xs: 490px;
 }
 
 /* Osnovni stilovi za ceo sajt */

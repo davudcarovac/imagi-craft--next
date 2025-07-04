@@ -12,16 +12,15 @@ export default function ProfileLayout({
   const pathname = usePathname();
 
   const items = [
-    { label: "Overview", icon: "pi pi-home", to: "/profile" },
-    { label: "Security", icon: "pi pi-shield", to: "/profile/security" },
-    // dodaj još tabova po potrebi
+    { label: "Overview", icon: "pi pi-user", to: "/profile" },
+    { label: "Security", icon: "pi pi-lock", to: "/profile/security" },
   ];
 
   // Nađi index aktivnog taba prema URL-u
   const activeIndex = items.findIndex((item) => pathname === item.to);
 
   return (
-    <div>
+    <div className="h-80vh px-5 ">
       <TabMenu
         model={items.map((item) => ({
           label: item.label,
@@ -29,9 +28,10 @@ export default function ProfileLayout({
           command: () => router.push(item.to),
         }))}
         activeIndex={activeIndex}
+        className="max-w-[800px] mx-auto mt-10"
       />
 
-      <div style={{ marginTop: "1rem" }}>{children}</div>
+      <div className="max-w-[800px] mx-auto mt-5 bg-white p-5">{children}</div>
     </div>
   );
 }

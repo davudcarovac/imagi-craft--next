@@ -20,7 +20,6 @@ export const loginUser = async (
       },
       withCredentials: true,
     });
-
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
