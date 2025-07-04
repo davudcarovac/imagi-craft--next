@@ -18,6 +18,7 @@ import {
   forgotPassword,
   getCsrfToken,
   getGeo,
+  getUser,
   getUsers,
   loginUser,
   logoutUser,
@@ -47,6 +48,8 @@ router.get("/convert-image/delete-all", deleteAll);
 // users
 
 router.get("/users", getUsers);
+router.get("/user", verifyToken, getUser);
+
 router.post("/signup", csrfProtection, signupUser);
 router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);

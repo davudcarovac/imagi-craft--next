@@ -135,6 +135,7 @@ export async function loginUser(
     res.status(200).json({
       success: true,
       message: "Logged in",
+      token: authToken,
       user: safeUser,
     });
   } catch (error) {
@@ -403,6 +404,34 @@ export async function getGeo(req: Request, res: Response, next: NextFunction) {
       region: geo.region,
       city: geo.city,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getUser(req: Request, res: Response, next: NextFunction) {
+  const { id } = req.userData;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+
+    if (!user) {
+      throw new ErrorResponse("User not found", 400);
+    }
+
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isPremium: user.ispremium,
+      premiumExpires: user.premiumexpires,
+      createdAt: user.createdat,
+      updatedAt: user.updatedat,
+      role: user.role,
+    };
+
+    res
+      .status(200)
+      .json({ sucess: true, message: "User sent!", user: safeUser });
   } catch (error) {
     next(error);
   }

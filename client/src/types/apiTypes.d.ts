@@ -134,6 +134,12 @@ export type ResetPasswordUserData = {
   confirmNewPassword: string;
 };
 
+export type getUserResponse = {
+  message: string;
+  success: boolean;
+  user: User;
+};
+
 export type ErrorResponse = {
   success: boolean;
   message: string;

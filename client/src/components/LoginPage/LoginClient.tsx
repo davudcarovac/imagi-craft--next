@@ -61,8 +61,6 @@ const LoginClient = () => {
             onSubmit={(values: InitialValuesType, { resetForm }) => {
               mutate(values, {
                 onSuccess: (response) => {
-                  console.log("Response from login ===> ", response.message);
-
                   // const { name, email, id, isPremium, role } = response.user;
                   // const user = {
                   //   name,
