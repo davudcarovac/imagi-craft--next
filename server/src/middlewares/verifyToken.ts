@@ -23,7 +23,7 @@ export const verifyToken = async (
   // }
 
   // const token = authorization?.split(" ")[1];
-  console.log("Token from cookies ===> ", token);
+  // console.log("Token from cookies ===> ", token);
   try {
     if (!token) {
       throw new ErrorResponse("Request is not authorized", 401);
@@ -33,11 +33,10 @@ export const verifyToken = async (
       where: { id: decoded.userId },
     });
 
+    // console.log("user from verify ===> ", user);
     if (!user) {
       throw new ErrorResponse("No user found", 400);
     }
-
-    console.log("user from verify ===> ", user);
 
     req.userData = user;
 

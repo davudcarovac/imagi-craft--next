@@ -92,6 +92,7 @@ export type User = {
   premiumExpires: string | null;
   createdAt: string;
   updatedAt: string;
+  profileImage: string;
   role: "user" | "admin";
 };
 

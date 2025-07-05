@@ -1,5 +1,6 @@
 "use client";
 
+import { TabMenuPassThroughOptions } from "primereact/tabmenu";
 import { TabMenu } from "primereact/tabmenu";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -28,10 +29,12 @@ export default function ProfileLayout({
           command: () => router.push(item.to),
         }))}
         activeIndex={activeIndex}
-        className="max-w-[800px] mx-auto mt-10"
+        className="max-w-[800px] mx-auto mt-10 rounded-t-md "
       />
 
-      <div className="max-w-[800px] mx-auto mt-5 bg-white p-5">{children}</div>
+      <div className="max-w-[800px] mx-auto mt-2 mb-10 bg-white p-5 rounded-md">
+        {children}
+      </div>
     </div>
   );
 }

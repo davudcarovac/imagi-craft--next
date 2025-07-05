@@ -13,20 +13,23 @@ enum Role {
 }
 
 model user {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email          String    @unique
-  password       String
-  name           String?
-  ispremium      Boolean?  @default(false)
-  premiumexpires DateTime? @db.Timestamp(6)
-  createdat      DateTime? @default(now()) @db.Timestamp(6)
-  updatedat      DateTime? @default(now()) @db.Timestamp(6)
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String   @unique
+  password              String
+  name                  String?
+  ispremium             Boolean?  @default(false)
+  premiumexpires        DateTime? @db.Timestamp(6)
+  createdat             DateTime? @default(now()) @db.Timestamp(6)
+  updatedat             DateTime? @default(now()) @db.Timestamp(6)
+  resetPasswordToken    String?
+  resetPasswordExpire   DateTime?
 
+  profileImage          String?  
+  profileImagePublicId  String?  
 
-   resetPasswordToken     String?  
-  resetPasswordExpire    DateTime?
-
-role Role @default(user)
+  role Role @default(user)
 
   @@map("user")
 }
+
+

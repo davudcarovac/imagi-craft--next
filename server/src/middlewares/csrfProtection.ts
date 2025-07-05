@@ -23,8 +23,8 @@ export const csrfProtection = (
   const csrfCookie = req.cookies["XSRF-TOKEN"];
   const csrfHeader = req.headers["x-xsrf-token"];
 
-  console.log("csrf cookie => ", csrfCookie);
-  console.log("csrf header => ", csrfHeader);
+  // console.log("csrf cookie => ", csrfCookie);
+  // console.log("csrf header => ", csrfHeader);
 
   if (!csrfCookie || csrfCookie !== csrfHeader) {
     throw new ErrorResponse("CSRF token invalid or missing", 403);

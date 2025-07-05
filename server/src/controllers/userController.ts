@@ -3,13 +3,14 @@ import { pool } from "../config/db.ts";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import "dotenv/config";
-import prisma from "../lib/prisma.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
 import { z } from "zod";
 import { comparePasswords } from "../utils/comparePasswords.ts";
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.ts";
 import geoip from "geoip-lite";
+import cloudinary from "../config/cloudinary.ts";
+import prisma from "../lib/prisma.ts";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -135,7 +136,7 @@ export async function loginUser(
     res.status(200).json({
       success: true,
       message: "Logged in",
-      token: authToken,
+      // token: authToken,
       user: safeUser,
     });
   } catch (error) {
@@ -448,5 +449,94 @@ export async function getUsers(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function removeImage(userId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImage: true, profileImagePublicId: true },
+    });
+
+    if (user?.profileImagePublicId) {
+      const result = await cloudinary.uploader.destroy(
+        user?.profileImagePublicId
+      );
+
+      if (result.ok) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            profileImage: null,
+            profileImagePublicId: null,
+          },
+        });
+        return true; // uspešno obrisano
+      }
+      return false;
+    }
+  } catch (error) {
+    console.error("Failed to remove image:", error);
+
+    throw new ErrorResponse("Image remove failed", 404);
+  }
+}
+
+export async function removeProfileImg(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.userData.id;
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function uploadProfileImg(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.userData.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImage: true, profileImagePublicId: true },
+    });
+
+    await removeImage(userId);
+
+    const imageFile = req.file;
+    if (!imageFile) {
+      throw new ErrorResponse("No image uploaded", 400);
+    }
+
+    const base64 = `data:${
+      imageFile.mimetype
+    };base64,${imageFile.buffer.toString("base64")}`;
+
+    const uploadResult = await cloudinary.uploader.upload(base64, {
+      folder: "frosty-image-profile-photos",
+    });
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profileImage: uploadResult.secure_url,
+        profileImagePublicId: uploadResult.public_id,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Upload successful",
+      imageUrl: uploadResult.secure_url,
+    });
+  } catch (error) {
+    next(error);
   }
 }

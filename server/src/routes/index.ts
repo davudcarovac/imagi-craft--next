@@ -22,11 +22,14 @@ import {
   getUsers,
   loginUser,
   logoutUser,
+  removeProfileImg,
   resetPassword,
   signupUser,
+  uploadProfileImg,
 } from "../controllers/userController.ts";
 import { verifyToken } from "../middlewares/verifyToken.ts";
 import { csrfProtection } from "../middlewares/csrfProtection.ts";
+import { profileImageUpload } from "../middlewares/profileImageUpload.ts";
 
 const router = Router();
 
@@ -54,6 +57,14 @@ router.post("/signup", csrfProtection, signupUser);
 router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);
 router.get("/csrf-token", csrfProtection, getCsrfToken);
+router.post(
+  "/upload-profile-image",
+  profileImageUpload,
+  verifyToken,
+  uploadProfileImg
+);
+router.post("/remove-profile-image", verifyToken, removeProfileImg);
+
 router.get("/geo", getGeo);
 
 router.post("/forgot-password", forgotPassword);

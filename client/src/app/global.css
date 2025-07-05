@@ -151,3 +151,18 @@ h3 {
 .p-sidebar-header {
   display: none;
 }
+
+/* Tab menu */
+/* Aktivni tab - koristi data atribut highlight */
+.p-tabmenuitem[data-p-highlight="true"] > .p-menuitem-link {
+  color: #1aac83 !important;
+  font-weight: 600;
+  border-bottom-color: #1aac83 !important ;
+  /* transition: background-color 0.3s ease;s */
+}
+
+/* Hover efekat za sve tabove */
+.p-tabmenuitem > .p-menuitem-link:hover {
+  opacity: 0.9;
+  transition: all 0.3s ease; /* smooth animacija svih stilova */
+}
