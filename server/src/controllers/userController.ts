@@ -83,6 +83,7 @@ export async function signupUser(
       createdAt: user.createdat,
       updatedAt: user.updatedat,
       role: user.role,
+      profileImage: user.profileImage,
     };
 
     res.status(201).json({
@@ -131,6 +132,7 @@ export async function loginUser(
       createdAt: user.createdat,
       updatedAt: user.updatedat,
       role: user.role,
+      profileImage: user.profileImage,
     };
 
     res.status(200).json({
@@ -428,6 +430,7 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
       createdAt: user.createdat,
       updatedAt: user.updatedat,
       role: user.role,
+      profileImage: user.profileImage,
     };
 
     res
@@ -458,6 +461,10 @@ async function removeImage(userId: string) {
       where: { id: userId },
       select: { profileImage: true, profileImagePublicId: true },
     });
+
+    if (!user) {
+      throw new ErrorResponse("No user found", 400);
+    }
 
     if (user?.profileImagePublicId) {
       const result = await cloudinary.uploader.destroy(
@@ -508,6 +515,10 @@ export async function uploadProfileImg(
       select: { profileImage: true, profileImagePublicId: true },
     });
 
+    if (!user) {
+      throw new ErrorResponse("No user found", 400);
+    }
+
     await removeImage(userId);
 
     const imageFile = req.file;
@@ -539,4 +550,24 @@ export async function uploadProfileImg(
   } catch (error) {
     next(error);
   }
+}
+
+export async function removeTokens(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const token = req.cookies.auth_token;
+  console.log("Prije => ", token);
+  res.clearCookie("auth_token", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    domain: process.env.DOMAIN || "localhost",
+  });
+
+  console.log("Posle => ", token);
+
+  res.status(200).json({ success: true, message: "token removed" });
 }

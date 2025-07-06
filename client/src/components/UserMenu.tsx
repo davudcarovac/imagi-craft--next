@@ -1,20 +1,48 @@
 import { TieredMenu } from "primereact/tieredmenu";
 import { MenuItem } from "primereact/menuitem";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import userImg from "@/assets/button images/user.png";
+import defaultProfileImage from "@/assets/button images/user.png";
 import Image from "next/image";
 import { useLogout } from "@/hooks/useLogout";
 import { Toast } from "primereact/toast";
+import { useGetUser } from "@/hooks/useGetUser";
 
 const UserMenu = () => {
   const menuRef = useRef<TieredMenu | null>(null);
   // const toast = useRef<Toast>(null);
   const router = useRouter();
-  const { dispatch } = useAuthContext();
-
+  const { dispatch, user: localUser } = useAuthContext();
+  const { user } = useGetUser();
   const { mutate } = useLogout();
+  const [profileImage, setProfileImg] = useState(
+    user?.profileImage || defaultProfileImage
+  );
+
+  useEffect(() => {
+    if (user) {
+      setProfileImg(user.profileImage || defaultProfileImage);
+    } else {
+      setProfileImg(defaultProfileImage);
+    }
+  }, [user]);
+
+  const logout = () => {
+    mutate(undefined, {
+      onSuccess: (response) => {
+        dispatch({ type: "LOGOUT" });
+        console.log(response);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user");
+        }
+        router.push("/login");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+  };
 
   const items: MenuItem[] = [
     {
@@ -71,26 +99,7 @@ const UserMenu = () => {
     {
       label: "Logout",
       icon: "pi pi-sign-out",
-      command: () => {
-        dispatch({ type: "LOGOUT" });
-        mutate(undefined, {
-          onSuccess: (response) => {
-            console.log(response);
-
-            // toast.current?.show({
-            //   severity: "success",
-            //   summary: "Success",
-            //   detail: response.message,
-            //   life: 4000,
-            // });
-          },
-          onError: (error) => {
-            console.log(error);
-          },
-        });
-        localStorage.removeItem("user");
-        router.push("/login");
-      },
+      command: () => logout(),
       template: (item, options) => (
         <div
           onClick={options.onClick}
@@ -119,7 +128,19 @@ const UserMenu = () => {
         className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#1aac83]/10 text-[#1aac83] hover:bg-[#1aac83]/20 transition"
       >
         {/* <i className="pi pi-user text-xl" /> */}
-        <Image src={userImg} alt="profile-img" height={25} width={35} />
+        <div
+          className="cursor-pointer flex items-center justify-center rounded-full overflow-hidden w-10 h-10 relative
+           "
+        >
+          <Image
+            src={profileImage}
+            alt="profile-img"
+            fill
+            className="object-cover w-full h-full"
+            unoptimized
+            priority
+          />
+        </div>
       </button>
     </>
   );

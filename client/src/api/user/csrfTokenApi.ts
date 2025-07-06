@@ -6,7 +6,7 @@ export const getCsrfToken = async () => {
       withCredentials: true,
     });
 
-    console.log("Get CSRF token api ===> ", response);
+    // console.log("Get CSRF token api ===> ", response);
     return response.data;
   } catch (error) {
     console.log("Get CSRF token function ERROR ===> ", error);

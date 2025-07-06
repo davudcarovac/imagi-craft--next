@@ -14,6 +14,7 @@ export interface User {
   name: string;
   role: Role;
   isPremium: boolean;
+  profileImage: string;
   // token: string;
 }
 
@@ -25,7 +26,8 @@ interface AuthState {
 type AuthAction =
   | { type: "LOGIN"; payload: User }
   | { type: "LOGOUT" }
-  | { type: "LOADING_COMPLETE" };
+  | { type: "LOADING_COMPLETE" }
+  | { type: "UPDATE_PROFILE_IMAGE"; payload: string };
 
 interface AuthContextType extends AuthState {
   dispatch: Dispatch<AuthAction>;
@@ -48,6 +50,12 @@ export const authReducer = (
       return { ...state, user: null };
     case "LOADING_COMPLETE":
       return { ...state, isLoading: false };
+    case "UPDATE_PROFILE_IMAGE":
+      if (!state.user) return state;
+      return {
+        ...state,
+        user: { ...state.user, profileImage: action.payload },
+      };
     default:
       return state;
   }

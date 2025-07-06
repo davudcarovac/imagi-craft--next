@@ -8,74 +8,91 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useRouter } from "next/navigation";
 import { useGetUser } from "@/hooks/useGetUser";
 import { formatDate } from "@/utils/formatDate";
-import userImg from "@/assets/button images/user.png";
+import defaultProfileImage from "@/assets/button images/user.png";
 import { useUploadProfileImage } from "@/hooks/useUploadProfileImage";
+import { StaticImageData } from "next/image";
+import { useQueryClient } from "@tanstack/react-query";
+import { Tag } from "primereact/tag";
+import { useLogout } from "@/hooks/useLogout";
+import loadingUserImg from "@/assets/button images/delete.png";
 
 const ProfileClient = () => {
-  const { data, isPending, error } = useGeo();
+  const { data, isPending } = useGeo();
   const { user, isPending: isPendingUser } = useGetUser();
   const { mutate } = useUploadProfileImage();
   const router = useRouter();
+  const { mutate: logoutMutate } = useLogout();
+
   const { dispatch } = useAuthContext();
-  const formattedDate = formatDate(user?.createdAt);
+  const formattedDate = user?.createdAt ? formatDate(user.createdAt) : "--";
   const plan = user?.isPremium ? "Premium" : "Basic";
   const premiumExpires = user?.premiumExpires
     ? formatDate(user.premiumExpires)
     : "--";
 
-  const [file, setFile] = useState<File | null>(null);
-  const [profileImg, setProfileImg] = useState(user?.profileImage || userImg);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [profileImg, setProfileImg] = useState<string | StaticImageData>(
+    user?.profileImage || defaultProfileImage
+  );
+  const queryClient = useQueryClient();
 
-  // Klik na sliku otvara file picker
+  useEffect(() => {
+    if (user?.profileImage) {
+      setProfileImg(user.profileImage);
+    }
+  }, [user]);
+
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Kada se izabere fajl, setuj fajl i prikaz preview slike,
-  // odmah triggeruj upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
 
-      // Prikaz preview slike
-      const imageUrl = URL.createObjectURL(selectedFile);
-      setProfileImg(imageUrl);
-
-      // Napravi formData i uploaduj odmah
       const formData = new FormData();
       formData.append("file", selectedFile);
 
       mutate(formData, {
         onSuccess: (response) => {
-          console.log("Upload image response ===> ", response);
-          // Poželjno je da posle uspešnog uploada ažuriraš profileImg sa URL-om sa servera,
-          // ako server vraća novi URL:
-          if (response?.profileImageUrl) {
-            setProfileImg(response.profileImageUrl);
+          console.log("Profile image upload ", response);
+          if (response?.imageUrl) {
+            setProfileImg(response.imageUrl);
+            queryClient.invalidateQueries({ queryKey: ["user"] });
+            dispatch({
+              type: "UPDATE_PROFILE_IMAGE",
+              payload: response.imageUrl,
+            });
           }
         },
-        onError: (error) => {
-          console.log("Upload image error ===> ", error);
+        onError: (error: Error) => {
+          console.error("Upload failed:", error);
         },
       });
     }
   };
 
   const logout = () => {
-    dispatch({ type: "LOGOUT" });
-    localStorage.removeItem("user");
-    router.push("/login");
-  };
+    logoutMutate(undefined, {
+      onSuccess: (response) => {
+        dispatch({ type: "LOGOUT" });
+        console.log(response);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user");
+        }
+        queryClient.cancelQueries({ queryKey: ["user"] });
+        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
 
-  useEffect(() => {
-    if (user?.profileImage) {
-      setProfileImg(user.profileImage);
-    } else {
-      setProfileImg(userImg);
-    }
-  }, [user]);
+        router.push("/login");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+  };
 
   return (
     <div>
@@ -84,16 +101,18 @@ const ProfileClient = () => {
           <div className="flex items-center gap-4">
             <div
               onClick={handleImageClick}
-              className="cursor-pointer rounded-full overflow-hidden w-24 h-24 border-4 border-[#1aac83]"
+              className="cursor-pointer flex items-center justify-center rounded-full overflow-hidden w-24 h-24 relative
+             border border-gray-200 ring-2 ring-white ring-offset-2 ring-offset-gray-100 hover:ring-blue-300 transition-all duration-300"
               title="Click to change profile image"
             >
               <Image
                 src={profileImg}
                 alt="profile-img"
-                width={96}
-                height={96}
-                className="object-cover"
+                fill
+                className="object-cover w-full h-full"
                 unoptimized
+                loading="eager"
+                priority
               />
             </div>
 
@@ -104,6 +123,20 @@ const ProfileClient = () => {
               <p className="text-gray-500 text-sm">
                 You can change the profile picture by clicking on it
               </p>
+              {user?.profileImage && (
+                // <Tag
+                //   severity="danger"
+                //   value="remove avatar"
+                //   rounded
+                //   className="p-1 my-2 cursor-pointer"
+                // ></Tag>
+
+                <button className="cursor-pointer">
+                  <p className="   text-red-600 font-semibold text-sm">
+                    remove profile image
+                  </p>
+                </button>
+              )}{" "}
             </div>
 
             <input
@@ -124,23 +157,23 @@ const ProfileClient = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <EditableInput
-          initialValue={user?.name}
+          initialValue={user?.name || ""}
           labelName="Name"
           editable={true}
           isLoading={isPendingUser}
         />
         <EditableInput
-          initialValue={user?.email}
+          initialValue={user?.email || ""}
           labelName="Email"
           isLoading={isPendingUser}
         />
         <EditableInput
-          initialValue={data?.country}
+          initialValue={data?.country || ""}
           isLoading={isPending}
           labelName="Country"
         />
         <EditableInput
-          initialValue={data?.city}
+          initialValue={data?.city || ""}
           isLoading={isPending}
           labelName="City"
         />

@@ -23,6 +23,7 @@ import {
   loginUser,
   logoutUser,
   removeProfileImg,
+  removeTokens,
   resetPassword,
   signupUser,
   uploadProfileImg,
@@ -64,6 +65,7 @@ router.post(
   uploadProfileImg
 );
 router.post("/remove-profile-image", verifyToken, removeProfileImg);
+router.post("/remove-tokens", removeTokens);
 
 router.get("/geo", getGeo);
 
