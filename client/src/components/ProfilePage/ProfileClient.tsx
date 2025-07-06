@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "@/hooks/useLogout";
 import { useProfilePictureRemove } from "@/hooks/useProfilePictureRemove";
 import { Toast } from "primereact/toast";
+import { useChangeUsername } from "@/hooks/useChangeUsername";
 
 const ProfileClient = () => {
   const { data, isPending } = useGeo();
@@ -22,6 +23,8 @@ const ProfileClient = () => {
   const { mutate: mutateRemovePicture, isPending: isPendingRemovePicture } =
     useProfilePictureRemove();
   const { mutate, isPending: isPendingUploadPicture } = useUploadProfileImage();
+  const { mutate: mutateChangeName, isPending: isPendingChangeName } =
+    useChangeUsername();
   const router = useRouter();
   const { mutate: logoutMutate } = useLogout();
   const toast = useRef<Toast>(null);
@@ -123,6 +126,30 @@ const ProfileClient = () => {
     });
   };
 
+  const saveUsername = (newName: string) => {
+    mutateChangeName(newName, {
+      onSuccess: (response) => {
+        console.log("Change name ===> ", response);
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+        toast.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: response.message,
+          life: 2000,
+        });
+      },
+      onError: (error) => {
+        console.log("Change name error ===> ", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: error.message,
+          life: 2000,
+        });
+      },
+    });
+  };
+
   return (
     <div>
       <Toast ref={toast} />
@@ -190,6 +217,7 @@ const ProfileClient = () => {
           labelName="Name"
           editable={true}
           isLoading={isPendingUser}
+          onSave={saveUsername}
         />
         <EditableInput
           initialValue={user?.email || ""}

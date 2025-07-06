@@ -145,6 +145,10 @@ export type getUserResponse = {
   success: boolean;
   user: User;
 };
+export type ChangeNameResponse = {
+  success: boolean;
+  message: string;
+};
 
 export type ErrorResponse = {
   success: boolean;

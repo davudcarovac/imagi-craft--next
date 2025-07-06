@@ -500,12 +500,10 @@ export async function removeProfileImg(
     const removedPicture = await removeImage(userId);
 
     if (removedPicture) {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Your profile image has been deleted.",
-        });
+      res.status(200).json({
+        success: true,
+        message: "Your profile image has been deleted.",
+      });
     } else {
       throw new ErrorResponse("Profile picture removal failed", 400);
     }
@@ -559,6 +557,46 @@ export async function uploadProfileImg(
       message: "Your new profile image has been saved.",
       imageUrl: uploadResult.secure_url,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function changeUsername(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { id } = req.userData;
+  const { newName } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+      select: {
+        name: true,
+      },
+    });
+
+    if (!user) {
+      throw new ErrorResponse("User not found", 400);
+    }
+
+    if (!newName) {
+      throw new ErrorResponse("Enter value for new name", 400);
+    }
+
+    if (newName === user.name) {
+      throw new ErrorResponse("Enter different name", 400);
+    }
+
+    await prisma.user.update({
+      where: { id: id },
+      data: {
+        name: newName,
+      },
+    });
+
+    res.status(200).json({ success: true, message: "Name changed" });
   } catch (error) {
     next(error);
   }

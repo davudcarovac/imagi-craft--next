@@ -15,6 +15,7 @@ import { uploadsMiddleware } from "../middlewares/uploads.ts";
 import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
 import {
   changePassword,
+  changeUsername,
   forgotPassword,
   getCsrfToken,
   getGeo,
@@ -65,6 +66,7 @@ router.post(
   uploadProfileImg
 );
 router.post("/remove-profile-image", verifyToken, removeProfileImg);
+
 // router.post("/remove-tokens", removeTokens);
 
 router.get("/geo", getGeo);
@@ -72,5 +74,6 @@ router.get("/geo", getGeo);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
 router.post("/change-password", verifyToken, changePassword);
+router.post("/change-username", verifyToken, changeUsername);
 
 export default router;
