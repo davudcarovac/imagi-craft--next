@@ -112,6 +112,11 @@ export type ResetPasswordResponse = {
   message: string;
   user: User;
 };
+export type RemoveProfilePictureResponse = {
+  success: boolean;
+  message: string;
+};
+
 export type ChangePasswordResponse = {
   success: boolean;
   message: string;

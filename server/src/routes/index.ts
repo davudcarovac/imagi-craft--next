@@ -65,7 +65,7 @@ router.post(
   uploadProfileImg
 );
 router.post("/remove-profile-image", verifyToken, removeProfileImg);
-router.post("/remove-tokens", removeTokens);
+// router.post("/remove-tokens", removeTokens);
 
 router.get("/geo", getGeo);
 

@@ -12,16 +12,19 @@ import defaultProfileImage from "@/assets/button images/user.png";
 import { useUploadProfileImage } from "@/hooks/useUploadProfileImage";
 import { StaticImageData } from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
-import { Tag } from "primereact/tag";
 import { useLogout } from "@/hooks/useLogout";
-import loadingUserImg from "@/assets/button images/delete.png";
+import { useProfilePictureRemove } from "@/hooks/useProfilePictureRemove";
+import { Toast } from "primereact/toast";
 
 const ProfileClient = () => {
   const { data, isPending } = useGeo();
   const { user, isPending: isPendingUser } = useGetUser();
-  const { mutate } = useUploadProfileImage();
+  const { mutate: mutateRemovePicture, isPending: isPendingRemovePicture } =
+    useProfilePictureRemove();
+  const { mutate, isPending: isPendingUploadPicture } = useUploadProfileImage();
   const router = useRouter();
   const { mutate: logoutMutate } = useLogout();
+  const toast = useRef<Toast>(null);
 
   const { dispatch } = useAuthContext();
   const formattedDate = user?.createdAt ? formatDate(user.createdAt) : "--";
@@ -40,6 +43,8 @@ const ProfileClient = () => {
   useEffect(() => {
     if (user?.profileImage) {
       setProfileImg(user.profileImage);
+    } else {
+      setProfileImg(defaultProfileImage);
     }
   }, [user]);
 
@@ -57,13 +62,20 @@ const ProfileClient = () => {
 
       mutate(formData, {
         onSuccess: (response) => {
-          console.log("Profile image upload ", response);
+          // console.log("Profile image upload ", response);
           if (response?.imageUrl) {
             setProfileImg(response.imageUrl);
             queryClient.invalidateQueries({ queryKey: ["user"] });
+
             dispatch({
               type: "UPDATE_PROFILE_IMAGE",
               payload: response.imageUrl,
+            });
+            toast.current?.show({
+              severity: "info",
+              summary: "info",
+              detail: response.message,
+              life: 2000,
             });
           }
         },
@@ -76,9 +88,9 @@ const ProfileClient = () => {
 
   const logout = () => {
     logoutMutate(undefined, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         dispatch({ type: "LOGOUT" });
-        console.log(response);
+        // console.log(response);
         if (typeof window !== "undefined") {
           localStorage.removeItem("user");
         }
@@ -93,9 +105,27 @@ const ProfileClient = () => {
       },
     });
   };
+  const removeProfilePicture = () => {
+    mutateRemovePicture(undefined, {
+      onSuccess(response) {
+        // console.log("Profile picture removal response ===> ", response);
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+        toast.current?.show({
+          severity: "info",
+          summary: "info",
+          detail: response.message,
+          life: 2000,
+        });
+      },
+      onError(error) {
+        console.log("Profile picture removal error ===> ", error);
+      },
+    });
+  };
 
   return (
     <div>
+      <Toast ref={toast} />
       <div className="pt-2 pb-6 sm:pb-10 flex gap-4 flex-col sm:items-center justify-between sm:flex-row">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-4">
@@ -121,22 +151,21 @@ const ProfileClient = () => {
                 Profile
               </h2>
               <p className="text-gray-500 text-sm">
-                You can change the profile picture by clicking on it
+                You can change the profile name by clicking on it
               </p>
-              {user?.profileImage && (
-                // <Tag
-                //   severity="danger"
-                //   value="remove avatar"
-                //   rounded
-                //   className="p-1 my-2 cursor-pointer"
-                // ></Tag>
-
-                <button className="cursor-pointer">
-                  <p className="   text-red-600 font-semibold text-sm">
+              {user?.profileImage && !isPendingRemovePicture && (
+                <button
+                  className="cursor-pointer"
+                  onClick={removeProfilePicture}
+                >
+                  <p className=" underline p-0  text-red-600 text-sm">
                     remove profile image
                   </p>
                 </button>
-              )}{" "}
+              )}
+              {(isPendingRemovePicture || isPendingUploadPicture) && (
+                <p className="text-sm text-blue-400">loading...</p>
+              )}
             </div>
 
             <input

@@ -465,13 +465,13 @@ async function removeImage(userId: string) {
     if (!user) {
       throw new ErrorResponse("No user found", 400);
     }
-
+    console.log(user.profileImagePublicId);
     if (user?.profileImagePublicId) {
       const result = await cloudinary.uploader.destroy(
         user?.profileImagePublicId
       );
 
-      if (result.ok) {
+      if (result.result === "ok") {
         await prisma.user.update({
           where: { id: userId },
           data: {
@@ -497,6 +497,18 @@ export async function removeProfileImg(
 ) {
   try {
     const userId = req.userData.id;
+    const removedPicture = await removeImage(userId);
+
+    if (removedPicture) {
+      res
+        .status(200)
+        .json({
+          success: true,
+          message: "Your profile image has been deleted.",
+        });
+    } else {
+      throw new ErrorResponse("Profile picture removal failed", 400);
+    }
   } catch (error) {
     next(error);
   }
@@ -544,7 +556,7 @@ export async function uploadProfileImg(
 
     res.status(200).json({
       success: true,
-      message: "Upload successful",
+      message: "Your new profile image has been saved.",
       imageUrl: uploadResult.secure_url,
     });
   } catch (error) {
