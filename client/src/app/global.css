@@ -166,3 +166,10 @@ h3 {
   opacity: 0.9;
   transition: all 0.3s ease; /* smooth animacija svih stilova */
 }
+
+.save-btn {
+  background-color: #1aac83;
+}
+.cancel-btn {
+  border-color: #1aac83;
+}

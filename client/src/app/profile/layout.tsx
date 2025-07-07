@@ -13,7 +13,7 @@ export default function ProfileLayout({
   const pathname = usePathname();
 
   const items = [
-    { label: "Overview", icon: "pi pi-user", to: "/profile" },
+    { label: "Overview", icon: "pi pi-user", to: "/profile/overview" },
     { label: "Security", icon: "pi pi-lock", to: "/profile/security" },
   ];
 

@@ -1,4 +1,4 @@
-import ProfileClient from "@/components/ProfilePage/ProfileClient";
+import ProfileClient from "@/components/Profile/ProfilePage/ProfileClient";
 import React from "react";
 
 const page = () => {

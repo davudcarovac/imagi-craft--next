@@ -353,9 +353,7 @@ export async function changePassword(
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res
-      .status(200)
-      .json({ success: true, message: "Password changed", token: token });
+    res.status(200).json({ success: true, message: "Password changed" });
   } catch (error) {
     next(error);
   }

@@ -1,7 +1,8 @@
+import SecurityClient from "@/components/Profile/SecurityPage/SecurityClient";
 import React from "react";
 
 const page = () => {
-  return <div>Security</div>;
+  return <SecurityClient />;
 };
 
 export default page;

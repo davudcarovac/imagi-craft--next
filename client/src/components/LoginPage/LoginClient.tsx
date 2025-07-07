@@ -11,6 +11,7 @@ import { useLogin } from "@/hooks/useLogin";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = Yup.object({
   email: Yup.string()
@@ -29,6 +30,7 @@ const LoginClient = () => {
   const router = useRouter();
   const { isPending, mutate } = useLogin();
   const { dispatch } = useAuthContext();
+  const queryClient = useQueryClient();
 
   const initialValues: InitialValuesType = {
     email: "",
@@ -69,6 +71,7 @@ const LoginClient = () => {
                   //   isPremium: isPremium,
                   //   role,
                   // };
+                  queryClient.invalidateQueries({ queryKey: ["user"] });
                   localStorage.setItem("user", JSON.stringify(response.user));
                   dispatch({ type: "LOGIN", payload: response.user });
                   toast.current?.show({

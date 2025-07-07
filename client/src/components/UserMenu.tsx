@@ -48,7 +48,7 @@ const UserMenu = () => {
     {
       label: "Profile",
       icon: "pi pi-user",
-      command: () => router.push("/profile"),
+      command: () => router.push("/profile/overview"),
       template: (item, options) => (
         <div
           onClick={options.onClick}

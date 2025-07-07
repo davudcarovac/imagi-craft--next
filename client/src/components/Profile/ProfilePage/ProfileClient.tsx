@@ -153,7 +153,7 @@ const ProfileClient = () => {
   return (
     <div>
       <Toast ref={toast} />
-      <div className="pt-2 pb-6 sm:pb-10 flex gap-4 flex-col sm:items-center justify-between sm:flex-row">
+      <div className="pb-6 sm:pb-10 flex gap-4 flex-col sm:items-center justify-between sm:flex-row">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-4">
             <div
