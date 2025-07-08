@@ -174,6 +174,8 @@ export type VerifyEnableTwoFactorResponse = {
   message: string;
 };
 
+export type DisableTwoFactorResponse = VerifyEnableTwoFactorResponse;
+
 export type VerifyLoginTwoFactorResponse = SignupResponse;
 export type ErrorResponse = {
   success: boolean;

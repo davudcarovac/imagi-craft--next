@@ -1,4 +1,4 @@
-import { verifyLoginTwoFactor } from "@/api/user/verifyLoginTwoFactor";
+import { verifyLoginTwoFactor } from "@/api/user/verifyLoginTwoFactorApi";
 import { VerifyLoginTwoFactorData } from "@/types/apiTypes";
 import { useMutation } from "@tanstack/react-query";
 

@@ -33,6 +33,7 @@ const LoginClient = () => {
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
   const [userIdFor2FA, setUserIdFor2FA] = useState<string | null>(null);
   const [otpCode, setOtpCode] = useState<string | null>(null);
+  const [errorMsg2FA, setErrorMsg2FA] = useState("");
 
   const router = useRouter();
   const { isPending, mutate } = useLogin();
@@ -62,10 +63,12 @@ const LoginClient = () => {
             detail: "Logged in via 2FA",
             life: 4000,
           });
+          setErrorMsg2FA("");
           router.push("/");
         },
         onError: (error) => {
           console.log("Verify login error ===> ", error);
+          setErrorMsg2FA(error.message);
           toast.current?.show({
             severity: "error",
             summary: "2FA Error",
@@ -202,7 +205,7 @@ const LoginClient = () => {
                 )}
               </Formik>
             ) : (
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3">
                 <p className="text-center text-sm text-gray-600">
                   Two-Factor Authentication is enabled. Please enter the 6-digit
                   code from your authenticator app.
@@ -219,6 +222,11 @@ const LoginClient = () => {
                   length={6}
                   integerOnly
                 />
+                {errorMsg2FA && (
+                  <p className="text-sm text-red-500 font-semibold">
+                    {errorMsg2FA}
+                  </p>
+                )}
                 <button
                   onClick={verifyLoginTwoFactor}
                   disabled={otpDisbled}

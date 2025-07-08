@@ -13,6 +13,7 @@ import { useTwoFactorSetup } from "@/hooks/useTwoFactorSetup";
 import { useVerifyEnableTwoFactor } from "@/hooks/useVerifyEnableTwoFactor";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDisableTwoFactor } from "@/hooks/useDisbaleTwoFactor";
 
 const changePasswordSchema = Yup.object({
   currentPassword: Yup.string().required("Required field"),
@@ -38,6 +39,7 @@ const SecurityClient = () => {
   const [token, setToken] = useState<string | number | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [ErrorMessageDisable2FA, setErrorMessageDisable2FA] = useState("");
 
   const queryClient = useQueryClient();
   const { mutate: mutateChangePassword, isPending: isPendingPassword } =
@@ -48,6 +50,8 @@ const SecurityClient = () => {
     mutate: mutateVerifyEnableTwoFactor,
     isPending: isPendingVerifyEnableTwoFactor,
   } = useVerifyEnableTwoFactor();
+  const { mutate: mutateDisableTwoFactor, isPending: isPendingTwoFactor } =
+    useDisableTwoFactor();
 
   const initialValues = {
     currentPassword: "",
@@ -102,6 +106,37 @@ const SecurityClient = () => {
         }
       );
     }
+  };
+
+  const disableTwoFactor = () => {
+    mutateDisableTwoFactor(
+      { currentPassword: currentPassword },
+      {
+        onSuccess: (response) => {
+          console.log("Disable 2fa response ", response);
+          queryClient.invalidateQueries({ queryKey: ["user"] });
+          setIsShownDisableTwoFactor(false);
+          setCurrentPassword("");
+          setErrorMessageDisable2FA("");
+          toast.current?.show({
+            summary: "Success",
+            severity: "success",
+            detail: response.message,
+            life: 3000,
+          });
+        },
+        onError: (error) => {
+          console.log("Disable 2fa error ", error);
+          setErrorMessageDisable2FA(error.message);
+          toast.current?.show({
+            summary: "Error",
+            severity: "error",
+            detail: error.message,
+            life: 3000,
+          });
+        },
+      }
+    );
   };
 
   const isDisabledVerifyButton =
@@ -354,21 +389,29 @@ const SecurityClient = () => {
               setIsShown={setIsShownDisableTwoFactor}
             >
               <div className="py-4 flex  flex-col gap-3">
-                <div className="p-inputgroup" style={{ width: "250px" }}>
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-key"></i>
-                  </span>
-                  <InputText
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    value={currentPassword}
-                    type="password"
-                    placeholder="Current password"
-                    className="placeholder:text-sm w-full"
-                  />
+                <div className="flex flex-col gap-1 ">
+                  <div className="p-inputgroup" style={{ width: "250px" }}>
+                    <span className="p-inputgroup-addon">
+                      <i className="pi pi-key"></i>
+                    </span>
+                    <InputText
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      value={currentPassword}
+                      type="password"
+                      placeholder="Current password"
+                      className="placeholder:text-sm w-full"
+                    />
+                  </div>
+                  {ErrorMessageDisable2FA && (
+                    <p className="font-semibold text-red-500 text-sm">
+                      {ErrorMessageDisable2FA}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center flex-row gap-3">
                   <button
-                    className={`  bg-[#1aac83] text-white rounded-md  px-4 py-2  font-semibold saira-font min-w-[150px]`}
+                    onClick={disableTwoFactor}
+                    className={`cursor-pointer  bg-[#1aac83] text-white rounded-md  px-4 py-2  font-semibold saira-font min-w-[150px]`}
                   >
                     Confirm
                   </button>
