@@ -19,19 +19,19 @@ const PasswordInput = ({
   onChange,
   onBlur,
 }: PasswordInputProps) => (
-  <div className="space-y-1">
-    <div className="flex items-center border border-gray-300 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500">
-      <span className="px-3 py-2 bg-gray-100 text-gray-500">
+  <div>
+    <div className="p-inputgroup ">
+      <span className="p-inputgroup-addon">
         <i className={icon}></i>
-      </span>
+      </span>{" "}
       <InputText
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
         name={name}
         type="password"
         placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        className="w-full px-3 py-2 text-sm border-0 focus:ring-0"
+        className="placeholder:text-sm"
       />
     </div>
     {typeof error === "string" && (

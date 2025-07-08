@@ -116,6 +116,8 @@ export async function loginUser(
     const isMatch = await comparePasswords(password, user.password);
     if (!isMatch) throw new ErrorResponse("Invalid credentials", 401);
 
+    // console.log(user);
+
     if (user.twoFactorEnabled) {
       res.status(200).json({
         success: true,
@@ -146,9 +148,10 @@ export async function loginUser(
       updatedAt: user.updatedat,
       role: user.role,
       profileImage: user.profileImage,
+      twoFactorEnabled: user.twoFactorEnabled,
     };
 
-    console.log("login token ==> ", authToken);
+    // console.log("login token ==> ", authToken);
 
     res.status(200).json({
       success: true,
@@ -444,6 +447,7 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
       updatedAt: user.updatedat,
       role: user.role,
       profileImage: user.profileImage,
+      twoFactorEnabled: user.twoFactorEnabled,
     };
 
     res
@@ -661,7 +665,7 @@ export async function verifyEnableTwoFactor(
   next: NextFunction
 ) {
   const { id } = req.userData;
-  const { token } = req.body;
+  const { token, currentPassword } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { id: id } });
 
@@ -671,6 +675,16 @@ export async function verifyEnableTwoFactor(
 
     if (!user.twoFactorSecret) {
       throw new ErrorResponse("This user has no token", 400);
+    }
+
+    if (!currentPassword) {
+      throw new ErrorResponse("Please provide password", 400);
+    }
+
+    const isMatch = await comparePasswords(currentPassword, user.password);
+
+    if (!isMatch) {
+      throw new ErrorResponse("Incorrect password", 400);
     }
 
     const verified = speakeasy.totp.verify({
@@ -689,7 +703,10 @@ export async function verifyEnableTwoFactor(
       data: { twoFactorEnabled: true },
     });
 
-    res.status(200).json({ success: true, message: "Two factor enabled" });
+    res.status(200).json({
+      success: true,
+      message: "Two factor enabled",
+    });
   } catch (error) {
     next(error);
   }

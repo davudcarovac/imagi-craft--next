@@ -1,15 +1,17 @@
-import { getUserResponse } from "@/types/apiTypes";
+import { SetupTwoFactorResponse } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
 import axios, { AxiosError } from "axios";
 
-export const getUser = async (): Promise<getUserResponse> => {
+export const setupTwoFactor = async (): Promise<SetupTwoFactorResponse> => {
   try {
-    const response = await axiosInstance.get("/user", {
-      withCredentials: true,
-    });
-
-    // console.log(response);
-    return response.data;
+    const response = axiosInstance.post<SetupTwoFactorResponse>(
+      "/2fa/setup",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return (await response).data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const err = error as AxiosError<{ error?: string; message?: string }>;

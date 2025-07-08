@@ -1,3 +1,5 @@
+"use client";
+
 import { getUser } from "@/api/user/getUserApi";
 import { getUserResponse } from "@/types/apiTypes";
 import { useQuery } from "@tanstack/react-query";
@@ -8,10 +10,9 @@ export const useGetUser = () => {
   const { data, isPending, error } = useQuery<getUserResponse>({
     queryKey: ["user"],
     queryFn: async () => getUser(),
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    enabled: !!localUser,
   });
 
   const user = data?.user;

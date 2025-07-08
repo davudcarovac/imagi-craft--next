@@ -93,6 +93,7 @@ export type User = {
   createdAt: string;
   updatedAt: string;
   profileImage: string;
+  twoFactorEnabled: boolean;
   role: "user" | "admin";
 };
 
@@ -140,12 +141,28 @@ export type ResetPasswordUserData = {
   confirmNewPassword: string;
 };
 
+export type verifyEnableTwoFactorData = {
+  currentPassword: string;
+  token: string;
+};
+
 export type getUserResponse = {
   message: string;
   success: boolean;
   user: User;
 };
 export type ChangeNameResponse = {
+  success: boolean;
+  message: string;
+};
+
+export type SetupTwoFactorResponse = {
+  success: boolean;
+  message: string;
+  qrCode: string;
+};
+
+export type VerifyEnableTwoFactorResponse = {
   success: boolean;
   message: string;
 };

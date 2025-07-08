@@ -1,14 +1,17 @@
-import { getUserResponse } from "@/types/apiTypes";
+import {
+  verifyEnableTwoFactorData,
+  VerifyEnableTwoFactorResponse,
+} from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
 import axios, { AxiosError } from "axios";
 
-export const getUser = async (): Promise<getUserResponse> => {
+export const verifyEnableTwoFactor = async (
+  data: verifyEnableTwoFactorData
+): Promise<VerifyEnableTwoFactorResponse> => {
   try {
-    const response = await axiosInstance.get("/user", {
+    const response = await axiosInstance.post("/2fa/verify-enable", data, {
       withCredentials: true,
     });
-
-    // console.log(response);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

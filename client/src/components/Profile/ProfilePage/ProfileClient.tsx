@@ -126,6 +126,10 @@ const ProfileClient = () => {
     });
   };
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   const saveUsername = (newName: string) => {
     mutateChangeName(newName, {
       onSuccess: (response) => {
