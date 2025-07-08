@@ -26,8 +26,11 @@ import {
   removeProfileImg,
   removeTokens,
   resetPassword,
+  setupTwoFactor,
   signupUser,
   uploadProfileImg,
+  verifyEnableTwoFactor,
+  verifyLoginTwoFactor,
 } from "../controllers/userController.ts";
 import { verifyToken } from "../middlewares/verifyToken.ts";
 import { csrfProtection } from "../middlewares/csrfProtection.ts";
@@ -75,5 +78,9 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
 router.post("/change-password", verifyToken, changePassword);
 router.post("/change-username", verifyToken, changeUsername);
+
+router.post("/2fa/setup", verifyToken, setupTwoFactor);
+router.post("/2fa/verify-enable", verifyToken, verifyEnableTwoFactor);
+router.post("/2fa/verify-login", verifyLoginTwoFactor);
 
 export default router;

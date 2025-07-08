@@ -23,12 +23,11 @@ model user {
   updatedat             DateTime? @default(now()) @db.Timestamp(6)
   resetPasswordToken    String?
   resetPasswordExpire   DateTime?
-
   profileImage          String?  
   profileImagePublicId  String?  
-
   role Role @default(user)
-
+ twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String?  // Čuva se samo ako je 2FA uključen
   @@map("user")
 }
 

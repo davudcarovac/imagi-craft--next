@@ -11,6 +11,8 @@ import { sendEmail } from "../utils/sendEmail.ts";
 import geoip from "geoip-lite";
 import cloudinary from "../config/cloudinary.ts";
 import prisma from "../lib/prisma.ts";
+import speakeasy from "speakeasy";
+import QRCode from "qrcode";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -114,6 +116,17 @@ export async function loginUser(
     const isMatch = await comparePasswords(password, user.password);
     if (!isMatch) throw new ErrorResponse("Invalid credentials", 401);
 
+    if (user.twoFactorEnabled) {
+      res.status(200).json({
+        success: true,
+        message: "2FA required",
+        twoFactor: true,
+        userId: user.id,
+      });
+
+      return;
+    }
+
     const authToken = createToken(user.id);
     res.cookie("auth_token", authToken, {
       httpOnly: true,
@@ -134,6 +147,8 @@ export async function loginUser(
       role: user.role,
       profileImage: user.profileImage,
     };
+
+    console.log("login token ==> ", authToken);
 
     res.status(200).json({
       success: true,
@@ -595,6 +610,156 @@ export async function changeUsername(
     });
 
     res.status(200).json({ success: true, message: "Name changed" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function setupTwoFactor(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { id } = req.userData;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+
+    if (!user) {
+      throw new ErrorResponse("No user found", 400);
+    }
+
+    const secret = speakeasy.generateSecret({
+      name: `Frosty image (${user?.email}) `,
+    });
+
+    await prisma.user.update({
+      where: { id: id },
+      data: { twoFactorSecret: secret.base32 },
+    });
+
+    if (!secret.otpauth_url) {
+      throw new ErrorResponse("Otpauth is not generated", 400);
+    }
+
+    QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
+      if (err) throw new ErrorResponse("Qr code error", 500);
+
+      res.json({
+        success: true,
+        message: "Qr code has been generated",
+        qrCode: dataUrl,
+      });
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function verifyEnableTwoFactor(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { id } = req.userData;
+  const { token } = req.body;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+
+    if (!user) {
+      throw new ErrorResponse("User not found", 400);
+    }
+
+    if (!user.twoFactorSecret) {
+      throw new ErrorResponse("This user has no token", 400);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: "base32",
+      token,
+      window: 1,
+    });
+
+    if (!verified) {
+      throw new ErrorResponse("Invalid code", 400);
+    }
+
+    await prisma.user.update({
+      where: { id: id },
+      data: { twoFactorEnabled: true },
+    });
+
+    res.status(200).json({ success: true, message: "Two factor enabled" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function verifyLoginTwoFactor(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { token, id } = req.body;
+
+  try {
+    if (!token) {
+      throw new ErrorResponse("Code is missing", 400);
+    }
+
+    if (!id) {
+      throw new ErrorResponse("User id is missing", 400);
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: id } });
+
+    if (!user) {
+      throw new ErrorResponse("No user found", 400);
+    }
+
+    if (!user.twoFactorEnabled) {
+      throw new ErrorResponse("Two factor is not set", 400);
+    }
+
+    if (!user.twoFactorSecret) {
+      throw new ErrorResponse("Two factor secret is missing", 400);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: "base32",
+      token,
+      window: 1,
+    });
+
+    if (!verified) {
+      throw new ErrorResponse("Invalid code", 400);
+    }
+
+    const authToken = createToken(user.id);
+
+    res.cookie("auth_token", authToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isPremium: user.ispremium,
+      premiumExpires: user.premiumexpires,
+      createdAt: user.createdat,
+      updatedAt: user.updatedat,
+      role: user.role,
+      profileImage: user.profileImage,
+    };
+
+    res
+      .status(200)
+      .json({ success: true, message: "Logged in with 2FA", user: safeUser });
   } catch (error) {
     next(error);
   }
