@@ -11,7 +11,7 @@ export const csrfProtection = (
 ) => {
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     const token = generateCsrfToken();
-    console.log(token);
+    console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -24,8 +24,8 @@ export const csrfProtection = (
   const csrfCookie = req.cookies["XSRF-TOKEN"];
   const csrfHeader = req.headers["x-xsrf-token"];
 
-  console.log("csrf cookie => ", csrfCookie);
-  console.log("csrf header => ", csrfHeader);
+  // console.log("csrf cookie => ", csrfCookie);
+  // console.log("csrf header => ", csrfHeader);
 
   if (!csrfCookie || csrfCookie !== csrfHeader) {
     throw new ErrorResponse("CSRF token invalid or missing", 403);

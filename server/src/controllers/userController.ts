@@ -782,6 +782,48 @@ export async function verifyLoginTwoFactor(
   }
 }
 
+export async function disableTwoFactor(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { id } = req.userData;
+  const { currentPassword } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+    if (!user) {
+      throw new ErrorResponse("User not found", 400);
+    }
+
+    const isMatch = await comparePasswords(currentPassword, user.password);
+    if (!isMatch) {
+      throw new ErrorResponse("Incorrect password", 400);
+    }
+
+    if (!user.twoFactorEnabled) {
+      throw new ErrorResponse(
+        "Two-Factor Authentication is already disabled",
+        400
+      );
+    }
+
+    await prisma.user.update({
+      where: { id: id },
+      data: {
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+      },
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Two factor authentication disabled" });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function removeTokens(
   req: Request,
   res: Response,

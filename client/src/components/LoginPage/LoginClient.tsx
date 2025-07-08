@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import frostyImg from "../../assets/frostyImg-transparent.png";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -12,6 +12,9 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { LoginResponse } from "@/types/apiTypes";
+import { useVerifyLoginTwoFactor } from "@/hooks/useVerifyLoginTwoFactor";
+import { InputOtp } from "primereact/inputotp";
 
 const loginSchema = Yup.object({
   email: Yup.string()
@@ -27,14 +30,50 @@ type InitialValuesType = {
 
 const LoginClient = () => {
   const toast = useRef<Toast | null>(null);
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+  const [userIdFor2FA, setUserIdFor2FA] = useState<string | null>(null);
+  const [otpCode, setOtpCode] = useState<string | null>(null);
+
   const router = useRouter();
   const { isPending, mutate } = useLogin();
+  const { mutate: mutateVerifyLogin, isPending: isPendingVerifyLogin } =
+    useVerifyLoginTwoFactor();
   const { dispatch } = useAuthContext();
   const queryClient = useQueryClient();
 
   const initialValues: InitialValuesType = {
     email: "",
     password: "",
+  };
+
+  const otpDisbled = !otpCode || otpCode.length !== 6;
+
+  const verifyLoginTwoFactor = () => {
+    mutateVerifyLogin(
+      { token: otpCode, id: userIdFor2FA },
+      {
+        onSuccess: (response) => {
+          queryClient.invalidateQueries({ queryKey: ["user"] });
+          localStorage.setItem("user", JSON.stringify(response.user));
+          dispatch({ type: "LOGIN", payload: response.user });
+          toast.current?.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Logged in via 2FA",
+            life: 4000,
+          });
+          router.push("/");
+        },
+        onError: (error) => {
+          console.log("Verify login error ===> ", error);
+          toast.current?.show({
+            severity: "error",
+            summary: "2FA Error",
+            detail: error.message,
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -57,108 +96,142 @@ const LoginClient = () => {
             Log in to continue editing and managing your images with ease.
           </p>
 
-          <Formik
-            initialValues={initialValues}
-            validationSchema={loginSchema}
-            onSubmit={(values: InitialValuesType, { resetForm }) => {
-              mutate(values, {
-                onSuccess: (response) => {
-                  // const { name, email, id, isPremium, role } = response.user;
-                  // const user = {
-                  //   name,
-                  //   email,
-                  //   id,
-                  //   isPremium: isPremium,
-                  //   role,
-                  // };
-                  queryClient.invalidateQueries({ queryKey: ["user"] });
-                  localStorage.setItem("user", JSON.stringify(response.user));
-                  dispatch({ type: "LOGIN", payload: response.user });
-                  toast.current?.show({
-                    severity: "success",
-                    summary: "Success",
-                    detail: response.message,
-                    life: 4000,
+          <>
+            {!twoFactorRequired ? (
+              <Formik
+                initialValues={initialValues}
+                validationSchema={loginSchema}
+                onSubmit={(values, { resetForm }) => {
+                  mutate(values, {
+                    onSuccess: (response: LoginResponse) => {
+                      if ("user" in response) {
+                        queryClient.invalidateQueries({ queryKey: ["user"] });
+                        localStorage.setItem(
+                          "user",
+                          JSON.stringify(response.user)
+                        );
+                        dispatch({ type: "LOGIN", payload: response.user });
+                        toast.current?.show({
+                          severity: "success",
+                          summary: "Success",
+                          detail: response.message,
+                          life: 4000,
+                        });
+                        resetForm();
+                        router.push("/");
+                      } else if (
+                        "twoFactor" in response &&
+                        response.twoFactor === true
+                      ) {
+                        setTwoFactorRequired(true);
+                        setUserIdFor2FA(response.userId);
+                      } else {
+                        console.warn("Unexpected response format:", response);
+                      }
+                    },
+                    onError: (error) => {
+                      toast.current?.show({
+                        severity: "error",
+                        summary: "Error",
+                        detail: error.message,
+                      });
+                    },
                   });
-
-                  resetForm();
-                  router.push("/");
-                },
-                onError: (error) => {
-                  toast.current?.show({
-                    severity: "error",
-                    summary: "Error",
-                    detail: error.message,
-                    // life: 4000,
-                  });
-                },
-              });
-            }}
-            className="space-y-4"
-          >
-            {({ values, handleChange, handleBlur }) => (
-              <Form>
-                <div className="mb-3">
-                  <InputComponent
-                    isPending={isPending}
-                    type="text"
-                    name="email"
-                    labelName="Email"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.email}
-                    placeholder="Email"
-                    icon={
-                      <i
-                        className="pi pi-user text-xl "
-                        style={{ color: "gray" }}
+                }}
+              >
+                {({ values, handleChange, handleBlur }) => (
+                  <Form>
+                    <div className="mb-3">
+                      <InputComponent
+                        isPending={isPending}
+                        type="text"
+                        name="email"
+                        labelName="Email"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.email}
+                        placeholder="Email"
+                        icon={
+                          <i
+                            className="pi pi-user text-xl "
+                            style={{ color: "gray" }}
+                          />
+                        }
                       />
-                    }
-                  />
-
-                  <ErrorMessage
-                    name="email"
-                    component="p"
-                    className="text-red-500 text-[13px]"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <InputComponent
-                    isPending={isPending}
-                    type="password"
-                    name="password"
-                    labelName="Password"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.password}
-                    placeholder="Password"
-                    icon={
-                      <i
-                        className="pi pi-envelope text-xl "
-                        style={{ color: "gray" }}
+                      <ErrorMessage
+                        name="email"
+                        component="p"
+                        className="text-red-500 text-[13px]"
                       />
-                    }
-                  />
-                  <ErrorMessage
-                    name="password"
-                    component="p"
-                    className="text-red-500 text-[13px]"
-                  />
-                </div>
+                    </div>
 
+                    <div className="mb-3">
+                      <InputComponent
+                        isPending={isPending}
+                        type="password"
+                        name="password"
+                        labelName="Password"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.password}
+                        placeholder="Password"
+                        icon={
+                          <i
+                            className="pi pi-envelope text-xl "
+                            style={{ color: "gray" }}
+                          />
+                        }
+                      />
+                      <ErrorMessage
+                        name="password"
+                        component="p"
+                        className="text-red-500 text-[13px]"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isPending}
+                      className={` ${
+                        isPending ? "opacity-65" : "opacity-100"
+                      } w-full mt-3 bg-[#1aac83] text-white py-2 hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
+                    >
+                      Log In
+                    </button>
+                  </Form>
+                )}
+              </Formik>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-center text-sm text-gray-600">
+                  Two-Factor Authentication is enabled. Please enter the 6-digit
+                  code from your authenticator app.
+                </p>
+                <InputOtp
+                  value={otpCode}
+                  onChange={(e) =>
+                    setOtpCode(
+                      e.value !== undefined && e.value !== null
+                        ? String(e.value)
+                        : null
+                    )
+                  }
+                  length={6}
+                  integerOnly
+                />
                 <button
-                  type="submit"
-                  disabled={isPending}
-                  className={` ${
-                    isPending ? "opacity-65" : "opacity-100"
-                  } w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
+                  onClick={verifyLoginTwoFactor}
+                  disabled={otpDisbled}
+                  className={`${otpDisbled ? "opacity-70" : "opacity-100"}
+                    ${
+                      otpDisbled ? "cursor-not-allowed" : "cursor-pointer"
+                    } bg-[#1aac83] text-white px-4 py-2 rounded-md hover:bg-[#159a74] transition-all saira-font font-semibold`}
                 >
-                  Log In
+                  Verify Code
                 </button>
-              </Form>
+              </div>
             )}
-          </Formik>
+          </>
 
           <p className="text-sm text-center mt-2 text-gray-600">
             Don’t have an account?{" "}

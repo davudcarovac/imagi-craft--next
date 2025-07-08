@@ -105,7 +105,9 @@ export type SignupResponse = {
   user: User;
 };
 
-export type LoginResponse = SignupResponse;
+export type LoginResponse =
+  | SignupResponse
+  | { success: boolean; message: string; twoFactor: boolean; userId: string };
 export type ForgotPasswordResponse = SignupResponse;
 export type ResetPasswordResponse = {
   success: boolean;
@@ -146,6 +148,11 @@ export type verifyEnableTwoFactorData = {
   token: string;
 };
 
+export type VerifyLoginTwoFactorData = {
+  token: string | null;
+  id: string | null;
+};
+
 export type getUserResponse = {
   message: string;
   success: boolean;
@@ -167,6 +174,7 @@ export type VerifyEnableTwoFactorResponse = {
   message: string;
 };
 
+export type VerifyLoginTwoFactorResponse = SignupResponse;
 export type ErrorResponse = {
   success: boolean;
   message: string;

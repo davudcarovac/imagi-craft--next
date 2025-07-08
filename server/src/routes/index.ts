@@ -16,6 +16,7 @@ import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.ts";
 import {
   changePassword,
   changeUsername,
+  disableTwoFactor,
   forgotPassword,
   getCsrfToken,
   getGeo,
@@ -81,6 +82,7 @@ router.post("/change-username", verifyToken, changeUsername);
 
 router.post("/2fa/setup", verifyToken, setupTwoFactor);
 router.post("/2fa/verify-enable", verifyToken, verifyEnableTwoFactor);
-router.post("/2fa/verify-login", verifyLoginTwoFactor);
+router.post("/2fa/verify-login", csrfProtection, verifyLoginTwoFactor);
+router.post("/2fa/disable", verifyToken, disableTwoFactor);
 
 export default router;
