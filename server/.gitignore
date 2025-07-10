@@ -2,3 +2,5 @@
 
 .env
 /src/generated/prisma
+
+/src/python/venv

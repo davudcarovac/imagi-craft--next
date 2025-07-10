@@ -3,12 +3,14 @@ import { Sidebar } from "primereact/sidebar";
 import Image from "next/image";
 import Link from "next/link";
 import frostyImg from "../assets/frostyImg-transparent.png";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import servicesIcon from "../assets/action icons/nav/services.png";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import pricingIcon from "../assets/action icons/nav/credit-card.png";
 import profileImg from "@/assets/button images/user1.png";
+import { useLogout } from "@/hooks/useLogout";
+import { useQueryClient } from "@tanstack/react-query";
 
 type MenuSidebarType = {
   isOpen: boolean;
@@ -24,7 +26,10 @@ const MenuSidebar = ({
   closeSidebar,
 }: MenuSidebarType) => {
   const pathname = usePathname();
-  const { user, isLoading } = useAuthContext();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user, isLoading, dispatch } = useAuthContext();
+  const { mutate: logoutMutate } = useLogout();
 
   const renderUserOptions = (component: ReactNode) => {
     if (isLoading) return <div></div>;
@@ -32,6 +37,25 @@ const MenuSidebar = ({
     if (user) {
       return component;
     }
+  };
+
+  const logout = () => {
+    logoutMutate(undefined, {
+      onSuccess: (response) => {
+        dispatch({ type: "LOGOUT" });
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user");
+        }
+        queryClient.cancelQueries({ queryKey: ["user"] });
+        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+
+        router.push("/login");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
   };
 
   return (
@@ -148,7 +172,7 @@ const MenuSidebar = ({
             </div>
           )}
         </div>
-        {!user && (
+        {!user ? (
           <div className="width-full flex flex-col items-center gap-2">
             <Link
               href="/login"
@@ -162,6 +186,15 @@ const MenuSidebar = ({
             >
               Sign Up{" "}
             </Link>
+          </div>
+        ) : (
+          <div className="width-full flex flex-col items-center gap-2">
+            <button
+              onClick={logout}
+              className="w-[90%] text-center px-4 py-2 bg-red-100 text-red-500 cursor-pointer rounded-md font-semibold saira-font"
+            >
+              Log out
+            </button>
           </div>
         )}
       </div>

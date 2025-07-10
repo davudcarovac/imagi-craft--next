@@ -642,6 +642,12 @@ export async function postCropFace(
   }
 }
 
+type DownloadLinkType = {
+  name: string;
+  outputPath?: string;
+  error?: string;
+};
+
 export function deleteAllFilesInDirectory(directory: string) {
   fs.readdir(directory, (err, files) => {
     if (err) {

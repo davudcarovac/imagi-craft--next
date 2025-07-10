@@ -76,6 +76,7 @@ const CropfaceClient = () => {
         }
       },
       onError: (error) => {
+        console.log(error.message);
         if (axios.isAxiosError(error)) {
           toast.current?.show({
             severity: "error",
