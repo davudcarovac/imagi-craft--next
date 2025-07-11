@@ -16,6 +16,8 @@ import type { FormatEnum } from "sharp";
 import type { DownloadLinksType } from "../types/output.ts";
 import cropfaceFile from "../utils/cropfaceFile.ts";
 import sharp from "sharp";
+import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.ts";
+import { processImageForCell } from "../utils/collageFile.ts";
 
 const { __dirname } = fileDirName(import.meta);
 
@@ -642,10 +644,89 @@ export async function postCropFace(
   }
 }
 
-type DownloadLinkType = {
-  name: string;
-  outputPath?: string;
-  error?: string;
+export const postCollageMaker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { templateName } = req.body;
+    const files = req.files as Express.Multer.File[];
+
+    if (!files?.length) {
+      throw new Error("Minimum 1 image required");
+    }
+
+    const template =
+      PROFESSIONAL_TEMPLATES[templateName] ||
+      PROFESSIONAL_TEMPLATES.INSTAGRAM_GRID;
+
+    if (!template) {
+      throw new ErrorResponse("No template", 400);
+    }
+    const totalCells = template.rows * template.cols;
+
+    // 1. Izračunaj dimenzije ćelije
+    const cellWidth = Math.floor(
+      (template.width - (template.cellPadding || 0) * (template.cols + 1)) /
+        template.cols
+    );
+    const cellHeight = Math.floor(
+      (template.height - (template.cellPadding || 0) * (template.rows + 1)) /
+        template.rows
+    );
+
+    // 2. Obradi sve slike
+    const processedImages = await Promise.all(
+      files
+        .slice(0, totalCells)
+        .map((file) => processImageForCell(file.path, cellWidth, cellHeight))
+    );
+
+    // 3. Pripremi slojeve za kompoziciju
+    const layers = processedImages.map((buffer, index) => {
+      const row = Math.floor(index / template.cols);
+      const col = index % template.cols;
+
+      return {
+        input: buffer,
+        top: row * cellHeight + (template.cellPadding || 0) * (row + 1),
+        left: col * cellWidth + (template.cellPadding || 0) * (col + 1),
+        blend: "over" as const,
+      };
+    });
+
+    // 4. Kreiraj collage
+    const outputFilePath = path.join(
+      __dirname,
+      "outputs",
+      "..",
+      `collage-${Date.now()}.jpg` // 👈 Eksplicitno dodajte ekstenziju
+    );
+
+    await sharp({
+      create: {
+        width: template.width,
+        height: template.height,
+        channels: 4,
+        background: template.backgroundColor || "#ffffff",
+      },
+    })
+      .composite(layers)
+      .jpeg({
+        quality: 98,
+        mozjpeg: true,
+      })
+      .toFile(outputFilePath); // 👈 Koristite punu putanju
+
+    res.json({
+      success: true,
+      path: outputFilePath.replace(`${__dirname}/../`, ""), // Relativna putanja za klijenta
+      dimensions: { width: template.width, height: template.height },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export function deleteAllFilesInDirectory(directory: string) {

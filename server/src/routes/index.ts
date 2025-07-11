@@ -3,6 +3,7 @@ import {
   deleteAll,
   getDownloadAllFiles,
   getDownloadFileById,
+  postCollageMaker,
   // getHomePage,
   postCompressImage,
   postConvertImage,
@@ -48,6 +49,7 @@ router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 
 // premium
 router.post("/crop-face", uploadsMiddleware, postCropFace);
+router.post("/collage", uploadsMiddleware, postCollageMaker);
 
 router.get("/download/:fileId", getDownloadFileById);
 router.get("/download-all", getDownloadAllFiles);

@@ -1,3 +1,4 @@
+import { sharp } from "sharp";
 export type DownloadLinksType = {
   name: string;
   size: number;
@@ -5,3 +6,23 @@ export type DownloadLinksType = {
   width: number;
   format: string;
 } & { error?: string };
+
+export type CollageTemplate = {
+  name: string;
+  width: number;
+  height: number;
+  rows: number;
+  cols: number;
+  cellPadding?: number;
+  targetDPI?: number;
+  backgroundColor?: string | sharp.Color;
+};
+
+export type ImageAsset = {
+  buffer: Buffer;
+  metadata: sharp.Metadata;
+  position: {
+    row: number;
+    col: number;
+  };
+};

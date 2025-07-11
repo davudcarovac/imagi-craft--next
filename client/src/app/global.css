@@ -173,3 +173,57 @@ h3 {
 .cancel-btn {
   border-color: #1aac83;
 }
+
+.collage-maker {
+  display: grid;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 80px);
+  gap: 10px;
+}
+
+.template {
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+}
+
+.template.premium {
+  border-color: gold;
+  position: relative;
+}
+
+.premium-badge {
+  background: gold;
+  color: black;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  border-radius: 10px;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+}
+
+.canvas-container {
+  position: relative;
+}
+
+.watermark-notice {
+  background: #fff3cd;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}

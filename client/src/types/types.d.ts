@@ -33,3 +33,35 @@ export type AuthStatus =
   | { state: "loading" }
   | { state: "authenticated"; user: User }
   | { state: "unauthenticated" };
+
+// Collage
+
+// Tipovi za Collage
+export type Template = {
+  id: string;
+  name: string;
+  icon: string;
+  premium: boolean;
+  dimensions?: { width: number; height: number };
+};
+
+export type ImageAsset = {
+  id: string;
+  file: File;
+  previewUrl: string;
+  position?: { x: number; y: number };
+};
+
+export type CollageState = {
+  images: ImageAsset[];
+  selectedTemplate: string;
+  background: string;
+  textElements: TextElement[];
+};
+
+export type TextElement = {
+  id: string;
+  content: string;
+  color: string;
+  position: { x: number; y: number };
+};
