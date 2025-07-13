@@ -1,4 +1,19 @@
-import type { CollageTemplate } from "../types/output.js";
+// src/templates.ts
+
+export interface CollageTemplate {
+  name: string;
+  width: number;
+  height: number;
+  rows: number;
+  cols: number;
+  cellPadding?: number;
+  gridHeight?: string;
+  gridWidth?: string;
+
+  backgroundColor?:
+    | string
+    | { r: number; g: number; b: number; alpha?: number };
+}
 
 export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
   INSTAGRAM_GRID: {
@@ -10,14 +25,16 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     cellPadding: 2,
     backgroundColor: "#ffffff",
   },
+
   PRINT_POSTER: {
     name: "A4 Poster",
     width: 2480,
     height: 3508,
     rows: 4,
     cols: 3,
-    targetDPI: 300,
-    backgroundColor: { r: 255, g: 255, b: 255, alpha: 1 },
+
+    cellPadding: 10,
+    backgroundColor: "#f8f8f8",
   },
 
   CLASSIC: {

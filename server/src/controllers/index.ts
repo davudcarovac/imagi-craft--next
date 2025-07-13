@@ -650,8 +650,10 @@ export const postCollageMaker = async (
   next: NextFunction
 ) => {
   try {
-    const { templateName } = req.body;
+    const { templateName, customPadding } = req.body;
     const files = req.files as Express.Multer.File[];
+
+    console.log("data ===> ", templateName, customPadding);
 
     if (!files?.length) {
       throw new Error("Minimum 1 image required");
@@ -664,16 +666,21 @@ export const postCollageMaker = async (
     if (!template) {
       throw new ErrorResponse("No template", 400);
     }
+    const padding =
+      typeof customPadding === "string"
+        ? parseInt(customPadding)
+        : typeof customPadding === "number"
+        ? customPadding
+        : template.cellPadding || 0;
+
     const totalCells = template.rows * template.cols;
 
     // 1. Izračunaj dimenzije ćelije
     const cellWidth = Math.floor(
-      (template.width - (template.cellPadding || 0) * (template.cols + 1)) /
-        template.cols
+      (template.width - (padding || 0) * (template.cols + 1)) / template.cols
     );
     const cellHeight = Math.floor(
-      (template.height - (template.cellPadding || 0) * (template.rows + 1)) /
-        template.rows
+      (template.height - (padding || 0) * (template.rows + 1)) / template.rows
     );
 
     // 2. Obradi sve slike
@@ -690,8 +697,8 @@ export const postCollageMaker = async (
 
       return {
         input: buffer,
-        top: row * cellHeight + (template.cellPadding || 0) * (row + 1),
-        left: col * cellWidth + (template.cellPadding || 0) * (col + 1),
+        top: row * cellHeight + (padding || 0) * (row + 1),
+        left: col * cellWidth + (padding || 0) * (col + 1),
         blend: "over" as const,
       };
     });

@@ -25,8 +25,13 @@ export default function RootLayout({
       <head />
       <body className={`${saira.variable} ${inter.variable}`}>
         <Providers>
-          <Header />
-          {children}
+          <div className="flex flex-col min-h-screen">
+            {/* Header je fiksiran na vrhu sa poznatom visinom */}
+            <Header />
+
+            {/* Main sadržaj ima padding-top da ne bi bio ispod headera */}
+            <main className="flex-1">{children}</main>
+          </div>
         </Providers>
       </body>
     </html>

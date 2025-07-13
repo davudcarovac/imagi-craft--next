@@ -1,4 +1,4 @@
-import { CollageClient } from "@/components/CollagePage/CollageClient";
+import CollageClient from "@/components/CollagePage/CollageClient";
 import React from "react";
 
 const page = () => {

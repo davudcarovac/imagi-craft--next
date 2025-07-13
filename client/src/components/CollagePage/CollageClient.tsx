@@ -1,69 +1,280 @@
 "use client";
 
-import { useState } from "react";
-import { TEMPLATES, TemplateSelector } from "./components/TemplateSelector";
-import { ImageUpload } from "./components/ImageUpload";
-import { CollageCanvas } from "./components/CollageCanvas";
-import { ImageAsset } from "@/types/types";
+import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { PROFESSIONAL_TEMPLATES } from "./utils/templates";
+import {
+  FileUpload,
+  FileUploadHandlerEvent,
+  FileUploadUploadEvent,
+} from "primereact/fileupload";
+import { UploadCloud } from "lucide-react"; // koristiš iz 'lucide-react'
+import { Slider } from "primereact/slider";
+import { Dropdown } from "primereact/dropdown";
+import SubmitButton from "../SubmitButton";
+import { useCollage } from "@/hooks/useCollage";
 
-export const CollageClient = () => {
-  const [state, setState] = useState<{
-    images: ImageAsset[];
-    template: string;
-    isPremium: boolean;
-  }>({
-    images: [],
-    template: "grid",
-    isPremium: false,
-  });
+const templates = [
+  { value: "INSTAGRAM_GRID", name: "instagram" },
+  { value: "PRINT_POSTER", name: "A4 Poster" },
+  { value: "CLASSIC", name: "2x2" },
+  { value: "PINTEREST_PIN", name: "Pinterest pin" },
+];
 
-  const handleImageUpload = (newImages: ImageAsset[]) => {
-    setState((prev) => ({
-      ...prev,
-      images: newImages.map((img) => ({
-        ...img,
-        position: { x: 0, y: 0 }, // Default position
-      })),
-    }));
+export default function CollageClient() {
+  const { mutate: mutateCollage, isPending: isPendingCollage } = useCollage();
+  const [images, setImages] = useState<string[]>([]);
+  const [template, setTemplate] = useState<keyof typeof PROFESSIONAL_TEMPLATES>(
+    templates[0].value
+  );
+  const [selectedTemplateKey, setSelectedTemplateKey] = useState<
+    keyof typeof PROFESSIONAL_TEMPLATES
+  >(templates[0].value);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const selectedTemplate = PROFESSIONAL_TEMPLATES[template];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cellSize, setCellSize] = useState(100);
+  const [gridPadding, setGridPadding] = useState<number>(
+    selectedTemplate.cellPadding || 3
+  ); // početni padding
+  const formData = new FormData();
+
+  useEffect(() => {
+    function updateCellSize() {
+      if (!containerRef.current) return;
+
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+
+      const availableHeight = viewportHeight - 160;
+      const totalPaddingHeight =
+        (selectedTemplate.rows - 1) * (selectedTemplate.cellPadding ?? 0);
+      const totalPaddingWidth =
+        (selectedTemplate.cols - 1) * (selectedTemplate.cellPadding ?? 0);
+
+      let possibleCellHeight =
+        (availableHeight - totalPaddingHeight) / selectedTemplate.rows;
+      possibleCellHeight = possibleCellHeight * 0.95;
+
+      const totalWidth =
+        possibleCellHeight * selectedTemplate.cols + totalPaddingWidth;
+      if (totalWidth > viewportWidth) {
+        let possibleCellWidth =
+          (viewportWidth - totalPaddingWidth) / selectedTemplate.cols;
+        possibleCellWidth = possibleCellWidth * 0.95;
+        possibleCellHeight = possibleCellWidth;
+      }
+
+      setCellSize(possibleCellHeight);
+    }
+
+    updateCellSize();
+    window.addEventListener("resize", updateCellSize);
+    return () => window.removeEventListener("resize", updateCellSize);
+  }, [selectedTemplate]);
+
+  const [uploadedFiles, setUploadedFiles] = useState<
+    { file: File; image: string }[]
+  >(Array(selectedTemplate.rows * selectedTemplate.cols).fill(null));
+
+  const handleUploadByIndex = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const newFiles = [...uploadedFiles];
+    newFiles[index] = { file: file, image: URL.createObjectURL(file) };
+    setUploadedFiles(newFiles);
+    uploadedFiles;
   };
 
-  const handleImageMove = (id: string, x: number, y: number) => {
-    setState((prev) => ({
-      ...prev,
-      images: prev.images.map((img) =>
-        img.id === id ? { ...img, position: { x, y } } : img
-      ),
-    }));
+  const onUpload = (event: FileUploadHandlerEvent) => {
+    const newImages = event.files.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...newImages]);
   };
 
-  const selectedTemplate = TEMPLATES.find((t) => t.id === state.template)!;
+  const totalGridWidth =
+    cellSize * selectedTemplate.cols +
+    (selectedTemplate.cols - 1) * gridPadding;
+  const totalGridHeight =
+    cellSize * selectedTemplate.rows +
+    (selectedTemplate.rows - 1) * gridPadding;
+
+  const submitCollage = (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent
+  ) => {
+    e.preventDefault();
+    console.log(uploadedFiles);
+    uploadedFiles.forEach(({ file }) => formData.append("files", file));
+    formData.append("templateName", template);
+    formData.append("customPadding", JSON.stringify(gridPadding));
+
+    mutateCollage(formData, {
+      onSuccess: (response) => {
+        console.log("Response collage ===> ", response);
+      },
+      onError: (error) => {
+        console.log("Error collage ===> ", error);
+      },
+    });
+  };
+
+  useEffect(() => {
+    console.log(selectedTemplate);
+  }, [selectedTemplate]);
 
   return (
-    <div className="collage-maker">
-      <TemplateSelector
-        selectedTemplate={state.template}
-        onSelect={(templateId) => setState({ ...state, template: templateId })}
-        isPremium={state.isPremium}
-      />
+    <div className="flex h-screen overflow-hidden" ref={containerRef}>
+      {/* Sidebar */}
+      <aside
+        className={`
+    fixed top-0 left-0 z-40 h-[100%] w-72 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out
+    transform
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    lg2:translate-x-0
+    lg2:relative
+    lg2:top-0
+    top-20
+  `}
+      >
+        <h1 className="text-2xl font-semibold mb-6 text-[#1aac83]">
+          Collage options
+        </h1>
+        <form onSubmit={submitCollage}>
+          <div className="mb-8">
+            <label
+              htmlFor="image-upload"
+              className="block mb-2 text-[#1aac83] font-medium text-lg"
+            >
+              Upload images
+            </label>
 
-      <ImageUpload
-        onUpload={handleImageUpload}
-        maxImages={state.isPremium ? 10 : 4}
-      />
+            <FileUpload
+              className="custom-file-upload font-medium "
+              multiple
+              mode="basic"
+              id="image-upload"
+              accept="image/*"
+              customUpload
+              uploadHandler={onUpload}
+              // maxFileSize={1000000}
+              // onUpload={onUpload}
+              auto
+              chooseLabel="Browse"
+            />
+          </div>
 
-      <CollageCanvas
-        images={state.images}
-        template={selectedTemplate}
-        onImageMove={handleImageMove}
-      />
+          {/* Zatvori dugme - vidi se samo na manjim ekranima */}
+          <button
+            className="lg2:hidden absolute top-4 right-4 p-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Zatvori sidebar"
+          >
+            ✕
+          </button>
 
-      {!state.isPremium && (
-        <div className="watermark-notice">
-          <p>
-            Free version adds watermark. <button>Upgrade</button>
-          </p>
-        </div>
+          <section>
+            <label className="block font-medium text-lg mb-2 saira-font text-[#1aac83]">
+              Choose layout
+            </label>
+            <Dropdown
+              value={template}
+              onChange={(e) => setTemplate(e.value)}
+              options={templates}
+              optionLabel="name"
+              placeholder="Select template"
+              className="w-full"
+            />
+          </section>
+
+          <div className="my-6">
+            <label className="block mb-2 text-[#1aac83] text-lg font-medium">
+              Cell spacing:{" "}
+              <span className="font-semibold">{gridPadding}px</span>
+            </label>
+            <Slider
+              value={gridPadding}
+              onChange={(e) => setGridPadding(e.value as number)}
+              min={0}
+              max={20}
+              step={1}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <SubmitButton isPending={isPendingCollage}>Submit</SubmitButton>
+          </div>
+        </form>
+      </aside>
+
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="top-25 left-5 absolute cursor-pointer  p-2 h-auto  bg-[#1aac83] rounded-md"
+        >
+          <i className="pi pi-cog" style={{ color: "white" }}></i>
+        </button>
       )}
+
+      <main
+        className="flex-1 overflow-auto flex justify-center items-center"
+        style={{ padding: 20 }}
+      >
+        <div
+          style={{
+            width: totalGridWidth,
+            height: totalGridHeight,
+            display: "grid",
+            gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellSize}px)`,
+            gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellSize}px)`,
+            gap: gridPadding,
+            margin: "0 auto",
+            // borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          {Array.from({
+            length: selectedTemplate.rows * selectedTemplate.cols,
+          }).map((_, i) => {
+            const src = uploadedFiles[i]?.image;
+
+            return (
+              <div
+                key={i}
+                className="relative bg-white overflow-hidden group  transition"
+                style={{ width: cellSize, height: cellSize }}
+              >
+                {/* File input (nevidljiv ali preko celog kvadrata) */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleUploadByIndex(e, i)}
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  title=""
+                />
+
+                {/* Slika ako postoji */}
+                {src ? (
+                  <Image
+                    src={src}
+                    alt={`img-${i}`}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  // Ikonica ako nema slike
+                  <div className="flex items-center flex-col justify-center h-full w-full text-gray-400 group-hover:text-[#1aac83] transition-colors duration-200">
+                    <UploadCloud className="w-7 h-7 text-[#1aac83]" />
+                    <p className="text-sm text-[#1aac83]">Upload a image</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </main>
     </div>
   );
-};
+}
