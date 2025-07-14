@@ -3,22 +3,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { PROFESSIONAL_TEMPLATES } from "./utils/templates";
-import {
-  FileUpload,
-  FileUploadHandlerEvent,
-  FileUploadUploadEvent,
-} from "primereact/fileupload";
+import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
 import { UploadCloud } from "lucide-react"; // koristiš iz 'lucide-react'
 import { Slider } from "primereact/slider";
 import { Dropdown } from "primereact/dropdown";
 import SubmitButton from "../SubmitButton";
 import { useCollage } from "@/hooks/useCollage";
+import { ColorPicker, ColorPickerChangeEvent } from "primereact/colorpicker";
 
 const templates = [
-  { value: "INSTAGRAM_GRID", name: "instagram" },
-  { value: "PRINT_POSTER", name: "A4 Poster" },
   { value: "CLASSIC", name: "2x2" },
+  { value: "PRINT_POSTER", name: "A4 Poster" },
+  { value: "INSTAGRAM_GRID", name: "Instagram grid" },
   { value: "PINTEREST_PIN", name: "Pinterest pin" },
+  { value: "INSTAGRAM_STORY", name: "Instagram Story Split" },
+  { value: "PHOTO_BOOTH", name: "Photo Booth Strip" },
+  { value: "BEFORE_AFTER", name: "Before / After" },
+  { value: "MAGAZINE_SPREAD", name: "Magazine spread" },
 ];
 
 export default function CollageClient() {
@@ -38,34 +39,33 @@ export default function CollageClient() {
     selectedTemplate.cellPadding || 3
   ); // početni padding
   const formData = new FormData();
+  const [color, setColor] = useState<string>("");
 
   useEffect(() => {
     function updateCellSize() {
       if (!containerRef.current) return;
 
-      const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
 
-      const availableHeight = viewportHeight - 160;
-      const totalPaddingHeight =
-        (selectedTemplate.rows - 1) * (selectedTemplate.cellPadding ?? 0);
-      const totalPaddingWidth =
+      const horizontalPadding =
         (selectedTemplate.cols - 1) * (selectedTemplate.cellPadding ?? 0);
+      const verticalPadding =
+        (selectedTemplate.rows - 1) * (selectedTemplate.cellPadding ?? 0);
 
-      let possibleCellHeight =
-        (availableHeight - totalPaddingHeight) / selectedTemplate.rows;
-      possibleCellHeight = possibleCellHeight * 0.95;
+      // Maksimalne dozvoljene dimenzije grida
+      const maxGridWidth = viewportWidth * 0.85;
+      const maxGridHeight = viewportHeight * 0.75;
 
-      const totalWidth =
-        possibleCellHeight * selectedTemplate.cols + totalPaddingWidth;
-      if (totalWidth > viewportWidth) {
-        let possibleCellWidth =
-          (viewportWidth - totalPaddingWidth) / selectedTemplate.cols;
-        possibleCellWidth = possibleCellWidth * 0.95;
-        possibleCellHeight = possibleCellWidth;
-      }
+      // Potencijalne veličine ćelija u oba smera
+      const maxCellWidth =
+        (maxGridWidth - horizontalPadding) / selectedTemplate.cols;
+      const maxCellHeight =
+        (maxGridHeight - verticalPadding) / selectedTemplate.rows;
 
-      setCellSize(possibleCellHeight);
+      const finalCellSize = Math.floor(Math.min(maxCellWidth, maxCellHeight));
+
+      setCellSize(finalCellSize);
     }
 
     updateCellSize();
@@ -122,15 +122,26 @@ export default function CollageClient() {
   };
 
   useEffect(() => {
-    console.log(selectedTemplate);
+    const totalSlots = selectedTemplate.rows * selectedTemplate.cols;
+    setUploadedFiles(Array(totalSlots).fill(null));
   }, [selectedTemplate]);
 
+  const resolveBackgroundColor = (
+    bg: string | { r: number; g: number; b: number; alpha?: number } | undefined
+  ) => {
+    if (!bg) return "#ffffff";
+    if (typeof bg === "string") return bg;
+
+    const { r, g, b, alpha } = bg;
+    return `rgba(${r}, ${g}, ${b}, ${alpha ?? 1})`;
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden" ref={containerRef}>
+    <div className="flex min-h-screen overflow-hidden" ref={containerRef}>
       {/* Sidebar */}
       <aside
         className={`
-    fixed top-0 left-0 z-40 h-[100%] w-72 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out
+    fixed top-0 left-0 z-40 min-h-screen w-72 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out
     transform
     ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
     lg2:translate-x-0
@@ -203,6 +214,17 @@ export default function CollageClient() {
               className="w-full"
             />
           </div>
+          <div className="my-6">
+            <label className="block mb-2 text-[#1aac83] text-lg font-medium">
+              Background color:
+            </label>
+            <ColorPicker
+              value={color}
+              onChange={(e: ColorPickerChangeEvent) =>
+                setColor(e.value as string)
+              }
+            />
+          </div>
           <div>
             <SubmitButton isPending={isPendingCollage}>Submit</SubmitButton>
           </div>
@@ -218,63 +240,103 @@ export default function CollageClient() {
         </button>
       )}
 
-      <main
-        className="flex-1 overflow-auto flex justify-center items-center"
-        style={{ padding: 20 }}
-      >
-        <div
-          style={{
-            width: totalGridWidth,
-            height: totalGridHeight,
-            display: "grid",
-            gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellSize}px)`,
-            gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellSize}px)`,
-            gap: gridPadding,
-            margin: "0 auto",
-            // borderRadius: 8,
-            overflow: "hidden",
-          }}
-        >
-          {Array.from({
-            length: selectedTemplate.rows * selectedTemplate.cols,
-          }).map((_, i) => {
-            const src = uploadedFiles[i]?.image;
+      <div className="flex justify-center items-center flex-col w-screen">
+        <div className="w-[70%] my-6 p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+          <h2 className="text-2xl font-semibold text-[#1aac83] mb-4 border-b border-slate-100 pb-2 saira-font">
+            Layout Details
+          </h2>
 
-            return (
-              <div
-                key={i}
-                className="relative bg-white overflow-hidden group  transition"
-                style={{ width: cellSize, height: cellSize }}
-              >
-                {/* File input (nevidljiv ali preko celog kvadrata) */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleUploadByIndex(e, i)}
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                  title=""
-                />
+          <div className="grid grid-cols-2 gap-x-5 gap-y-1 text-sm text-slate-700">
+            <div className="space-y-1">
+              <p className="font-medium text-slate-600">
+                Dimensions: {selectedTemplate.width} × {selectedTemplate.height}
+                px
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-slate-600">
+                Columns: {selectedTemplate.cols}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-slate-600">
+                Rows: {selectedTemplate.rows}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-slate-600">
+                Total Slots: {selectedTemplate.rows * selectedTemplate.cols}
+              </p>
+            </div>
 
-                {/* Slika ako postoji */}
-                {src ? (
-                  <Image
-                    src={src}
-                    alt={`img-${i}`}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  // Ikonica ako nema slike
-                  <div className="flex items-center flex-col justify-center h-full w-full text-gray-400 group-hover:text-[#1aac83] transition-colors duration-200">
-                    <UploadCloud className="w-7 h-7 text-[#1aac83]" />
-                    <p className="text-sm text-[#1aac83]">Upload a image</p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+            <div className="space-y-1">
+              <p className="font-medium text-slate-600">
+                Cell Padding: {gridPadding}px
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
+        <main
+          className="flex-1 overflow-auto flex justify-center items-center flex-col gap-5 max-w-screen"
+          style={{ padding: 20 }}
+        >
+          <div
+            style={{
+              width: totalGridWidth,
+              height: totalGridHeight,
+              display: "grid",
+              gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellSize}px)`,
+              gap: gridPadding,
+              margin: "0 auto",
+              // borderRadius: 8,
+              overflow: "hidden",
+              backgroundColor: resolveBackgroundColor(
+                selectedTemplate.backgroundColor
+              ),
+            }}
+          >
+            {Array.from({
+              length: selectedTemplate.rows * selectedTemplate.cols,
+            }).map((_, i) => {
+              const src = uploadedFiles[i]?.image;
+
+              return (
+                <div
+                  key={i}
+                  className="relative bg-white overflow-hidden group  transition"
+                  style={{ width: cellSize, height: cellSize }}
+                >
+                  {/* File input (nevidljiv ali preko celog kvadrata) */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleUploadByIndex(e, i)}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    title=""
+                  />
+
+                  {/* Slika ako postoji */}
+                  {src ? (
+                    <Image
+                      src={src}
+                      alt={`img-${i}`}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    // Ikonica ako nema slike
+                    <div className="flex items-center flex-col justify-center h-full w-full text-gray-400 group-hover:text-[#1aac83] transition-colors duration-200">
+                      <UploadCloud className="w-7 h-7 text-[#1aac83]" />
+                      <p className="text-sm text-[#1aac83]">Upload a image</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
