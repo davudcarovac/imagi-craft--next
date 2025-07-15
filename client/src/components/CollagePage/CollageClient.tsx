@@ -34,12 +34,17 @@ export default function CollageClient() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const selectedTemplate = PROFESSIONAL_TEMPLATES[template];
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cellSize, setCellSize] = useState(100);
-  const [gridPadding, setGridPadding] = useState<number>(
-    selectedTemplate.cellPadding || 3
-  ); // početni padding
+
   const formData = new FormData();
   const [color, setColor] = useState<string>("");
+
+  // States
+  const [gridPadding, setGridPadding] = useState<number>(
+    selectedTemplate.cellPadding || 3
+  );
+  const [cellWidth, setCellWidth] = useState(0);
+  const [cellHeight, setCellHeight] = useState(0);
+  const [scaledGap, setScaledGap] = useState(0);
 
   useEffect(() => {
     function updateCellSize() {
@@ -48,30 +53,54 @@ export default function CollageClient() {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      const horizontalPadding =
-        (selectedTemplate.cols - 1) * (selectedTemplate.cellPadding ?? 0);
-      const verticalPadding =
-        (selectedTemplate.rows - 1) * (selectedTemplate.cellPadding ?? 0);
+      const baseGap = gridPadding; // koristi vrednost iz state
 
-      // Maksimalne dozvoljene dimenzije grida
+      const horizontalGapTotal = (selectedTemplate.cols - 1) * baseGap;
+      const verticalGapTotal = (selectedTemplate.rows - 1) * baseGap;
+
       const maxGridWidth = viewportWidth * 0.85;
       const maxGridHeight = viewportHeight * 0.75;
 
-      // Potencijalne veličine ćelija u oba smera
       const maxCellWidth =
-        (maxGridWidth - horizontalPadding) / selectedTemplate.cols;
+        (maxGridWidth - horizontalGapTotal) / selectedTemplate.cols;
       const maxCellHeight =
-        (maxGridHeight - verticalPadding) / selectedTemplate.rows;
+        (maxGridHeight - verticalGapTotal) / selectedTemplate.rows;
 
-      const finalCellSize = Math.floor(Math.min(maxCellWidth, maxCellHeight));
+      const templateCellWidth = selectedTemplate.width / selectedTemplate.cols;
+      const templateCellHeight =
+        selectedTemplate.height / selectedTemplate.rows;
 
-      setCellSize(finalCellSize);
+      const widthScale = maxCellWidth / templateCellWidth;
+      const heightScale = maxCellHeight / templateCellHeight;
+
+      const scale = Math.min(widthScale, heightScale);
+
+      setCellWidth(templateCellWidth * scale);
+      setCellHeight(templateCellHeight * scale);
+
+      setScaledGap(baseGap * scale);
     }
 
     updateCellSize();
     window.addEventListener("resize", updateCellSize);
     return () => window.removeEventListener("resize", updateCellSize);
-  }, [selectedTemplate]);
+  }, [selectedTemplate, gridPadding]);
+
+  // Slider deo (u JSX)
+
+  <div className="my-6">
+    <label className="block mb-2 text-[#1aac83] text-lg font-medium">
+      Cell spacing: <span className="font-semibold">{gridPadding}px</span>
+    </label>
+    <Slider
+      value={gridPadding}
+      onChange={(e) => setGridPadding(e.value as number)}
+      min={0}
+      max={20}
+      step={1}
+      className="w-full"
+    />
+  </div>;
 
   const [uploadedFiles, setUploadedFiles] = useState<
     { file: File; image: string }[]
@@ -96,11 +125,10 @@ export default function CollageClient() {
   };
 
   const totalGridWidth =
-    cellSize * selectedTemplate.cols +
-    (selectedTemplate.cols - 1) * gridPadding;
+    cellWidth * selectedTemplate.cols + (selectedTemplate.cols - 1) * scaledGap;
   const totalGridHeight =
-    cellSize * selectedTemplate.rows +
-    (selectedTemplate.rows - 1) * gridPadding;
+    cellHeight * selectedTemplate.rows +
+    (selectedTemplate.rows - 1) * scaledGap;
 
   const submitCollage = (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent
@@ -141,7 +169,7 @@ export default function CollageClient() {
       {/* Sidebar */}
       <aside
         className={`
-    fixed top-0 left-0 z-40 min-h-screen w-72 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out
+    fixed top-0 left-0 z-40 min-h-screen w-80 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out
     transform
     ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
     lg2:translate-x-0
@@ -163,15 +191,13 @@ export default function CollageClient() {
             </label>
 
             <FileUpload
-              className="custom-file-upload font-medium "
+              className="custom-file-upload font-medium"
               multiple
               mode="basic"
               id="image-upload"
               accept="image/*"
               customUpload
               uploadHandler={onUpload}
-              // maxFileSize={1000000}
-              // onUpload={onUpload}
               auto
               chooseLabel="Browse"
             />
@@ -214,17 +240,7 @@ export default function CollageClient() {
               className="w-full"
             />
           </div>
-          <div className="my-6">
-            <label className="block mb-2 text-[#1aac83] text-lg font-medium">
-              Background color:
-            </label>
-            <ColorPicker
-              value={color}
-              onChange={(e: ColorPickerChangeEvent) =>
-                setColor(e.value as string)
-              }
-            />
-          </div>
+
           <div>
             <SubmitButton isPending={isPendingCollage}>Submit</SubmitButton>
           </div>
@@ -278,16 +294,21 @@ export default function CollageClient() {
         </div>
         <main
           className="flex-1 overflow-auto flex justify-center items-center flex-col gap-5 max-w-screen"
-          style={{ padding: 20 }}
+          style={{
+            padding: 20,
+            // backgroundColor: resolveBackgroundColor(
+            //   selectedTemplate.backgroundColor
+            // ),
+          }}
         >
           <div
             style={{
               width: totalGridWidth,
               height: totalGridHeight,
               display: "grid",
-              gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellSize}px)`,
-              gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellSize}px)`,
-              gap: gridPadding,
+              gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellWidth}px)`,
+              gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellHeight}px)`,
+              gap: scaledGap,
               margin: "0 auto",
               // borderRadius: 8,
               overflow: "hidden",
@@ -305,7 +326,7 @@ export default function CollageClient() {
                 <div
                   key={i}
                   className="relative bg-white overflow-hidden group  transition"
-                  style={{ width: cellSize, height: cellSize }}
+                  style={{ width: cellWidth, height: cellHeight }}
                 >
                   {/* File input (nevidljiv ali preko celog kvadrata) */}
                   <input

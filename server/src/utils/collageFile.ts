@@ -11,7 +11,7 @@ export const processImageForCell = async (
       width: cellWidth,
       height: cellHeight,
       fit: sharp.fit.cover,
-      position: sharp.strategy.attention,
+      // position: sharp.strategy.attention,
       kernel: sharp.kernel.lanczos3,
       withoutEnlargement: false,
     })

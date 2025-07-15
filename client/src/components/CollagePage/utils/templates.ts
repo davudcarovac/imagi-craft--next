@@ -23,7 +23,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 3,
     cols: 3,
     cellPadding: 2,
-    backgroundColor: "#ffffff",
+    backgroundColor: "ffffff",
   },
 
   PRINT_POSTER: {
@@ -43,7 +43,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 2,
     cellPadding: 2,
-    backgroundColor: "#1aac83",
+    backgroundColor: "#ffffff",
   },
 
   PINTEREST_PIN: {
