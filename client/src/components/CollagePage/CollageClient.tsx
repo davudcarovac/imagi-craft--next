@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { PROFESSIONAL_TEMPLATES } from "./utils/templates";
 import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
-import { UploadCloud } from "lucide-react"; // koristiš iz 'lucide-react'
+import { UploadCloud } from "lucide-react";
 import { Slider } from "primereact/slider";
 import { Dropdown } from "primereact/dropdown";
 import SubmitButton from "../SubmitButton";
@@ -45,6 +45,7 @@ export default function CollageClient() {
   const [cellWidth, setCellWidth] = useState(0);
   const [cellHeight, setCellHeight] = useState(0);
   const [scaledGap, setScaledGap] = useState(0);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     function updateCellSize() {
@@ -53,32 +54,33 @@ export default function CollageClient() {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      const baseGap = gridPadding; // koristi vrednost iz state
-
-      const horizontalGapTotal = (selectedTemplate.cols - 1) * baseGap;
-      const verticalGapTotal = (selectedTemplate.rows - 1) * baseGap;
-
       const maxGridWidth = viewportWidth * 0.85;
       const maxGridHeight = viewportHeight * 0.75;
 
-      const maxCellWidth =
-        (maxGridWidth - horizontalGapTotal) / selectedTemplate.cols;
-      const maxCellHeight =
-        (maxGridHeight - verticalGapTotal) / selectedTemplate.rows;
+      // Izračunaj faktor skaliranja na osnovu cele širine i visine template-a
+      const widthScale = maxGridWidth / selectedTemplate.width;
+      const heightScale = maxGridHeight / selectedTemplate.height;
+      const newScale = Math.min(widthScale, heightScale);
 
-      const templateCellWidth = selectedTemplate.width / selectedTemplate.cols;
-      const templateCellHeight =
-        selectedTemplate.height / selectedTemplate.rows;
+      // Preračunaj scaled gap
+      const newScaledGap = gridPadding * newScale;
 
-      const widthScale = maxCellWidth / templateCellWidth;
-      const heightScale = maxCellHeight / templateCellHeight;
+      // Preračunaj dimenzije jedne ćelije
+      const totalHorizontalGap = (selectedTemplate.cols - 1) * newScaledGap;
+      const totalVerticalGap = (selectedTemplate.rows - 1) * newScaledGap;
 
-      const scale = Math.min(widthScale, heightScale);
+      const newCellWidth =
+        (selectedTemplate.width * newScale - totalHorizontalGap) /
+        selectedTemplate.cols;
+      const newCellHeight =
+        (selectedTemplate.height * newScale - totalVerticalGap) /
+        selectedTemplate.rows;
 
-      setCellWidth(templateCellWidth * scale);
-      setCellHeight(templateCellHeight * scale);
-
-      setScaledGap(baseGap * scale);
+      // Postavi sve skalirane vrednosti
+      setCellWidth(newCellWidth);
+      setCellHeight(newCellHeight);
+      setScaledGap(newScaledGap);
+      setScale(newScale); // ✅ sada je scale čista vrednost (0-1)
     }
 
     updateCellSize();
@@ -153,6 +155,14 @@ export default function CollageClient() {
     const totalSlots = selectedTemplate.rows * selectedTemplate.cols;
     setUploadedFiles(Array(totalSlots).fill(null));
   }, [selectedTemplate]);
+
+  //   const isUploaded = (index: number) => {
+  // return uploadedFiles[index]
+  //   }
+
+  const showBorder = (index: number) => {
+    return !uploadedFiles[index] && "border-2 border-dashed border-gray-200";
+  };
 
   const resolveBackgroundColor = (
     bg: string | { r: number; g: number; b: number; alpha?: number } | undefined
@@ -235,7 +245,7 @@ export default function CollageClient() {
               value={gridPadding}
               onChange={(e) => setGridPadding(e.value as number)}
               min={0}
-              max={20}
+              max={100}
               step={1}
               className="w-full"
             />
@@ -293,24 +303,24 @@ export default function CollageClient() {
           </div>
         </div>
         <main
-          className="flex-1 overflow-auto flex justify-center items-center flex-col gap-5 max-w-screen"
+          className="flex justify-center items-center flex-col gap-5 m-[20px]"
           style={{
-            padding: 20,
-            // backgroundColor: resolveBackgroundColor(
-            //   selectedTemplate.backgroundColor
-            // ),
+            width: selectedTemplate.width * scale + scaledGap * 2,
+            height: selectedTemplate.height * scale + scaledGap * 2,
+            backgroundColor: resolveBackgroundColor(
+              selectedTemplate.backgroundColor
+            ),
           }}
         >
           <div
             style={{
-              width: totalGridWidth,
-              height: totalGridHeight,
+              width: "100%",
+              height: "100%",
+              padding: scaledGap,
               display: "grid",
               gridTemplateColumns: `repeat(${selectedTemplate.cols}, ${cellWidth}px)`,
               gridTemplateRows: `repeat(${selectedTemplate.rows}, ${cellHeight}px)`,
               gap: scaledGap,
-              margin: "0 auto",
-              // borderRadius: 8,
               overflow: "hidden",
               backgroundColor: resolveBackgroundColor(
                 selectedTemplate.backgroundColor
@@ -325,7 +335,9 @@ export default function CollageClient() {
               return (
                 <div
                   key={i}
-                  className="relative bg-white overflow-hidden group  transition"
+                  className={`relative bg-white overflow-hidden group  transition ${showBorder(
+                    i
+                  )}  `}
                   style={{ width: cellWidth, height: cellHeight }}
                 >
                   {/* File input (nevidljiv ali preko celog kvadrata) */}
@@ -349,7 +361,7 @@ export default function CollageClient() {
                     // Ikonica ako nema slike
                     <div className="flex items-center flex-col justify-center h-full w-full text-gray-400 group-hover:text-[#1aac83] transition-colors duration-200">
                       <UploadCloud className="w-7 h-7 text-[#1aac83]" />
-                      <p className="text-sm text-[#1aac83]">Upload a image</p>
+                      <p className="text-xs text-[#1aac83]">Upload a image</p>
                     </div>
                   )}
                 </div>
