@@ -2,9 +2,9 @@
 
 import { Slider } from "primereact/slider";
 import React, { useState, useEffect } from "react";
-import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "./utils/templates";
+import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "../utils/templates";
 import Image from "next/image";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, Pencil } from "lucide-react";
 import fillImg from "@/assets/button images/user.png";
 
 // type GridPreviewProps = {
@@ -16,7 +16,7 @@ import fillImg from "@/assets/button images/user.png";
 //   displayScale?: number;
 // };
 
-type CollageTestProps = { templateName?: string };
+type CollageTestProps = { templateName?: string; gridPadding?: number };
 
 const templates = [
   { value: "CLASSIC", name: "2x2" },
@@ -29,17 +29,23 @@ const templates = [
   { value: "MAGAZINE_SPREAD", name: "Magazine spread" },
 ];
 
-const CollageTest: React.FC<CollageTestProps> = ({
+const CollageLayout: React.FC<CollageTestProps> = ({
   templateName = "INSTAGRAM_GRID",
+  gridPadding = 3,
 }) => {
   const [template, setTemplate] = useState<CollageTemplate>(
     PROFESSIONAL_TEMPLATES[templateName]
   );
 
-  const { width, height, rows, cols, cellPadding, displayScale } = template;
+  useEffect(
+    () => setTemplate(PROFESSIONAL_TEMPLATES[templateName]),
+    [templateName]
+  );
+
+  const { width, height, rows, cols, displayScale } = template;
   const [scale, setScale] = useState(template.displayScale || 1);
   const [isClient, setIsClient] = useState(false);
-  const [gridPadding, setGridPadding] = useState<number>(cellPadding || 3);
+  // const [gridPadding, setGridPadding] = useState<number>(cellPadding || 3);
 
   const [uploadedFiles, setUploadedFiles] = useState<
     { file: File; image: string }[]
@@ -102,6 +108,11 @@ const CollageTest: React.FC<CollageTestProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [isClient, width, height, displayScale]);
 
+  // useEffect(() => {
+  //   console.log("width: ", width * debouncedScale);
+  //   console.log("height: ", height * debouncedScale);
+  // }, [debouncedScale, width, height]);
+
   // Dynamic styles that can't be expressed with Tailwind
   const gridContainerStyle: React.CSSProperties = {
     gridTemplateColumns: `repeat(${cols}, 1fr)`,
@@ -119,57 +130,46 @@ const CollageTest: React.FC<CollageTestProps> = ({
   };
 
   return (
-    <div className="w-full h-[90vh] flex flex-col items-center justify-center overflow-hidden bg-[#f8f8f8]">
-      <div className="my-6 w-full max-w-lg">
-        <label className="block mb-2 text-[#1aac83] text-lg font-medium">
-          Cell spacing: <span className="font-semibold">{gridPadding}px</span>
-        </label>
-        <Slider
-          value={gridPadding}
-          onChange={(e) => setGridPadding(e.value as number)}
-          min={0}
-          max={100}
-          step={1}
-          className="w-full"
-        />
-      </div>
-
+    <div className="w-full h-[90vh] flex flex-col items-center justify-start py-[100px] overflow-hidden bg-[#f8f8f8]">
       <div
-        className="grid bg-[#f0f0f0] mx-auto transition-all duration-300 ease-out box-border"
+        className="grid bg-[#f0f0f0]  transition-all duration-300 ease-out box-border"
         style={gridContainerStyle}
       >
         {Array.from({ length: rows * cols }).map((_, i) => (
           <div
             key={i}
-            className="relative bg-white flex items-center justify-center box-border transition-all duration-300 ease-out group"
+            className="relative bg-gray-50 flex items-center justify-center box-border transition-all duration-300 ease-out group border border-dashed border-gray-200"
             style={cellStyle}
           >
-            {/* File input (nevidljiv ali preko celog kvadrata) */}
+            {/* File input */}
             <input
               type="file"
               accept="image/*"
               onChange={(e) => handleUploadByIndex(e, i)}
-              className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
+              className="absolute opacity-0 cursor-pointer z-10 w-full h-full"
               title=""
             />
 
             {uploadedFiles[i]?.image ? (
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full ">
                 <Image
                   src={uploadedFiles[i].image}
-                  alt={`img-${i}`}
+                  alt={`Uploaded content ${i}`}
                   fill
-                  className="object-cover"
-                  // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover transition-opacity duration-300"
                 />
+                <div className="absolute inset-0 bg-black/0  transition-all duration-300 flex items-center justify-center opacity-0 ">
+                  <Pencil className="w-6 h-6 text-white" />
+                </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center p-4">
-                {/* <UploadCloud className="w-7 h-7 text-[#1aac83] group-hover:text-[#1aac83]/80 transition-colors" />
-                <p className="text-xs text-[#1aac83] mt-2 group-hover:text-[#1aac83]/80 transition-colors">
+              <div className="hidden xs:flex flex-col items-center justify-center p-6 text-center">
+                <div className="p-3 mb-2 rounded-full bg-[#1aac83]/10  transition-colors duration-200">
+                  <UploadCloud className="      h-4 w-4    sm:w-6           sm:h-6  text-[#1aac83]" />
+                </div>
+                {/* <p className=" hidden xs:block  sm:text-xs text-gray-400">
                   Upload an image
                 </p> */}
-                hi
               </div>
             )}
           </div>
@@ -179,4 +179,4 @@ const CollageTest: React.FC<CollageTestProps> = ({
   );
 };
 
-export default CollageTest;
+export default CollageLayout;

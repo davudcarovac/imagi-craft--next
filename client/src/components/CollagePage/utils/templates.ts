@@ -24,7 +24,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 3,
     cols: 3,
     cellPadding: 2,
-    displayScale: 0.8,
+    displayScale: 0.7,
     backgroundColor: "ffffff",
   },
 
@@ -34,7 +34,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     height: 3508,
     rows: 4,
     cols: 3,
-    displayScale: 0.7,
+    displayScale: 0.75,
 
     cellPadding: 10,
     backgroundColor: "#f8f8f8",
@@ -58,7 +58,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 1,
     cellPadding: 0,
-    displayScale: 0.8,
+    displayScale: 0.6,
     backgroundColor: "#f5f5f5",
   },
 
@@ -69,7 +69,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 1,
     cellPadding: 4,
-    displayScale: 0.8,
+    displayScale: 0.7,
     backgroundColor: "#ffffff",
   },
 
@@ -80,7 +80,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 4,
     cols: 1,
     cellPadding: 5,
-    displayScale: 0.9,
+    displayScale: 0.7,
     backgroundColor: "#eeeeee",
   },
 
@@ -102,7 +102,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 1,
     cols: 2,
     cellPadding: 6,
-    displayScale: 0.5,
+    displayScale: 0.6,
     backgroundColor: "#fafafa",
   },
 };
