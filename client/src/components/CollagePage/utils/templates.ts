@@ -9,6 +9,7 @@ export interface CollageTemplate {
   cellPadding?: number;
   gridHeight?: string;
   gridWidth?: string;
+  displayScale?: number;
 
   backgroundColor?:
     | string
@@ -23,6 +24,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 3,
     cols: 3,
     cellPadding: 2,
+    displayScale: 0.8,
     backgroundColor: "ffffff",
   },
 
@@ -32,6 +34,8 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     height: 3508,
     rows: 4,
     cols: 3,
+    displayScale: 0.7,
+
     cellPadding: 10,
     backgroundColor: "#f8f8f8",
   },
@@ -43,7 +47,8 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 2,
     cellPadding: 2,
-    backgroundColor: "#1aac83",
+    displayScale: 0.7,
+    backgroundColor: "#ffffff",
   },
 
   PINTEREST_PIN: {
@@ -53,6 +58,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 1,
     cellPadding: 0,
+    displayScale: 0.8,
     backgroundColor: "#f5f5f5",
   },
 
@@ -63,6 +69,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 1,
     cellPadding: 4,
+    displayScale: 0.8,
     backgroundColor: "#ffffff",
   },
 
@@ -73,6 +80,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 4,
     cols: 1,
     cellPadding: 5,
+    displayScale: 0.9,
     backgroundColor: "#eeeeee",
   },
 
@@ -83,6 +91,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 1,
     cols: 2,
     cellPadding: 3,
+    displayScale: 0.5,
     backgroundColor: "#ffffff",
   },
 
@@ -93,6 +102,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 1,
     cols: 2,
     cellPadding: 6,
+    displayScale: 0.5,
     backgroundColor: "#fafafa",
   },
 };
