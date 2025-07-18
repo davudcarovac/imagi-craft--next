@@ -5,6 +5,7 @@ import CollageSidebar from "./components/CollageSidebar";
 import CollageLayout from "./components/CollageLayout";
 import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "./utils/templates";
 import { TemplateInfo } from "./components/TemplateInfo";
+import { ColorResult } from "@uiw/react-color";
 
 const templates = [
   { value: "CLASSIC", name: "2x2" },
@@ -26,8 +27,34 @@ const CollageClient = () => {
     selectedTemplate.cellPadding || 3
   );
 
+  // sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
+  // color picker
+  const [activeColor, setActiveColor] = useState<string>(
+    selectedTemplate.backgroundColor as string
+  );
+  const templateBgColor =
+    typeof selectedTemplate.backgroundColor === "string"
+      ? selectedTemplate.backgroundColor.startsWith("#")
+        ? selectedTemplate.backgroundColor
+        : `#${selectedTemplate.backgroundColor}`
+      : selectedTemplate.backgroundColor
+      ? `rgba(${selectedTemplate.backgroundColor.r}, ${
+          selectedTemplate.backgroundColor.g
+        }, ${selectedTemplate.backgroundColor.b}, ${
+          selectedTemplate.backgroundColor.alpha || 1
+        })`
+      : "#ffffff";
+
+  useEffect(() => {
+    setActiveColor(templateBgColor);
+  }, [template, templateBgColor]);
+
+  const handleColorChange = (color: ColorResult) => {
+    setActiveColor(color.hex);
+  };
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -45,9 +72,6 @@ const CollageClient = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  useEffect(() => {
-    console.log(template);
-  }, [template]);
 
   return (
     <div className="flex flex-col lg:flex-row h-[90vh] bg-gray-100">
@@ -66,6 +90,9 @@ const CollageClient = () => {
           templates={templates}
           template={template}
           gridPadding={gridPadding}
+          templateBgColor={templateBgColor}
+          activeColor={activeColor}
+          handleColorChange={handleColorChange}
           setGridPadding={setGridPadding}
           setTemplate={setTemplate}
           onClose={toggleSidebar}
@@ -82,9 +109,13 @@ const CollageClient = () => {
     ${isMobile ? "ml-0" : ""}
   `}
       >
-        {/* <TemplateInfo template={selectedTemplate} /> */}
+        <TemplateInfo template={selectedTemplate} />
         {/* <div className="h-full w-full"> */}
-        <CollageLayout templateName={template} gridPadding={gridPadding} />
+        <CollageLayout
+          backgroundColor={activeColor}
+          templateName={template}
+          gridPadding={gridPadding}
+        />
         {/* </div> */}
       </div>
     </div>

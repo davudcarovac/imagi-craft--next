@@ -4,7 +4,8 @@ import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { Dropdown } from "primereact/dropdown";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { Slider } from "primereact/slider";
-
+import CustomColorPicker from "./CustomCollorPicker";
+import { ColorResult } from "@uiw/react-color";
 type SidebarProps = {
   isOpen: boolean;
   isMobile: boolean;
@@ -12,6 +13,9 @@ type SidebarProps = {
   templates: { value: string; name: string }[];
   template: string;
   gridPadding: number;
+  templateBgColor: string;
+  activeColor: string;
+  handleColorChange?: (color: ColorResult) => void;
   setGridPadding: Dispatch<SetStateAction<number>>;
   onClose: () => void;
   setTemplate: Dispatch<SetStateAction<string>>;
@@ -23,6 +27,9 @@ const Sidebar = ({
   templates,
   isMobile,
   gridPadding,
+  templateBgColor,
+  activeColor,
+  handleColorChange,
   setGridPadding,
   onClose,
   setTemplate,
@@ -52,7 +59,7 @@ const Sidebar = ({
       >
         <div className="p-6 h-full flex flex-col">
           {/* <h2 className="text-xl font-bold mb-6">Collage Settings</h2> */}
-          <div className="flex-1 ">
+          <div className="flex-1 flex flex-col gap-5">
             <section>
               <label className="block font-medium text-lg mb-2 saira-font text-[#1aac83]">
                 Choose layout
@@ -67,7 +74,7 @@ const Sidebar = ({
               />
             </section>
             <div className="my-6">
-              <label className="block mb-2 text-[#1aac83] text-lg font-medium">
+              <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
                 Cell spacing:{" "}
                 <span className="font-semibold">{gridPadding}px</span>
               </label>
@@ -78,6 +85,18 @@ const Sidebar = ({
                 max={100}
                 step={1}
                 className="w-full"
+              />
+            </div>
+            <div className="my-6">
+              <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
+                Change background color
+              </label>
+              <CustomColorPicker
+                templateBgColor={templateBgColor}
+                handleColorChange={handleColorChange}
+                activeColor={activeColor}
+                // label="Background color"
+                // showColorValue={true}
               />
             </div>
           </div>

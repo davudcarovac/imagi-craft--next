@@ -1,22 +1,15 @@
 "use client";
 
-import { Slider } from "primereact/slider";
 import React, { useState, useEffect } from "react";
 import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "../utils/templates";
 import Image from "next/image";
 import { UploadCloud, Pencil } from "lucide-react";
-import fillImg from "@/assets/button images/user.png";
 
-// type GridPreviewProps = {
-//   width?: number;
-//   height?: number;
-//   rows?: number;
-//   cols?: number;
-//   cellPadding?: number;
-//   displayScale?: number;
-// };
-
-type CollageTestProps = { templateName?: string; gridPadding?: number };
+type CollageTestProps = {
+  backgroundColor: string;
+  templateName?: string;
+  gridPadding?: number;
+};
 
 const templates = [
   { value: "CLASSIC", name: "2x2" },
@@ -32,6 +25,7 @@ const templates = [
 const CollageLayout: React.FC<CollageTestProps> = ({
   templateName = "INSTAGRAM_GRID",
   gridPadding = 3,
+  backgroundColor,
 }) => {
   const [template, setTemplate] = useState<CollageTemplate>(
     PROFESSIONAL_TEMPLATES[templateName]
@@ -45,7 +39,6 @@ const CollageLayout: React.FC<CollageTestProps> = ({
   const { width, height, rows, cols, displayScale } = template;
   const [scale, setScale] = useState(template.displayScale || 1);
   const [isClient, setIsClient] = useState(false);
-  // const [gridPadding, setGridPadding] = useState<number>(cellPadding || 3);
 
   const [uploadedFiles, setUploadedFiles] = useState<
     { file: File; image: string }[]
@@ -108,11 +101,6 @@ const CollageLayout: React.FC<CollageTestProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [isClient, width, height, displayScale]);
 
-  // useEffect(() => {
-  //   console.log("width: ", width * debouncedScale);
-  //   console.log("height: ", height * debouncedScale);
-  // }, [debouncedScale, width, height]);
-
   // Dynamic styles that can't be expressed with Tailwind
   const gridContainerStyle: React.CSSProperties = {
     gridTemplateColumns: `repeat(${cols}, 1fr)`,
@@ -123,6 +111,7 @@ const CollageLayout: React.FC<CollageTestProps> = ({
     height: `${height * debouncedScale}px`,
     transformOrigin: "top left",
     visibility: isClient ? "visible" : "hidden",
+    backgroundColor: backgroundColor,
   };
 
   const cellStyle: React.CSSProperties = {
