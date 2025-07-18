@@ -34,7 +34,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     height: 3508,
     rows: 4,
     cols: 3,
-    displayScale: 0.75,
+    displayScale: 0.6,
 
     cellPadding: 10,
     backgroundColor: "#f8f8f8",
@@ -47,7 +47,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 2,
     cellPadding: 2,
-    displayScale: 0.7,
+    displayScale: 0.6,
     backgroundColor: "#ffffff",
   },
 
@@ -80,7 +80,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 4,
     cols: 1,
     cellPadding: 5,
-    displayScale: 0.7,
+    displayScale: 0.6,
     backgroundColor: "#eeeeee",
   },
 

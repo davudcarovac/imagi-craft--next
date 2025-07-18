@@ -6,6 +6,7 @@ import CollageLayout from "./components/CollageLayout";
 import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "./utils/templates";
 import { TemplateInfo } from "./components/TemplateInfo";
 import { ColorResult } from "@uiw/react-color";
+import { useCollage } from "@/hooks/useCollage";
 
 const templates = [
   { value: "CLASSIC", name: "2x2" },
@@ -23,18 +24,24 @@ const CollageClient = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<CollageTemplate>(
     PROFESSIONAL_TEMPLATES[template]
   );
+  const { rows, cols } = selectedTemplate;
+
   const [gridPadding, setGridPadding] = useState<number>(
     selectedTemplate.cellPadding || 3
   );
+  const [uploadedFiles, setUploadedFiles] = useState<
+    { file: File; image: string }[]
+  >(Array(rows * cols).fill(null));
+
+  // submit collage
+  const { mutate: mutateCollage, isPending: isPendingCollage } = useCollage();
+  const formData = new FormData();
 
   // sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   // color picker
-  const [activeColor, setActiveColor] = useState<string>(
-    selectedTemplate.backgroundColor as string
-  );
   const templateBgColor =
     typeof selectedTemplate.backgroundColor === "string"
       ? selectedTemplate.backgroundColor.startsWith("#")
@@ -47,10 +54,19 @@ const CollageClient = () => {
           selectedTemplate.backgroundColor.alpha || 1
         })`
       : "#ffffff";
+  const [activeColor, setActiveColor] = useState<string>(templateBgColor);
+
+  useEffect(() => {
+    setSelectedTemplate(PROFESSIONAL_TEMPLATES[template]);
+  }, [template]);
 
   useEffect(() => {
     setActiveColor(templateBgColor);
   }, [template, templateBgColor]);
+
+  // useEffect(() => {
+  //   console.log(template, PROFESSIONAL_TEMPLATES[template].backgroundColor);
+  // }, [template]);
 
   const handleColorChange = (color: ColorResult) => {
     setActiveColor(color.hex);
@@ -73,6 +89,24 @@ const CollageClient = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const submitCollage = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    uploadedFiles.forEach(({ file }) => formData.append("files", file));
+    formData.append("templateName", template);
+    formData.append("customPadding", gridPadding.toString());
+    formData.append("backgroundColor", activeColor);
+
+    mutateCollage(formData, {
+      onSuccess: (response) => {
+        console.log("Collage response ===> ", response);
+      },
+      onError: (error) => {
+        console.log("Collage error ===> ", error);
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col lg:flex-row h-[90vh] bg-gray-100">
       {/* Sidebar - fiksna širina 300px, apsolutno pozicioniran na desktopu */}
@@ -84,19 +118,21 @@ const CollageClient = () => {
     transition-all duration-300
   `}
       >
-        <CollageSidebar
-          isOpen={isSidebarOpen}
-          isMobile={isMobile}
-          templates={templates}
-          template={template}
-          gridPadding={gridPadding}
-          templateBgColor={templateBgColor}
-          activeColor={activeColor}
-          handleColorChange={handleColorChange}
-          setGridPadding={setGridPadding}
-          setTemplate={setTemplate}
-          onClose={toggleSidebar}
-        ></CollageSidebar>
+        <form onSubmit={submitCollage}>
+          <CollageSidebar
+            isOpen={isSidebarOpen}
+            isMobile={isMobile}
+            templates={templates}
+            template={template}
+            gridPadding={gridPadding}
+            templateBgColor={templateBgColor}
+            activeColor={activeColor}
+            handleColorChange={handleColorChange}
+            setGridPadding={setGridPadding}
+            setTemplate={setTemplate}
+            onClose={toggleSidebar}
+          />
+        </form>
       </div>
 
       {/* Main Content - direktno dolepo sidebaru na desktopu */}
@@ -109,12 +145,18 @@ const CollageClient = () => {
     ${isMobile ? "ml-0" : ""}
   `}
       >
-        <TemplateInfo template={selectedTemplate} />
+        <TemplateInfo
+          template={selectedTemplate}
+          gridPadding={gridPadding}
+          backgroundColor={activeColor}
+        />
         {/* <div className="h-full w-full"> */}
         <CollageLayout
           backgroundColor={activeColor}
           templateName={template}
           gridPadding={gridPadding}
+          uploadedFiles={uploadedFiles}
+          setUploadedFiles={setUploadedFiles}
         />
         {/* </div> */}
       </div>

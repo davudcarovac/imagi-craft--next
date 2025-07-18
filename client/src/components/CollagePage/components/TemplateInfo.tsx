@@ -7,9 +7,16 @@ import { CollageTemplate } from "../utils/templates";
 interface TemplateInfoProps {
   template: CollageTemplate;
   className?: string;
+  backgroundColor?: string;
+  gridPadding?: number;
 }
 
-export const TemplateInfo = ({ template, className }: TemplateInfoProps) => {
+export const TemplateInfo = ({
+  template,
+  className,
+  backgroundColor,
+  gridPadding,
+}: TemplateInfoProps) => {
   const getBackgroundColor = () => {
     if (!template.backgroundColor) return undefined;
 
@@ -50,7 +57,7 @@ export const TemplateInfo = ({ template, className }: TemplateInfoProps) => {
               {/* Spacing */}
               <div className="flex items-center gap-2 text-gray-600">
                 <LayoutGrid className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span>{template.cellPadding ?? 0}px spacing</span>
+                <span>{gridPadding}px spacing</span>
               </div>
 
               {/* Background Color */}
@@ -61,7 +68,7 @@ export const TemplateInfo = ({ template, className }: TemplateInfoProps) => {
                     <span>Background:</span>
                     <div
                       className="w-4 h-4 rounded-sm border border-gray-200 shadow-inner"
-                      style={{ backgroundColor: getBackgroundColor() }}
+                      style={{ backgroundColor: backgroundColor }}
                     />
                   </div>
                 </div>

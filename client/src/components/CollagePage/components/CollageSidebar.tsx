@@ -6,6 +6,7 @@ import { Dispatch, ReactNode, SetStateAction } from "react";
 import { Slider } from "primereact/slider";
 import CustomColorPicker from "./CustomCollorPicker";
 import { ColorResult } from "@uiw/react-color";
+import SubmitButton from "@/components/SubmitButton";
 type SidebarProps = {
   isOpen: boolean;
   isMobile: boolean;
@@ -39,6 +40,7 @@ const Sidebar = ({
     <>
       {/* Sidebar Toggle Button */}
       <button
+        type="button"
         onClick={onClose}
         className={`fixed lg:hidden z-50 m-2 p-2 rounded-full bg-white shadow-md ${
           isOpen ? "left-[250px]" : "left-2"
@@ -59,7 +61,7 @@ const Sidebar = ({
       >
         <div className="p-6 h-full flex flex-col">
           {/* <h2 className="text-xl font-bold mb-6">Collage Settings</h2> */}
-          <div className="flex-1 flex flex-col gap-5">
+          <div className="flex-1 flex flex-col gap-10 ">
             <section>
               <label className="block font-medium text-lg mb-2 saira-font text-[#1aac83]">
                 Choose layout
@@ -73,10 +75,10 @@ const Sidebar = ({
                 className="w-full"
               />
             </section>
-            <div className="my-6">
+            <div>
               <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
-                Cell spacing:{" "}
-                <span className="font-semibold">{gridPadding}px</span>
+                Cell spacing
+                {/* <span className="font-semibold">{gridPadding}px</span> */}
               </label>
               <Slider
                 value={gridPadding}
@@ -87,9 +89,9 @@ const Sidebar = ({
                 className="w-full"
               />
             </div>
-            <div className="my-6">
+            <div>
               <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
-                Change background color
+                Background color
               </label>
               <CustomColorPicker
                 templateBgColor={templateBgColor}
@@ -98,6 +100,9 @@ const Sidebar = ({
                 // label="Background color"
                 // showColorValue={true}
               />
+            </div>
+            <div className="my-6">
+              <SubmitButton>Generate</SubmitButton>
             </div>
           </div>
         </div>

@@ -650,10 +650,10 @@ export const postCollageMaker = async (
   next: NextFunction
 ) => {
   try {
-    const { templateName, customPadding } = req.body;
+    const { templateName, customPadding, backgroundColor } = req.body;
     const files = req.files as Express.Multer.File[];
 
-    console.log("data ===> ", templateName, customPadding);
+    console.log("data ===> ", templateName, customPadding, backgroundColor);
 
     if (!files?.length) {
       throw new Error("Minimum 1 image required");
@@ -716,7 +716,7 @@ export const postCollageMaker = async (
         width: template.width,
         height: template.height,
         channels: 4,
-        background: template.backgroundColor || "#ffffff",
+        background: backgroundColor || "#ffffff",
       },
     })
       .composite(layers)
