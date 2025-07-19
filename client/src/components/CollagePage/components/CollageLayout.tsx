@@ -10,6 +10,7 @@ type CollageTestProps = {
   templateName?: string;
   gridPadding?: number;
   uploadedFiles: { file: File; image: string }[];
+  radius?: number;
   setUploadedFiles: React.Dispatch<
     React.SetStateAction<{ file: File; image: string }[]>
   >;
@@ -31,6 +32,7 @@ const CollageLayout: React.FC<CollageTestProps> = ({
   gridPadding = 3,
   backgroundColor,
   uploadedFiles,
+  radius = 0,
   setUploadedFiles,
 }) => {
   const [template, setTemplate] = useState<CollageTemplate>(
@@ -122,6 +124,7 @@ const CollageLayout: React.FC<CollageTestProps> = ({
 
   const cellStyle: React.CSSProperties = {
     fontSize: `${Math.max(10, 12 * debouncedScale)}px`,
+    borderRadius: `${radius * debouncedScale}px`,
   };
 
   return (
@@ -155,12 +158,16 @@ const CollageLayout: React.FC<CollageTestProps> = ({
               />
 
               {uploadedFiles[i]?.image ? (
-                <div className="relative w-full h-full ">
+                <div
+                  className="relative w-full h-full "
+                  style={{ borderRadius: `${radius * debouncedScale}px` }}
+                >
                   <Image
                     src={uploadedFiles[i].image}
                     alt={`Uploaded content ${i}`}
                     fill
                     className="object-cover transition-opacity duration-300"
+                    style={{ borderRadius: `${radius * debouncedScale}px` }}
                   />
                   <div className="absolute inset-0 bg-black/0  transition-all duration-300 flex items-center justify-center opacity-0 ">
                     <Pencil className="w-6 h-6 text-white" />

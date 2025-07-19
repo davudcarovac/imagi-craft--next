@@ -1,7 +1,14 @@
 // components/TemplateInfo.tsx
 "use client";
 
-import { Ruler, LayoutGrid, Droplet, ZoomIn, Info } from "lucide-react";
+import {
+  Ruler,
+  LayoutGrid,
+  Droplet,
+  ZoomIn,
+  Info,
+  SquareRoundCorner,
+} from "lucide-react";
 import { CollageTemplate } from "../utils/templates";
 
 interface TemplateInfoProps {
@@ -9,6 +16,7 @@ interface TemplateInfoProps {
   className?: string;
   backgroundColor?: string;
   gridPadding?: number;
+  radius: number;
 }
 
 export const TemplateInfo = ({
@@ -16,6 +24,7 @@ export const TemplateInfo = ({
   className,
   backgroundColor,
   gridPadding,
+  radius,
 }: TemplateInfoProps) => {
   const getBackgroundColor = () => {
     if (!template.backgroundColor) return undefined;
@@ -58,6 +67,10 @@ export const TemplateInfo = ({
               <div className="flex items-center gap-2 text-gray-600">
                 <LayoutGrid className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span>{gridPadding}px spacing</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <SquareRoundCorner className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span>{radius}px </span>
               </div>
 
               {/* Background Color */}

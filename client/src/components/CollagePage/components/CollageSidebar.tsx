@@ -16,6 +16,8 @@ type SidebarProps = {
   gridPadding: number;
   templateBgColor: string;
   activeColor: string;
+  borderRadius: number;
+  setBorderRadius: Dispatch<SetStateAction<number>>;
   handleColorChange?: (color: ColorResult) => void;
   setGridPadding: Dispatch<SetStateAction<number>>;
   onClose: () => void;
@@ -30,6 +32,8 @@ const Sidebar = ({
   gridPadding,
   templateBgColor,
   activeColor,
+  borderRadius,
+  setBorderRadius,
   handleColorChange,
   setGridPadding,
   onClose,
@@ -83,6 +87,20 @@ const Sidebar = ({
               <Slider
                 value={gridPadding}
                 onChange={(e) => setGridPadding(e.value as number)}
+                min={0}
+                max={100}
+                step={1}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
+                Border radius
+                {/* <span className="font-semibold">{gridPadding}px</span> */}
+              </label>
+              <Slider
+                value={borderRadius}
+                onChange={(e) => setBorderRadius(e.value as number)}
                 min={0}
                 max={100}
                 step={1}

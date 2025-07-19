@@ -25,7 +25,7 @@ const CollageClient = () => {
     PROFESSIONAL_TEMPLATES[template]
   );
   const { rows, cols } = selectedTemplate;
-
+  const [borderRadius, setBorderRadius] = useState<number>(0);
   const [gridPadding, setGridPadding] = useState<number>(
     selectedTemplate.cellPadding || 3
   );
@@ -62,6 +62,7 @@ const CollageClient = () => {
 
   useEffect(() => {
     setActiveColor(templateBgColor);
+    setUploadedFiles(Array(rows * cols).fill(null));
   }, [template, templateBgColor]);
 
   // useEffect(() => {
@@ -127,6 +128,8 @@ const CollageClient = () => {
             gridPadding={gridPadding}
             templateBgColor={templateBgColor}
             activeColor={activeColor}
+            borderRadius={borderRadius}
+            setBorderRadius={setBorderRadius}
             handleColorChange={handleColorChange}
             setGridPadding={setGridPadding}
             setTemplate={setTemplate}
@@ -149,6 +152,7 @@ const CollageClient = () => {
           template={selectedTemplate}
           gridPadding={gridPadding}
           backgroundColor={activeColor}
+          radius={borderRadius}
         />
         {/* <div className="h-full w-full"> */}
         <CollageLayout
@@ -157,6 +161,7 @@ const CollageClient = () => {
           gridPadding={gridPadding}
           uploadedFiles={uploadedFiles}
           setUploadedFiles={setUploadedFiles}
+          radius={borderRadius}
         />
         {/* </div> */}
       </div>
