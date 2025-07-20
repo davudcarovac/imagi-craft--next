@@ -17,6 +17,11 @@ const templates = [
   { value: "PHOTO_BOOTH", name: "Photo Booth Strip" },
   { value: "BEFORE_AFTER", name: "Before / After" },
   { value: "MAGAZINE_SPREAD", name: "Magazine spread" },
+  { value: "YOUTUBE_THUMBNAIL", name: "YouTube Thumbnail" },
+  { value: "FACEBOOK_EVENT", name: "Facebook Event Cover" },
+  { value: "TWITTER_THREAD", name: "Twitter Thread" },
+  { value: "LINKEDIN_CAROUSEL", name: "LinkedIn Carousel" },
+  { value: "PORTFOLIO_SHOWCASE", name: "Portfolio Showcase" },
 ];
 
 const CollageClient = () => {
@@ -65,10 +70,6 @@ const CollageClient = () => {
     setUploadedFiles(Array(rows * cols).fill(null));
   }, [template, templateBgColor]);
 
-  // useEffect(() => {
-  //   console.log(template, PROFESSIONAL_TEMPLATES[template].backgroundColor);
-  // }, [template]);
-
   const handleColorChange = (color: ColorResult) => {
     setActiveColor(color.hex);
   };
@@ -97,6 +98,7 @@ const CollageClient = () => {
     formData.append("templateName", template);
     formData.append("customPadding", gridPadding.toString());
     formData.append("backgroundColor", activeColor);
+    formData.append("borderRadius", borderRadius.toString());
 
     mutateCollage(formData, {
       onSuccess: (response) => {
@@ -107,6 +109,19 @@ const CollageClient = () => {
       },
     });
   };
+
+  useEffect(() => {
+    return () => {
+      // Oslobađanje URL-ova pri unmount-u komponente
+      uploadedFiles.forEach((item) => {
+        if (item?.image) {
+          if (item.image.startsWith("blob:")) {
+            URL.revokeObjectURL(item.image);
+          }
+        }
+      });
+    };
+  }, [uploadedFiles]);
 
   return (
     <div className="flex flex-col lg:flex-row h-[90vh] bg-gray-100">
@@ -129,6 +144,8 @@ const CollageClient = () => {
             templateBgColor={templateBgColor}
             activeColor={activeColor}
             borderRadius={borderRadius}
+            uploadedFiles={uploadedFiles}
+            setUploadedFiles={setUploadedFiles}
             setBorderRadius={setBorderRadius}
             handleColorChange={handleColorChange}
             setGridPadding={setGridPadding}

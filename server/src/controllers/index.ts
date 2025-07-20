@@ -650,10 +650,17 @@ export const postCollageMaker = async (
   next: NextFunction
 ) => {
   try {
-    const { templateName, customPadding, backgroundColor } = req.body;
+    const { templateName, customPadding, backgroundColor, borderRadius } =
+      req.body;
     const files = req.files as Express.Multer.File[];
 
-    console.log("data ===> ", templateName, customPadding, backgroundColor);
+    console.log(
+      "data ===> ",
+      templateName,
+      customPadding,
+      backgroundColor,
+      borderRadius
+    );
 
     if (!files?.length) {
       throw new Error("Minimum 1 image required");
@@ -687,7 +694,9 @@ export const postCollageMaker = async (
     const processedImages = await Promise.all(
       files
         .slice(0, totalCells)
-        .map((file) => processImageForCell(file.path, cellWidth, cellHeight))
+        .map((file) =>
+          processImageForCell(file.path, cellWidth, cellHeight, borderRadius)
+        )
     );
 
     // 3. Pripremi slojeve za kompoziciju

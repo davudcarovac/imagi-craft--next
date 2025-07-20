@@ -62,7 +62,6 @@ const CollageLayout: React.FC<CollageTestProps> = ({
     const newFiles = [...uploadedFiles];
     newFiles[index] = { file: file, image: URL.createObjectURL(file) };
     setUploadedFiles(newFiles);
-    uploadedFiles;
   };
 
   // Debounce function

@@ -14,6 +14,7 @@ export type CollageTemplate = {
   rows: number;
   cols: number;
   cellPadding?: number;
+  description?: string;
   targetDPI?: number;
   backgroundColor?: string | sharp.Color;
 };

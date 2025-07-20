@@ -80,4 +80,63 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     cellPadding: 6,
     backgroundColor: "#fafafa",
   },
+  YOUTUBE_THUMBNAIL: {
+    name: "YouTube Thumbnail",
+    description:
+      "1280×720px standard thumbnail size with safe zones for text and branding.",
+    width: 1280,
+    height: 720,
+    rows: 2,
+    cols: 2,
+    cellPadding: 8,
+    backgroundColor: "#000000",
+  },
+
+  FACEBOOK_EVENT: {
+    name: "Facebook Event Cover",
+    description:
+      "1920×1080px widescreen format for Facebook events and promotional banners.",
+    width: 1920,
+    height: 1080,
+    rows: 1,
+    cols: 3,
+    cellPadding: 15,
+    backgroundColor: "#1877f2",
+  },
+
+  TWITTER_THREAD: {
+    name: "Twitter Thread",
+    description:
+      "Square format optimized for Twitter threads with multiple visual elements.",
+    width: 1200,
+    height: 1200,
+    rows: 3,
+    cols: 1,
+    cellPadding: 10,
+    backgroundColor: "#e1e8ed",
+  },
+
+  LINKEDIN_CAROUSEL: {
+    name: "LinkedIn Carousel",
+    description:
+      "1080×1080px square format perfect for LinkedIn document carousels.",
+    width: 1080,
+    height: 1080,
+    rows: 2,
+    cols: 2,
+    cellPadding: 5,
+    backgroundColor: "#f3f6f8",
+  },
+
+  PORTFOLIO_SHOWCASE: {
+    name: "Portfolio Showcase",
+    description:
+      "Dynamic 3×3 grid for creative portfolios with balanced whitespace.",
+    width: 2000,
+    height: 2000,
+    rows: 3,
+    cols: 3,
+    cellPadding: 20,
+    backgroundColor: "#ffffff",
+  },
 };

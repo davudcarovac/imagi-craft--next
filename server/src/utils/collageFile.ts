@@ -4,7 +4,7 @@ export const processImageForCell = async (
   imagePath: string,
   cellWidth: number,
   cellHeight: number,
-  borderRadius: number = 100
+  borderRadius: number = 0
 ): Promise<Buffer> => {
   if (borderRadius <= 0) {
     return sharp(imagePath)

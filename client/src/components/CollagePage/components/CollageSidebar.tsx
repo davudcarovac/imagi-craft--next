@@ -2,11 +2,13 @@
 
 import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { Dropdown } from "primereact/dropdown";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction, useRef } from "react";
 import { Slider } from "primereact/slider";
-import CustomColorPicker from "./CustomCollorPicker";
+import CustomColorPicker from "./CustomColorPicker";
 import { ColorResult } from "@uiw/react-color";
 import SubmitButton from "@/components/SubmitButton";
+import { FileUpload } from "primereact/fileupload";
+
 type SidebarProps = {
   isOpen: boolean;
   isMobile: boolean;
@@ -17,6 +19,8 @@ type SidebarProps = {
   templateBgColor: string;
   activeColor: string;
   borderRadius: number;
+  uploadedFiles: { file: File; image: string }[];
+  setUploadedFiles: Dispatch<SetStateAction<{ file: File; image: string }[]>>;
   setBorderRadius: Dispatch<SetStateAction<number>>;
   handleColorChange?: (color: ColorResult) => void;
   setGridPadding: Dispatch<SetStateAction<number>>;
@@ -33,6 +37,8 @@ const Sidebar = ({
   templateBgColor,
   activeColor,
   borderRadius,
+  uploadedFiles,
+  setUploadedFiles,
   setBorderRadius,
   handleColorChange,
   setGridPadding,
@@ -40,13 +46,45 @@ const Sidebar = ({
   setTemplate,
   children,
 }: SidebarProps) => {
+  const fileUploadRef = useRef<FileUpload>(null);
+
+  const uploadHandler = async (event: { files: File[] }) => {
+    const files = event.files;
+
+    if (!files || files.length === 0) return;
+
+    // Oslobodi prethodne URL-ove
+    uploadedFiles.forEach((file) => {
+      try {
+        if (file?.image?.startsWith("blob:")) {
+          URL.revokeObjectURL(file.image);
+        }
+      } catch (error) {
+        console.error("Error revoking URL:", error);
+      }
+    });
+
+    // Kreiraj nove URL-ove
+    const modifiedFiles = files.map((item) => ({
+      image: URL.createObjectURL(item),
+      file: item,
+    }));
+
+    setUploadedFiles(modifiedFiles);
+
+    // Resetuj file input
+    if (fileUploadRef.current) {
+      fileUploadRef.current.clear();
+    }
+  };
+
   return (
     <>
       {/* Sidebar Toggle Button */}
       <button
         type="button"
         onClick={onClose}
-        className={`fixed lg:hidden z-50 m-2 p-2 rounded-full bg-white shadow-md ${
+        className={`fixed lg:hidden z-50 m-2 p-2 rounded-full cursor-pointer bg-white shadow-md ${
           isOpen ? "left-[250px]" : "left-2"
         } transition-all duration-300 hover:bg-gray-100`}
       >
@@ -59,15 +97,15 @@ const Sidebar = ({
 
       {/* Sidebar Content */}
       <div
-        className={`bg-white shadow-lg h-[90vh] transition-all duration-300 ${
+        className={`bg-white shadow-lg h-[92vh] transition-all duration-300 ${
           isOpen ? "w-[300px]" : "w-0 overflow-hidden"
         } ${isMobile ? "fixed z-40" : "relative"}`}
       >
         <div className="p-6 h-full flex flex-col">
           {/* <h2 className="text-xl font-bold mb-6">Collage Settings</h2> */}
-          <div className="flex-1 flex flex-col gap-10 ">
+          <div className="flex-1 flex flex-col gap-6 ">
             <section>
-              <label className="block font-medium text-lg mb-2 saira-font text-[#1aac83]">
+              <label className="block font-medium text-lg mb-1 saira-font text-[#1aac83]">
                 Choose layout
               </label>
               <Dropdown
@@ -79,6 +117,24 @@ const Sidebar = ({
                 className="w-full"
               />
             </section>
+            <div>
+              <label className="block mb-1 text-[#1aac83] text-lg font-medium saira-font">
+                Upload images
+              </label>
+              <FileUpload
+                ref={fileUploadRef}
+                key={uploadedFiles.length}
+                className="custom-file-upload font-medium"
+                multiple
+                mode="basic"
+                id="image-upload"
+                accept="image/*"
+                customUpload
+                uploadHandler={uploadHandler}
+                auto
+                chooseLabel="Browse"
+              />
+            </div>
             <div>
               <label className="block mb-2 text-[#1aac83] text-lg font-medium saira-font">
                 Cell spacing
@@ -119,8 +175,9 @@ const Sidebar = ({
                 // showColorValue={true}
               />
             </div>
-            <div className="my-6">
-              <SubmitButton>Generate</SubmitButton>
+
+            <div>
+              <SubmitButton className="my-3">Generate</SubmitButton>
             </div>
           </div>
         </div>

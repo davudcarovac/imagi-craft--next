@@ -1,7 +1,5 @@
 import { ColorResult, Sketch } from "@uiw/react-color";
 
-import { useState } from "react";
-
 type CustomColorPickerProps = {
   handleColorChange?: (color: ColorResult) => void;
   activeColor?: string;
