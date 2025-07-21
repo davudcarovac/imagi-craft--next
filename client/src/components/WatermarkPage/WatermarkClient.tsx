@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import UploadFile from "../UploadFile";
-import { FileUpload } from "primereact/fileupload";
+import {
+  FileUpload,
+  FileUploadHandlerEvent,
+  FileUploadSelectEvent,
+} from "primereact/fileupload";
 import { Button } from "primereact/button";
 import dynamic from "next/dynamic";
 import ServiceIntro from "../ServiceIntro";
@@ -10,6 +14,7 @@ import { useWatermark } from "@/hooks/useWatermark";
 import DownloadArea from "../DownloadArea";
 import { deleteAllFiles } from "@/api/deleteAllApi";
 import LetsTryActions from "../LetsTryActions/LetsTryActions";
+import { Toast } from "primereact/toast";
 
 const WatermarkKonva = dynamic(
   () => import("@/components/WatermarkPage/WatermarkKonva"),
@@ -37,6 +42,9 @@ const WatermarkClient = () => {
   const [selected, setSelected] = useState(false);
   const [, setErrorMessage] = useState<string | null>(null);
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
+
+  const toast = useRef<Toast>(null);
+  const fileUploadRef = useRef<FileUpload>(null);
 
   const formData = new FormData();
   const { mutate, isPending } = useWatermark();
@@ -117,8 +125,70 @@ const WatermarkClient = () => {
     setErrorMessage(null);
   };
 
+  const removeWatermark = () => {
+    setWatermarkSrc(null);
+    setWatermarkPos({ x: 50, y: 50 });
+    setWatermarkSize({ width: 100, height: 100 });
+    setSelected(false);
+    fileUploadRef.current?.clear();
+  };
+
+  const uploadHandler = (e: FileUploadHandlerEvent) => {
+    const file = e.files?.[0];
+
+    if (!file) {
+      toast.current?.show({
+        severity: "warn",
+        summary: "No file selected",
+        detail: "Please select a file to upload",
+        life: 3000,
+      });
+      return;
+    }
+
+    // Provera veličine fajla (3MB)
+    if (file.size > 3048576) {
+      toast.current?.show({
+        severity: "error",
+        summary: "File too large",
+        detail: "Maximum allowed size is 3MB",
+        life: 3000,
+      });
+
+      // Resetujte file input
+      fileUploadRef.current?.clear();
+      return;
+    }
+
+    // Provera tipa fajla
+    if (!file.type.startsWith("image/")) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Invalid file type",
+        detail: "Please upload an image file",
+        life: 3000,
+      });
+      fileUploadRef.current?.clear();
+      return;
+    }
+
+    // Ako je sve u redu
+    // toast.current?.show({
+    //   severity: "success",
+    //   summary: "Success",
+    //   detail: "File uploaded successfully",
+    //   life: 3000,
+    // });
+
+    // Postavite watermark fajl
+    setWatermarkFile(file);
+    setWatermarkSrc(URL.createObjectURL(file));
+    setSelected(true);
+  };
+
   return (
     <div className="mx-5">
+      <Toast ref={toast} />
       {/* Faza 1: Uvod i Upload */}
       {!backgroundSrc && !downloadItem && (
         <>
@@ -143,27 +213,22 @@ const WatermarkClient = () => {
       {backgroundSrc && !downloadItem && (
         <div className="max-w-[900px] my-5 mx-auto">
           {!watermarkSrc && (
-            <div className="pt-5 flex items-center gap-2 ">
-              <FileUpload
-                chooseLabel="Add Watermark"
-                className="custom-file-upload font-medium "
-                mode="basic"
-                name="demo[]"
-                accept="image/*"
-                maxFileSize={3048576}
-                auto
-                customUpload
-                uploadHandler={(e) => {
-                  const file = e.files[0];
-                  if (file) {
-                    setWatermarkFile(file);
-                    setWatermarkSrc(file.objectURL);
-                    setSelected(true);
-                  }
-                }}
-              />
+            <div className="pt-5 flex items-center justify-between gap-2 ">
+              <div className="flex items-center gap-4 flex-row">
+                <FileUpload
+                  ref={fileUploadRef}
+                  chooseLabel="Add Watermark"
+                  className="custom-file-upload font-medium"
+                  mode="basic"
+                  name="demo[]"
+                  accept="image/*"
+                  auto
+                  customUpload
+                  uploadHandler={uploadHandler}
+                />
+              </div>
               <Button
-                label="Cancel"
+                label="Remove all"
                 className="custom-cancel-upload saira-font font-medium-"
                 onClick={handleCancel}
               />
@@ -181,6 +246,7 @@ const WatermarkClient = () => {
               setSelected={setSelected}
               setWatermarkPos={setWatermarkPos}
               setWatermarkSize={setWatermarkSize}
+              removeWatermark={removeWatermark}
             />
           </form>
         </div>

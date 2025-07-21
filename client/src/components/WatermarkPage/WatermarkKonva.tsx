@@ -22,6 +22,7 @@ type WatermarkKonvaProps = {
   watermarkSize: { width: number; height: number };
   selected: boolean;
   isPending: boolean;
+  removeWatermark: () => void;
   setSelected: Dispatch<SetStateAction<boolean>>;
   setWatermarkPos: (pos: { x: number; y: number }) => void;
   setWatermarkSize: (size: { width: number; height: number }) => void;
@@ -72,6 +73,7 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
   watermarkSize,
   selected,
   isPending,
+  removeWatermark,
   setSelected,
   setWatermarkPos,
   setWatermarkSize,
@@ -119,7 +121,17 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
   };
 
   const handleWatermarkLoad = (img: HTMLImageElement) => {
-    setWatermarkSize({ width: img.naturalWidth, height: img.naturalHeight });
+    // Proporcija između pozadinske slike i watermarka
+    const widthRatio = naturalSize.width / img.naturalWidth;
+    const heightRatio = naturalSize.height / img.naturalHeight;
+
+    // Odaberite manji ratio da watermark ne pređe granice
+    const scale = Math.min(widthRatio, heightRatio) * 0.2; // 0.2 = 1/5 željenog odnosa
+
+    setWatermarkSize({
+      width: img.naturalWidth * scale,
+      height: img.naturalHeight * scale,
+    });
 
     setTimeout(() => {
       if (transformerRef.current && watermarkRef.current) {
@@ -143,6 +155,7 @@ const WatermarkKonva: React.FC<WatermarkKonvaProps> = ({
             position={watermarkPos}
             size={watermarkSize}
             isPending={isPending}
+            removeWatermark={removeWatermark}
           />
           <Stage
             width={stageSize.width}

@@ -8,6 +8,7 @@ type WatermarkInfoProps = {
   isPending: boolean;
   position: { x: number; y: number };
   size: { width: number; height: number };
+  removeWatermark: () => void;
 };
 
 const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
@@ -15,6 +16,7 @@ const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
   position,
   size,
   isPending,
+  removeWatermark,
 }) => {
   if (!watermarkSrc) return null;
 
@@ -57,10 +59,17 @@ const WatermarkInfo: React.FC<WatermarkInfoProps> = ({
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end">
-        <SubmitButton isPending={isPending} className={`my-0`}>
+      <div className="mt-10  flex justify-end gap-3">
+        <SubmitButton isPending={isPending} className={`my-0 font-semibold`}>
           Apply Watermark
         </SubmitButton>
+
+        <button
+          onClick={removeWatermark}
+          className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-500 cursor-pointer rounded-md font-semibold saira-font"
+        >
+          Remove watermark
+        </button>
       </div>
     </div>
   );

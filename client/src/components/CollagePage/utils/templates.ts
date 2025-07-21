@@ -129,7 +129,7 @@ export const PROFESSIONAL_TEMPLATES: Record<string, CollageTemplate> = {
     rows: 2,
     cols: 2,
     cellPadding: 8,
-    displayScale: 0.7,
+    displayScale: 0.6,
     backgroundColor: "#000000",
   },
 

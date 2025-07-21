@@ -8,8 +8,11 @@ import {
   ZoomIn,
   Info,
   SquareRoundCorner,
+  X,
 } from "lucide-react";
 import { CollageTemplate } from "../utils/templates";
+import { Dialog } from "primereact/dialog";
+import { useState } from "react";
 
 interface TemplateInfoProps {
   template: CollageTemplate;
@@ -26,6 +29,8 @@ export const TemplateInfo = ({
   gridPadding,
   radius,
 }: TemplateInfoProps) => {
+  const [visible, setVisible] = useState<boolean>(false);
+
   const getBackgroundColor = () => {
     if (!template.backgroundColor) return undefined;
 
@@ -106,14 +111,32 @@ export const TemplateInfo = ({
 
             {/* Info Button */}
             <button
-              className="p-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
               aria-label="Template information"
+              onClick={() => setVisible(true)}
             >
               <Info className="w-5 h-5 text-gray-400 hover:text-gray-600" />
             </button>
           </div>
         </div>
       </div>
+
+      <Dialog
+        header={
+          <h2 className="text-2xl text-[#1aac83] saira-font">
+            {template.name}
+          </h2>
+        }
+        closeIcon={<X className="w-6 h-6 text-[#1aac83]" />}
+        visible={visible}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+        }}
+      >
+        <p className="m-0">{template.description}</p>
+      </Dialog>
     </div>
   );
 };
