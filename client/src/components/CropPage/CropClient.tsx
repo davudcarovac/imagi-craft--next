@@ -14,8 +14,10 @@ import { deleteAllFiles } from "@/api/deleteAllApi";
 import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
 import DownloadArea from "@/components/DownloadArea";
 import UploadFile from "@/components/UploadFile";
-import Sidebar from "@/components/CropPage/Sidebar";
+import Sidebar from "@/components/CropPage/components/Sidebar";
 import ServiceIntro from "../ServiceIntro";
+import { PanelLeftOpen, Settings } from "lucide-react";
+import { Button } from "primereact/button";
 
 const aspectRatios = [
   { value: 1 / 1, name: "1/1" },
@@ -50,7 +52,7 @@ const CropClient = () => {
     CropperState["coordinates"] | null
   >(null);
   const [ratio, setRatio] = useState<number | boolean>(aspectRatios[1].value);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const formData = new FormData();
   const { mutate, isPending } = useCrop();
@@ -203,23 +205,19 @@ const CropClient = () => {
         </div>
       )}
       {image && (
-        <div className="flex w-full flex-col lg2:flex-row  h-[90vh] overflow-hidden">
-          <div className="p-5">
-            {!sidebarOpen && (
-              <button
-                onClick={toggleSidebar}
-                className="flex text-lg font-semibold items-center flex-row gap-2 text-[#1aac83] lg2:hidden p-1 rounded-full cursor-pointer hover:opacity-50 transition duration-150 saira-font"
-              >
-                Options
-                <i
-                  className="pi pi-arrow-right text-[#1aac83]"
-                  style={{ fontSize: "18px" }}
-                ></i>
-              </button>
-            )}
-          </div>
+        <div className="flex w-full flex-col lg2:flex-row h-[90vh] overflow-hidden">
+          {/* Dugme za otvaranje sidebara (prikazuje se samo na malim ekranima) */}
+          {!sidebarOpen && (
+            <button
+              onClick={toggleSidebar}
+              className="w-fit cursor-pointer lg2:hidden p-3 text-[#1aac83] hover:bg-[#1aac83]/10 rounded-lg transition-colors"
+              aria-label="Open options panel"
+            >
+              <PanelLeftOpen className="w-6 h-6" />
+            </button>
+          )}
+
           <form onSubmit={submitCropping}>
-            {/* Sidebar */}
             <Sidebar
               options={options}
               isGridActive={isGridActive}
@@ -237,13 +235,13 @@ const CropClient = () => {
             />
           </form>
 
-          {/* Crop Area */}
-          <div className=" flex-1  flex justify-center items-center flex-col   p-4 h-[90vh] overflow-y-scroll ">
-            <div className="h-full  w-full  flex justify-center items-center   max-w-[900px] ">
+          {/* Glavni sadržaj - Cropper */}
+          <div className="flex-1 flex justify-center items-center flex-col p-4 h-[90vh] overflow-y-auto">
+            <div className="h-full w-full max-w-[900px] flex justify-center items-center">
               <Cropper
                 ref={cropperRef}
                 src={image}
-                className="w-full  "
+                className="w-full max-h-full object-contain"
                 transformImage={{
                   adjustStencil: false,
                 }}
@@ -259,18 +257,23 @@ const CropClient = () => {
                 onChange={handleCropChange}
               />
             </div>
-            <div className="w-full lg2:hidden py-5">
-              {!sidebarOpen && (
+
+            {/* Dugme za crop na mobilnim (prikazuje se samo kada je sidebar zatvoren) */}
+            {!sidebarOpen && (
+              <div className="my-5 flex gap-3 flex-row lg2:hidden">
                 <button
                   onClick={submitCropping}
                   disabled={isPending}
-                  className="className={`mt-4 py-5 px-16 bg-[#1aac83] text-white rounded-lg text-xl cursor-pointer"
+                  className=" py-3 px-8 bg-[#1aac83] text-white rounded-lg text-lg cursor-pointer saira-font font-semibold"
                 >
-                  {" "}
-                  Crop Image
+                  Crop image
                 </button>
-              )}
-            </div>
+                <Button
+                  label="Cancel"
+                  className="custom-cancel-upload saira-font font-medium py-3 px-8 saira-font"
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
