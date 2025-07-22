@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CollageSidebar from "./components/CollageSidebar";
 import CollageLayout from "./components/CollageLayout";
 import { CollageTemplate, PROFESSIONAL_TEMPLATES } from "./utils/templates";
 import { TemplateInfo } from "./components/TemplateInfo";
 import { ColorResult } from "@uiw/react-color";
 import { useCollage } from "@/hooks/useCollage";
+import DownloadArea from "../DownloadArea";
+import LetsTryActions from "../LetsTryActions/LetsTryActions";
+import { deleteAllFiles } from "@/api/deleteAllApi";
+import { Toast } from "primereact/toast";
 
 const templates = [
   { value: "CLASSIC", name: "2x2" },
@@ -26,6 +30,9 @@ const templates = [
 
 const CollageClient = () => {
   const [template, setTemplate] = useState<string>(templates[0].value);
+  const [downloadItem, setDownloadItem] = useState<string | null>(null);
+  const toast = useRef<Toast>(null);
+
   const [selectedTemplate, setSelectedTemplate] = useState<CollageTemplate>(
     PROFESSIONAL_TEMPLATES[template]
   );
@@ -102,17 +109,36 @@ const CollageClient = () => {
 
     mutateCollage(formData, {
       onSuccess: (response) => {
-        console.log("Collage response ===> ", response);
+        if (
+          response?.success &&
+          response.downloadLinks &&
+          response.downloadLinks?.length > 0
+        ) {
+          setDownloadItem(String(response?.downloadLinks[0].name));
+          setTemplate(templates[0].value);
+          setUploadedFiles(Array(rows * cols).fill(null));
+          toast.current?.show({
+            severity: "success",
+            summary: "Collage succed",
+            detail: response.message,
+            life: 4000,
+          });
+        }
       },
       onError: (error) => {
         console.log("Collage error ===> ", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Collage failed",
+          detail: error.message,
+          life: 4000,
+        });
       },
     });
   };
 
   useEffect(() => {
     return () => {
-      // Oslobađanje URL-ova pri unmount-u komponente
       uploadedFiles.forEach((item) => {
         if (item?.image) {
           if (item.image.startsWith("blob:")) {
@@ -123,65 +149,102 @@ const CollageClient = () => {
     };
   }, [uploadedFiles]);
 
-  return (
-    <div className="flex flex-col lg:flex-row h-[90vh] bg-gray-100">
-      {/* Sidebar - fiksna širina 300px, apsolutno pozicioniran na desktopu */}
-      <div
-        className={`
-    ${isMobile ? "fixed z-40" : "relative"}
-    ${isSidebarOpen ? "w-[300px]" : "w-0"}
-    h-[90vh]
-    transition-all duration-300
-  `}
-      >
-        <form onSubmit={submitCollage}>
-          <CollageSidebar
-            isOpen={isSidebarOpen}
-            isMobile={isMobile}
-            templates={templates}
-            template={template}
-            gridPadding={gridPadding}
-            templateBgColor={templateBgColor}
-            activeColor={activeColor}
-            borderRadius={borderRadius}
-            uploadedFiles={uploadedFiles}
-            setUploadedFiles={setUploadedFiles}
-            setBorderRadius={setBorderRadius}
-            handleColorChange={handleColorChange}
-            setGridPadding={setGridPadding}
-            setTemplate={setTemplate}
-            onClose={toggleSidebar}
-          />
-        </form>
-      </div>
+  const resetAll = () => {
+    setDownloadItem(null);
+    setUploadedFiles(Array(rows * cols).fill(null));
+    setTemplate(templates[0].value);
+    setActiveColor(templateBgColor);
+    setBorderRadius(0);
+    setGridPadding(selectedTemplate.cellPadding || 3);
+  };
 
-      {/* Main Content - direktno dolepo sidebaru na desktopu */}
-      <div
-        className={`
-    h-[90vh]
-    flex-grow
-    transition-all duration-300
-    ${isSidebarOpen ? "lg:w-[calc(100%-300px)]" : "w-full"}
-    ${isMobile ? "ml-0" : ""}
-  `}
-      >
-        <TemplateInfo
-          template={selectedTemplate}
-          gridPadding={gridPadding}
-          backgroundColor={activeColor}
-          radius={borderRadius}
-        />
-        {/* <div className="h-full w-full"> */}
-        <CollageLayout
-          backgroundColor={activeColor}
-          templateName={template}
-          gridPadding={gridPadding}
-          uploadedFiles={uploadedFiles}
-          setUploadedFiles={setUploadedFiles}
-          radius={borderRadius}
-        />
-        {/* </div> */}
-      </div>
+  const deleteAll = () => {
+    try {
+      deleteAllFiles();
+      resetAll();
+    } catch (error) {
+      console.log("This is Error ===> ", error);
+    }
+  };
+
+  return (
+    <div>
+      <Toast ref={toast} />
+      {!downloadItem && (
+        <div className="flex flex-col lg:flex-row h-[90vh] bg-gray-100">
+          <div
+            className={`
+     ${isMobile ? "fixed z-40" : "relative"}
+     ${isSidebarOpen ? "w-[300px]" : "w-0"}
+     h-[90vh]
+     transition-all duration-300
+   `}
+          >
+            <form onSubmit={submitCollage}>
+              <CollageSidebar
+                isOpen={isSidebarOpen}
+                isMobile={isMobile}
+                templates={templates}
+                template={template}
+                gridPadding={gridPadding}
+                templateBgColor={templateBgColor}
+                activeColor={activeColor}
+                borderRadius={borderRadius}
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                setBorderRadius={setBorderRadius}
+                handleColorChange={handleColorChange}
+                setGridPadding={setGridPadding}
+                setTemplate={setTemplate}
+                onClose={toggleSidebar}
+              />
+            </form>
+          </div>
+
+          <div
+            className={`
+     h-[90vh]
+     flex-grow
+     transition-all duration-300
+     ${isSidebarOpen ? "lg:w-[calc(100%-300px)]" : "w-full"}
+     ${isMobile ? "ml-0" : ""}
+   `}
+          >
+            <TemplateInfo
+              template={selectedTemplate}
+              gridPadding={gridPadding}
+              backgroundColor={activeColor}
+              radius={borderRadius}
+            />
+            <CollageLayout
+              backgroundColor={activeColor}
+              templateName={template}
+              gridPadding={gridPadding}
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
+              radius={borderRadius}
+            />
+          </div>
+        </div>
+      )}
+
+      {downloadItem && (
+        <div>
+          <div className="max-w-[700px] mx-auto flex justify-center flex-col py-10  ">
+            <DownloadArea
+              handleDisableLink={null}
+              downloadLinks={[]}
+              isSingle={true}
+              text="You image has been cropped. Download it!"
+              resetAll={resetAll}
+              deleteAll={deleteAll}
+              downloadItem={downloadItem}
+            />
+            {/* Let's try */}
+          </div>
+          <LetsTryActions />
+        </div>
+      )}
     </div>
   );
 };

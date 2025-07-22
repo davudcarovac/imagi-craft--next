@@ -166,6 +166,20 @@ const CropClient = () => {
           east: true,
         };
 
+  const cancelCrop = () => {
+    setImage(null);
+    setFile(undefined);
+    setIsCropped(false);
+    setDownloadItem(null);
+    setCoordinates(null);
+    setRatio(aspectRatios[1].value);
+    setHandlersValue(options[0]);
+    setStencilValue("rectangle");
+    setCurrentStencil(RectangleStencil);
+    setIsGridActive(true);
+    toggleSidebar();
+  };
+
   return (
     // <div className="w-full ">
     <div>
@@ -232,6 +246,7 @@ const CropClient = () => {
               toggleSidebar={toggleSidebar}
               toggleStencil={toggleStencil}
               setHandlersValue={setHandlersValue}
+              cancelCrop={cancelCrop}
             />
           </form>
 
@@ -269,6 +284,7 @@ const CropClient = () => {
                   Crop image
                 </button>
                 <Button
+                  onClick={cancelCrop}
                   label="Cancel"
                   className="custom-cancel-upload saira-font font-medium py-3 px-8 saira-font"
                 />

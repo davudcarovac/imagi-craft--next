@@ -130,6 +130,7 @@ export const TemplateInfo = ({
         closeIcon={<X className="w-6 h-6 text-[#1aac83]" />}
         visible={visible}
         style={{ width: "50vw" }}
+        draggable={false}
         onHide={() => {
           if (!visible) return;
           setVisible(false);

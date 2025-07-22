@@ -12,7 +12,7 @@ import archiver from "archiver";
 import canvas from "canvas";
 import faceapi from "face-api.js";
 import type { Request, Response, NextFunction } from "express";
-import type { FormatEnum } from "sharp";
+import type { FormatEnum, OutputInfo } from "sharp";
 import type { DownloadLinksType } from "../types/output.ts";
 import cropfaceFile from "../utils/cropfaceFile.ts";
 import sharp from "sharp";
@@ -649,10 +649,14 @@ export const postCollageMaker = async (
   res: Response,
   next: NextFunction
 ) => {
+  const files = req.files as Express.Multer.File[];
   try {
     const { templateName, customPadding, backgroundColor, borderRadius } =
       req.body;
-    const files = req.files as Express.Multer.File[];
+
+    const downloadLinks: DownloadLinksType[] & {
+      dimensions?: { width: number; height: number };
+    } = [];
 
     console.log(
       "data ===> ",
@@ -712,15 +716,17 @@ export const postCollageMaker = async (
       };
     });
 
+    const date = Date.now();
+
     // 4. Kreiraj collage
     const outputFilePath = path.join(
       __dirname,
-      "outputs",
       "..",
-      `collage-${Date.now()}.jpg` // 👈 Eksplicitno dodajte ekstenziju
+      "outputs",
+      `collage-${date}.jpg`
     );
 
-    await sharp({
+    const processedImage = await sharp({
       create: {
         width: template.width,
         height: template.height,
@@ -733,15 +739,26 @@ export const postCollageMaker = async (
         quality: 98,
         mozjpeg: true,
       })
-      .toFile(outputFilePath); // 👈 Koristite punu putanju
+      .toFile(outputFilePath);
 
-    res.json({
+    downloadLinks.push({
+      name: `collage-${date}.jpg`,
+      size: (await processedImage).size,
+      width: template.width,
+      height: template.height,
+      format: "jpeg",
+    });
+
+    res.status(200).json({
       success: true,
-      path: outputFilePath.replace(`${__dirname}/../`, ""), // Relativna putanja za klijenta
+      downloadLinks: downloadLinks,
+      message: "Collage generated successfully",
       dimensions: { width: template.width, height: template.height },
     });
   } catch (error) {
     next(error);
+  } finally {
+    files.forEach((item) => deleteFile(item.path));
   }
 };
 

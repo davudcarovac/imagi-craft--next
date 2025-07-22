@@ -18,6 +18,7 @@ import {
   ArrowUpDown,
   ChevronLeft,
 } from "lucide-react";
+import { Button } from "primereact/button";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -38,6 +39,7 @@ type SidebarProps = {
   toggleStencil: () => void;
   toggleSidebar: () => void;
   setHandlersValue: (value: string) => void;
+  cancelCrop: () => void;
 };
 
 const Sidebar = ({
@@ -54,6 +56,7 @@ const Sidebar = ({
   toggleStencil,
   toggleSidebar,
   setHandlersValue,
+  cancelCrop,
 }: SidebarProps) => {
   return (
     <aside
@@ -202,6 +205,7 @@ const Sidebar = ({
             />
           </div>
         </section>
+        <section></section>
       </div>
 
       {/* Apply Crop Button */}
