@@ -65,3 +65,44 @@ export type TextElement = {
   color: string;
   position: { x: number; y: number };
 };
+// Eksterni tipovi (u posebnom types.ts fajlu)
+import { LucideIcon } from "lucide-react";
+
+export type PricingPlan = {
+  id: string;
+  name: string;
+  price: number;
+  billing: "monthly" | "yearly" | "forever";
+  featured?: boolean;
+  description: string;
+  features: {
+    text: string;
+    icon: LucideIcon;
+    negative?: boolean; // For negative features (like limitations)
+    premium?: boolean; // For premium-only features
+  }[];
+  cta: {
+    text: string;
+    variant: "contained" | "outlined" | "text";
+    icon?: string; // PrimeReact icon class
+    severity?:
+      | "secondary"
+      | "success"
+      | "info"
+      | "warning"
+      | "help"
+      | "danger"
+      | "contrast";
+    disabled?: boolean;
+  };
+  ribbon?: string;
+  badge?: string;
+  custom?: boolean;
+  annualDiscount?: number;
+  mostPopular?: boolean;
+  // Optional additional fields
+  storage?: string; // e.g. "10GB", "Unlimited"
+  teamMembers?: number;
+};
+
+export type PrimeIcons = `pi ${string}`; // Za PrimeReact ikonice
