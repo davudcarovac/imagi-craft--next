@@ -18,8 +18,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
 const NODE_ENV = process.env.NODE_ENV;
 
-const createToken = (userId: string) => {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "3d" });
+const createToken = (userId: string, plan: string) => {
+  return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: "3d" });
 };
 
 export const registerSchema = z
@@ -67,7 +67,7 @@ export async function signupUser(
       },
     });
 
-    const token = createToken(user.id);
+    const token = createToken(user.id, user.plan);
 
     res.cookie("auth_token", token, {
       httpOnly: true,
@@ -80,10 +80,10 @@ export async function signupUser(
       id: user.id,
       email: user.email,
       name: user.name,
-      isPremium: user.ispremium,
-      premiumExpires: user.premiumexpires,
-      createdAt: user.createdat,
-      updatedAt: user.updatedat,
+      plan: user.plan,
+      planExpires: user.planExpires,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       role: user.role,
       profileImage: user.profileImage,
     };
@@ -111,6 +111,8 @@ export async function loginUser(
     if (!password) throw new ErrorResponse("Password is required", 400);
 
     const user = await prisma.user.findUnique({ where: { email } });
+
+    console.log("User ===> ", user);
     if (!user) throw new ErrorResponse("User not found", 404);
 
     const isMatch = await comparePasswords(password, user.password);
@@ -129,7 +131,7 @@ export async function loginUser(
       return;
     }
 
-    const authToken = createToken(user.id);
+    const authToken = createToken(user.id, user.plan);
     res.cookie("auth_token", authToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -142,10 +144,10 @@ export async function loginUser(
       id: user.id,
       email: user.email,
       name: user.name,
-      isPremium: user.ispremium,
-      premiumExpires: user.premiumexpires,
-      createdAt: user.createdat,
-      updatedAt: user.updatedat,
+      plan: user.plan,
+      planExpires: user,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       role: user.role,
       profileImage: user.profileImage,
       twoFactorEnabled: user.twoFactorEnabled,
@@ -160,6 +162,7 @@ export async function loginUser(
       user: safeUser,
     });
   } catch (error) {
+    console.log("Error ===> ", error);
     next(error);
   }
 }
@@ -307,7 +310,7 @@ export async function resetPassword(
       },
     });
 
-    const token = createToken(user?.id!);
+    const token = createToken(user?.id!, user.plan);
 
     res.status(200).json({
       success: true,
@@ -362,7 +365,7 @@ export async function changePassword(
       },
     });
 
-    const token = createToken(user.id);
+    const token = createToken(user.id, user.plan);
 
     res.cookie("auth_token", token, {
       httpOnly: true,
@@ -441,10 +444,10 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
       id: user.id,
       email: user.email,
       name: user.name,
-      isPremium: user.ispremium,
-      premiumExpires: user.premiumexpires,
-      createdAt: user.createdat,
-      updatedAt: user.updatedat,
+      plan: user.plan,
+      planExpires: user.planExpires,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       role: user.role,
       profileImage: user.profileImage,
       twoFactorEnabled: user.twoFactorEnabled,
@@ -753,7 +756,7 @@ export async function verifyLoginTwoFactor(
       throw new ErrorResponse("Invalid code", 400);
     }
 
-    const authToken = createToken(user.id);
+    const authToken = createToken(user.id, user.plan);
 
     res.cookie("auth_token", authToken, {
       httpOnly: true,
@@ -766,10 +769,10 @@ export async function verifyLoginTwoFactor(
       id: user.id,
       email: user.email,
       name: user.name,
-      isPremium: user.ispremium,
-      premiumExpires: user.premiumexpires,
-      createdAt: user.createdat,
-      updatedAt: user.updatedat,
+      plan: user.plan,
+      planExpires: user.planExpires,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       role: user.role,
       profileImage: user.profileImage,
     };

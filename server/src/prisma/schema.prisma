@@ -8,27 +8,32 @@ datasource db {
 }
 
 enum Role {
-  user
-  admin
+  USER
+  ADMIN
 }
 
-model user {
-  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                 String   @unique
+enum Plan {
+  STARTER
+  PROFESSIONAL
+  BUSINESS
+}
+
+model User {
+  id                    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String     @unique
   password              String
   name                  String?
-  ispremium             Boolean?  @default(false)
-  premiumexpires        DateTime? @db.Timestamp(6)
-  createdat             DateTime? @default(now()) @db.Timestamp(6)
-  updatedat             DateTime? @default(now()) @db.Timestamp(6)
-  resetPasswordToken    String?
-  resetPasswordExpire   DateTime?
-  profileImage          String?  
-  profileImagePublicId  String?  
-  role Role @default(user)
- twoFactorEnabled Boolean @default(false)
-  twoFactorSecret String?  // Čuva se samo ako je 2FA uključen
+  plan        String     @default("STARTER") @map("plan")
+  planExpires DateTime?  @db.Timestamp(6) @map("plan_expires")
+  createdAt             DateTime?  @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime   @default(now()) @db.Timestamp(6) @map("updatedat")
+  resetPasswordToken    String?    @map("resetpasswordtoken")
+  resetPasswordExpire   DateTime?  @map("resetpasswordexpire")
+  profileImage          String?    @map("profileimage")  
+  profileImagePublicId  String?    @map("profileimagepublicid")  
+  role                  Role       @default(USER)
+  twoFactorEnabled      Boolean    @default(false) @map("twofactorenabled")
+  twoFactorSecret       String?    @map("twofactorsecret")
+  
   @@map("user")
 }
-
-

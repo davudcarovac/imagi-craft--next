@@ -37,7 +37,7 @@ const PricingClient = () => {
           {" "}
           <div className="flex flex-wrap justify-center gap-6 p-4">
             {pricingPlans.map((plan) => (
-              <PricingCard plan={plan} />
+              <PricingCard key={plan.id} plan={plan} />
             ))}
           </div>
         </div>
