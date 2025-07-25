@@ -28,6 +28,7 @@ const ConvertClient = () => {
   >([]);
   const [disabledLinks, setDisabledLinks] = useState<string[]>([]);
   const [globalFormat, setGlobalFormat] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const formData = new FormData();
 
@@ -110,6 +111,8 @@ const ConvertClient = () => {
             action="convert"
             isMultiple={true}
             files={files}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
             setFiles={setFiles}
           />
         </form>

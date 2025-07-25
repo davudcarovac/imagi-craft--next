@@ -31,7 +31,7 @@ const aspectRatios = [
   { value: 5 / 4, name: "5/4" },
 ];
 
-const options: string[] = ["On", "Off"];
+const options: string[] = ["on", "off"];
 
 type StencilComponentType = typeof RectangleStencil | typeof CircleStencil;
 
@@ -42,7 +42,7 @@ const CropClient = () => {
   const [file, setFile] = useState<File>();
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
-  const [handlersValue, setHandlersValue] = useState<string>(options[0]);
+  const [handlersValue, setHandlersValue] = useState<boolean>(false);
   const [stencilValue, setStencilValue] = useState<"rectangle" | "circle">(
     "rectangle"
   );
@@ -143,28 +143,28 @@ const CropClient = () => {
     }
   };
 
-  const handlers =
-    handlersValue === "Off"
-      ? {
-          eastNorth: false,
-          north: false,
-          westNorth: false,
-          west: false,
-          westSouth: false,
-          south: false,
-          eastSouth: false,
-          east: false,
-        }
-      : {
-          eastNorth: true,
-          north: true,
-          westNorth: true,
-          west: true,
-          westSouth: true,
-          south: true,
-          eastSouth: true,
-          east: true,
-        };
+  // const handlers =
+  //   handlersValue === "Off"
+  //     ? {
+  //         eastNorth: false,
+  //         north: false,
+  //         westNorth: false,
+  //         west: false,
+  //         westSouth: false,
+  //         south: false,
+  //         eastSouth: false,
+  //         east: false,
+  //       }
+  //     : {
+  //         eastNorth: true,
+  //         north: true,
+  //         westNorth: true,
+  //         west: true,
+  //         westSouth: true,
+  //         south: true,
+  //         eastSouth: true,
+  //         east: true,
+  //       };
 
   const cancelCrop = () => {
     setImage(null);
@@ -173,7 +173,7 @@ const CropClient = () => {
     setDownloadItem(null);
     setCoordinates(null);
     setRatio(aspectRatios[1].value);
-    setHandlersValue(options[0]);
+    setHandlersValue(false);
     setStencilValue("rectangle");
     setCurrentStencil(RectangleStencil);
     setIsGridActive(true);
@@ -263,7 +263,7 @@ const CropClient = () => {
                 stencilComponent={currentStencil}
                 stencilProps={{
                   grid: isGridActive,
-                  handlers: handlers,
+                  handlers: handlersValue,
                   aspectRatio: ratio,
                   resizable: true,
                   movable: true,

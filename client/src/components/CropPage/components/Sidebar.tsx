@@ -32,13 +32,13 @@ type SidebarProps = {
   aspectRatios: { value: number | boolean; name: string }[];
   ratio: number | boolean;
   stencilValue: "rectangle" | "circle";
-  handlersValue: string;
+  handlersValue: boolean;
   isGridActive: boolean;
   setIsGridActive: Dispatch<SetStateAction<boolean>>;
   setRatio: Dispatch<SetStateAction<number | boolean>>;
   toggleStencil: () => void;
   toggleSidebar: () => void;
-  setHandlersValue: (value: string) => void;
+  setHandlersValue: (value: boolean) => void;
   cancelCrop: () => void;
 };
 
@@ -200,12 +200,11 @@ const Sidebar = ({
             {/* Desni kontrolni element */}
             <InputSwitch
               className="mt-2"
-              checked={handlersValue === "on"}
-              onChange={(e) => setHandlersValue(e.value ? "on" : "off")}
+              checked={handlersValue}
+              onChange={(e) => setHandlersValue(e.value)}
             />
           </div>
         </section>
-        <section></section>
       </div>
 
       {/* Apply Crop Button */}

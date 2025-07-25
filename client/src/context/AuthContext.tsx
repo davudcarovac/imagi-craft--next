@@ -15,6 +15,8 @@ export interface User {
   role: Role;
   isPremium: boolean;
   profileImage: string;
+  plan: "STARTER" | "PROFESSIONAL" | "BUSINESS";
+  planExpires: Date | null;
   // token: string;
 }
 

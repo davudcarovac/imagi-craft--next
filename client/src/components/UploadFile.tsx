@@ -1,6 +1,12 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Toast } from "primereact/toast";
 import {
   FileUpload,
@@ -21,6 +27,9 @@ import "primeicons/primeicons.css";
 import { FileType } from "../types/apiTypes";
 import { v4 as uuidv4 } from "uuid";
 import NextImage from "next/image";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { PLAN_LIMITS } from "@/utils/planLimits";
+import { bytesToMB } from "@/utils/bytesToMb";
 
 type UploadFileType = {
   tooltip: string;
@@ -62,66 +71,101 @@ export default function UploadFile({
     Record<string, { width: number; height: number }>
   >({});
 
-  // NEW: Global format state
+  const { user } = useAuthContext();
+  const currentPlan = user?.plan || "STARTER";
+  const { maxFiles, maxTotalSize } = PLAN_LIMITS[currentPlan];
+
+  useEffect(() => console.log(currentPlan), [user]);
 
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
-    let _totalSize = totalSize;
+    const selectedFiles = e.files || [];
+    let processedFiles = [...selectedFiles];
 
-    let newFiles = [...e.files];
-    if (action === "crop-face" && newFiles.length > 5) {
-      newFiles = newFiles.slice(0, 5);
-      toast.current?.show({
-        severity: "warn",
-        summary: "Warning",
-        detail: (
-          <span style={{ fontSize: "13px" }}>
-            You can only upload up to 5 files at a time.
-          </span>
-        ),
-        life: 4000,
-      });
+    if (selectedFiles.length > maxFiles) {
+      showToast(
+        "error",
+        "File number limit",
+        `Your ${currentPlan} plan allows maximum ${maxFiles} files (${bytesToMB(
+          maxTotalSize
+        )}MB each). Upgrade to upload more.`
+      );
+      fileUploadRef.current?.setFiles([]); // Resetuje izbor
+      return false; // Prekida dalju obradu
+    }
 
-      fileUploadRef?.current?.setFiles(newFiles);
+    // 1. Provera maksimalnog broja fajlova
+    if (action === "crop-face" && selectedFiles.length > 5) {
+      processedFiles = selectedFiles.slice(0, 5);
+      showToast("warn", "Warning", "Max 5 files allowed", 4000);
+      fileUploadRef.current?.setFiles(processedFiles);
       return;
     }
 
-    if (!isMultiple && setErrorMessage && e.files.length > 0) {
-      if (e.files[0]?.size > 6145728) {
-        setErrorMessage("File size exceeds the maximum limit of 6 MB.");
+    // 2. Provera pojedinačnog fajla PRVO (za single upload)
+    if (!isMultiple && selectedFiles.length > 0) {
+      const singleFile = selectedFiles[0];
+      if (singleFile.size > maxTotalSize) {
+        setErrorMessage?.(`File size exceeds ${bytesToMB(maxTotalSize)} MB`);
+        showToast("error", "Error", "File too large");
         return;
       }
     }
 
-    if (Array.isArray(e.files)) {
-      if (setImage) {
-        const objectURL = URL.createObjectURL(e.files[0]);
-        setImage(objectURL);
-      }
+    // 3. Računanje nove ukupne veličine
+    const newFilesSize = calculateFilesSize(processedFiles);
+    const updatedTotalSize = totalSize + newFilesSize;
 
-      if (setBackgroundOptions) {
-        const objectURL = URL.createObjectURL(e.files[0]);
-        setBackgroundOptions(objectURL);
-      }
+    // 4. Provera ukupne veličine PRE nego što se bilo šta postavi
 
-      if (setFile) {
-        setFile(e.files[0]);
-      }
+    console.log(`${updatedTotalSize} - ${maxTotalSize}`);
 
-      if (setFiles) {
-        const transformed = Array.from(e.files).map((item) => ({
-          id: uuidv4(),
-          file: item,
-          format: globalFormat || "png",
-        }));
-        setFiles(transformed);
-      }
+    // if (updatedTotalSize > maxTotalSize) {
+    //   showToast(
+    //     "error",
+    //     "Limit exceeded",
+    //     `Total size: ${bytesToMB(updatedTotalSize)}MB (Max: ${bytesToMB(
+    //       maxTotalSize
+    //     )}MB)`
+    //   );
+    //   return;
+    // }
+    // 5. Ako sve provere prođu, obradi fajlove
+    processSelectedFiles(processedFiles);
+    setTotalSize(updatedTotalSize);
+  };
 
-      e.files.forEach((file) => {
-        _totalSize += file.size || 0;
-      });
+  const showToast = (
+    severity: "success" | "info" | "warn" | "error",
+    summary: string,
+    detail: string | React.ReactNode,
+    life?: number
+  ) => {
+    toast.current?.show({ severity, summary, detail, life });
+  };
+
+  const calculateFilesSize = (files: File[]) => {
+    return files.reduce((total, file) => total + (file.size || 0), 0);
+  };
+
+  const processSelectedFiles = (files: File[]) => {
+    if (!Array.isArray(files) || files.length === 0) return;
+
+    const firstFile = files[0];
+    const objectURL = URL.createObjectURL(firstFile);
+
+    // Postavljanje stanja na osnovu propsa
+    setImage?.(objectURL);
+    setBackgroundOptions?.(objectURL);
+    setFile?.(firstFile);
+
+    if (setFiles) {
+      const transformedFiles = files.map((file) => ({
+        id: uuidv4(),
+        file,
+        format: globalFormat || "png",
+      }));
+      setFiles(transformedFiles);
     }
-
-    setTotalSize(_totalSize);
   };
 
   const handleFormatChange = (fileName: string, newFormat: string) => {
@@ -134,20 +178,19 @@ export default function UploadFile({
     }
   };
 
-  const onTemplateUpload = (e: FileUploadUploadEvent) => {
-    let _totalSize = 0;
+  // const onTemplateUpload = (e: FileUploadUploadEvent) => {
+  //   let _totalSize = 0;
 
-    e.files.forEach((file) => {
-      _totalSize += file.size || 0;
-    });
-
-    setTotalSize(_totalSize);
-    toast.current?.show({
-      severity: "info",
-      summary: "Success",
-      detail: "File Uploaded",
-    });
-  };
+  //   e.files.forEach((file) => {
+  //     _totalSize += file.size || 0;
+  //   });
+  //   setTotalSize(_totalSize);
+  //   // toast.current?.show({
+  //   //   severity: "info",
+  //   //   summary: "Success",
+  //   //   detail: "File Uploaded",
+  //   // });
+  // };
 
   const onTemplateRemove = (file: File, callback: () => void) => {
     setTotalSize(totalSize - file.size);
@@ -366,8 +409,8 @@ export default function UploadFile({
         multiple={isMultiple}
         name="demo[]"
         accept="image/*"
-        maxFileSize={6145728}
-        onUpload={onTemplateUpload}
+        maxFileSize={maxTotalSize}
+        // onUpload={onTemplateUpload}
         onSelect={onTemplateSelect}
         onError={onTemplateClear}
         onClear={onTemplateClear}

@@ -15,6 +15,9 @@ import DownloadArea from "../DownloadArea";
 import { deleteAllFiles } from "@/api/deleteAllApi";
 import LetsTryActions from "../LetsTryActions/LetsTryActions";
 import { Toast } from "primereact/toast";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { PLAN_LIMITS_WM } from "@/utils/planLimits";
+import { bytesToMB } from "@/utils/bytesToMb";
 
 const WatermarkKonva = dynamic(
   () => import("@/components/WatermarkPage/WatermarkKonva"),
@@ -45,6 +48,10 @@ const WatermarkClient = () => {
 
   const toast = useRef<Toast>(null);
   const fileUploadRef = useRef<FileUpload>(null);
+
+  const { user } = useAuthContext();
+  const currentPlan = user?.plan || "STARTER";
+  const { bgFileSize } = PLAN_LIMITS_WM[currentPlan];
 
   const formData = new FormData();
   const { mutate, isPending } = useWatermark();
@@ -147,12 +154,13 @@ const WatermarkClient = () => {
     }
 
     // Provera veličine fajla (3MB)
-    if (file.size > 3048576) {
+    if (file.size > bgFileSize) {
       toast.current?.show({
         severity: "error",
-        summary: "File too large",
-        detail: "Maximum allowed size is 3MB",
-        life: 3000,
+        summary: "File number limit",
+        detail: `Your ${currentPlan} plan allows maximum ${bytesToMB(
+          bgFileSize
+        )}MB watermark. Upgrade to upload more.`,
       });
 
       // Resetujte file input
