@@ -16,7 +16,7 @@ import DownloadArea from "@/components/DownloadArea";
 import UploadFile from "@/components/UploadFile";
 import Sidebar from "@/components/CropPage/components/Sidebar";
 import ServiceIntro from "../ServiceIntro";
-import { PanelLeftOpen, Settings } from "lucide-react";
+import { PanelLeftOpen } from "lucide-react";
 import { Button } from "primereact/button";
 
 const aspectRatios = [
@@ -143,29 +143,6 @@ const CropClient = () => {
     }
   };
 
-  // const handlers =
-  //   handlersValue === "Off"
-  //     ? {
-  //         eastNorth: false,
-  //         north: false,
-  //         westNorth: false,
-  //         west: false,
-  //         westSouth: false,
-  //         south: false,
-  //         eastSouth: false,
-  //         east: false,
-  //       }
-  //     : {
-  //         eastNorth: true,
-  //         north: true,
-  //         westNorth: true,
-  //         west: true,
-  //         westSouth: true,
-  //         south: true,
-  //         eastSouth: true,
-  //         east: true,
-  //       };
-
   const cancelCrop = () => {
     setImage(null);
     setFile(undefined);
@@ -269,6 +246,16 @@ const CropClient = () => {
                   movable: true,
                 }}
                 backgroundWrapperProps={{ className: "grid-overlay" }}
+                style={{
+                  backgroundImage: `
+      linear-gradient(45deg, #e5e7eb 25%, #ffffff 25%),
+      linear-gradient(-45deg, #e5e7eb 25%, #ffffff 25%),
+      linear-gradient(45deg, #ffffff 75%, #e5e7eb 75%),
+      linear-gradient(-45deg, #ffffff 75%, #e5e7eb 75%)
+    `,
+                  backgroundSize: "20px 20px",
+                  backgroundColor: "#f3f4f6", // Fallback boja
+                }}
                 onChange={handleCropChange}
               />
             </div>

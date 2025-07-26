@@ -18,6 +18,7 @@ import { Toast } from "primereact/toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { PLAN_LIMITS_WM } from "@/utils/planLimits";
 import { bytesToMB } from "@/utils/bytesToMb";
+import { useToast } from "@/context/ToastContext";
 
 const WatermarkKonva = dynamic(
   () => import("@/components/WatermarkPage/WatermarkKonva"),
@@ -46,9 +47,9 @@ const WatermarkClient = () => {
   const [, setErrorMessage] = useState<string | null>(null);
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
 
-  const toast = useRef<Toast>(null);
   const fileUploadRef = useRef<FileUpload>(null);
 
+  const { showToast } = useToast();
   const { user } = useAuthContext();
   const currentPlan = user?.plan || "STARTER";
   const { bgFileSize } = PLAN_LIMITS_WM[currentPlan];
@@ -144,24 +145,25 @@ const WatermarkClient = () => {
     const file = e.files?.[0];
 
     if (!file) {
-      toast.current?.show({
-        severity: "warn",
-        summary: "No file selected",
-        detail: "Please select a file to upload",
-        life: 3000,
-      });
+      showToast(
+        "warn",
+        "No file selected",
+        "Please select a file to upload",
+        6000
+      );
       return;
     }
 
     // Provera veličine fajla (3MB)
     if (file.size > bgFileSize) {
-      toast.current?.show({
-        severity: "error",
-        summary: "File number limit",
-        detail: `Your ${currentPlan} plan allows maximum ${bytesToMB(
+      showToast(
+        "error",
+        "File number limit",
+        `Your ${currentPlan} plan allows maximum ${bytesToMB(
           bgFileSize
         )}MB watermark. Upgrade to upload more.`,
-      });
+        6000
+      );
 
       // Resetujte file input
       fileUploadRef.current?.clear();
@@ -170,12 +172,12 @@ const WatermarkClient = () => {
 
     // Provera tipa fajla
     if (!file.type.startsWith("image/")) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Invalid file type",
-        detail: "Please upload an image file",
-        life: 3000,
-      });
+      showToast(
+        "error",
+        "Invalid file type",
+        "Please upload an image file",
+        3000
+      );
       fileUploadRef.current?.clear();
       return;
     }
@@ -196,7 +198,6 @@ const WatermarkClient = () => {
 
   return (
     <div className="mx-5">
-      <Toast ref={toast} />
       {/* Faza 1: Uvod i Upload */}
       {!backgroundSrc && !downloadItem && (
         <>
@@ -209,7 +210,7 @@ const WatermarkClient = () => {
           <UploadFile
             setFile={setFile}
             setErrorMessage={setErrorMessage}
-            action="watermark"
+            action="watermarking"
             tooltip="resize images"
             isMultiple={false}
             setBackgroundOptions={setBackgroundOptions}

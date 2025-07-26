@@ -7,12 +7,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Toast } from "primereact/toast";
 import {
   FileUpload,
   FileUploadHeaderTemplateOptions,
   FileUploadSelectEvent,
-  FileUploadUploadEvent,
   ItemTemplateOptions,
 } from "primereact/fileupload";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -30,6 +28,7 @@ import NextImage from "next/image";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { PLAN_LIMITS } from "@/utils/planLimits";
 import { bytesToMB } from "@/utils/bytesToMb";
+import { useToast } from "@/context/ToastContext";
 
 type UploadFileType = {
   tooltip: string;
@@ -64,13 +63,13 @@ export default function UploadFile({
   setFiles,
   setBackgroundOptions,
 }: UploadFileType) {
-  const toast = useRef<Toast | null>(null);
   const fileUploadRef = useRef<FileUpload | null>(null);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [imageDimensions, setImageDimensions] = useState<
     Record<string, { width: number; height: number }>
   >({});
 
+  const { showToast } = useToast();
   const { user } = useAuthContext();
   const currentPlan = user?.plan || "STARTER";
   const { maxFiles, maxTotalSize } = PLAN_LIMITS[currentPlan];
@@ -78,69 +77,63 @@ export default function UploadFile({
   useEffect(() => console.log(currentPlan), [user]);
 
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
-    const selectedFiles = e.files || [];
-    let processedFiles = [...selectedFiles];
+    if (!e.files || e.files.length === 0) return false;
+
+    const selectedFiles = e.files;
+    let shouldProceed = true;
 
     if (selectedFiles.length > maxFiles) {
       showToast(
         "error",
-        "File number limit",
-        `Your ${currentPlan} plan allows maximum ${maxFiles} files (${bytesToMB(
-          maxTotalSize
-        )}MB each). Upgrade to upload more.`
+        "Too many files",
+        `Maximum ${maxFiles} files allowed in ${currentPlan} plan`
       );
-      fileUploadRef.current?.setFiles([]); // Resetuje izbor
-      return false; // Prekida dalju obradu
+      fileUploadRef.current?.clear();
+      return false;
     }
 
-    // 1. Provera maksimalnog broja fajlova
-    if (action === "crop-face" && selectedFiles.length > 5) {
-      processedFiles = selectedFiles.slice(0, 5);
-      showToast("warn", "Warning", "Max 5 files allowed", 4000);
-      fileUploadRef.current?.setFiles(processedFiles);
-      return;
-    }
-
-    // 2. Provera pojedinačnog fajla PRVO (za single upload)
-    if (!isMultiple && selectedFiles.length > 0) {
-      const singleFile = selectedFiles[0];
-      if (singleFile.size > maxTotalSize) {
-        setErrorMessage?.(`File size exceeds ${bytesToMB(maxTotalSize)} MB`);
-        showToast("error", "Error", "File too large");
-        return;
+    // Provera veličine svakog fajla
+    selectedFiles.forEach((file) => {
+      if (file.size > maxTotalSize) {
+        showToast(
+          "error",
+          "File Size Limit Exceeded",
+          `Your ${currentPlan} plan allows maximum ${bytesToMB(
+            maxTotalSize
+          )}MB per file. ` +
+            `"${file.name}" (${bytesToMB(file.size)}MB) exceeds this limit.`,
+          6000
+        );
+        shouldProceed = false;
       }
+    });
+
+    if (!shouldProceed) {
+      fileUploadRef.current?.clear();
+      return false;
     }
 
-    // 3. Računanje nove ukupne veličine
-    const newFilesSize = calculateFilesSize(processedFiles);
-    const updatedTotalSize = totalSize + newFilesSize;
+    // Provera ukupne veličine svih fajlova
+    const totalNewSize = selectedFiles.reduce(
+      (sum, file) => sum + file.size,
+      0
+    );
+    if (totalSize + totalNewSize > maxTotalSize) {
+      showToast(
+        "error",
+        "Total size exceeded",
+        `Total upload size would be ${bytesToMB(
+          totalSize + totalNewSize
+        )}MB (limit: ${bytesToMB(maxTotalSize)}MB)`
+      );
+      fileUploadRef.current?.clear();
+      return false;
+    }
 
-    // 4. Provera ukupne veličine PRE nego što se bilo šta postavi
-
-    console.log(`${updatedTotalSize} - ${maxTotalSize}`);
-
-    // if (updatedTotalSize > maxTotalSize) {
-    //   showToast(
-    //     "error",
-    //     "Limit exceeded",
-    //     `Total size: ${bytesToMB(updatedTotalSize)}MB (Max: ${bytesToMB(
-    //       maxTotalSize
-    //     )}MB)`
-    //   );
-    //   return;
-    // }
-    // 5. Ako sve provere prođu, obradi fajlove
-    processSelectedFiles(processedFiles);
-    setTotalSize(updatedTotalSize);
-  };
-
-  const showToast = (
-    severity: "success" | "info" | "warn" | "error",
-    summary: string,
-    detail: string | React.ReactNode,
-    life?: number
-  ) => {
-    toast.current?.show({ severity, summary, detail, life });
+    // Ako sve provere prođu
+    processSelectedFiles(selectedFiles);
+    setTotalSize((prev) => prev + totalNewSize);
+    return true;
   };
 
   const calculateFilesSize = (files: File[]) => {
@@ -395,7 +388,6 @@ export default function UploadFile({
 
   return (
     <div className={`max-w-[800px] mx-auto    px-8 lg:px-0 py-5`}>
-      <Toast ref={toast} />
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip
         target=".custom-upload-btn"
@@ -409,7 +401,7 @@ export default function UploadFile({
         multiple={isMultiple}
         name="demo[]"
         accept="image/*"
-        maxFileSize={maxTotalSize}
+        // maxFileSize={maxTotalSize}
         // onUpload={onTemplateUpload}
         onSelect={onTemplateSelect}
         onError={onTemplateClear}
