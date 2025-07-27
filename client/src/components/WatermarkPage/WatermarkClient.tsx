@@ -182,14 +182,6 @@ const WatermarkClient = () => {
       return;
     }
 
-    // Ako je sve u redu
-    // toast.current?.show({
-    //   severity: "success",
-    //   summary: "Success",
-    //   detail: "File uploaded successfully",
-    //   life: 3000,
-    // });
-
     // Postavite watermark fajl
     setWatermarkFile(file);
     setWatermarkSrc(URL.createObjectURL(file));
@@ -230,7 +222,7 @@ const WatermarkClient = () => {
                   className="custom-file-upload font-medium"
                   mode="basic"
                   name="demo[]"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp, image/gif"
                   auto
                   customUpload
                   uploadHandler={uploadHandler}

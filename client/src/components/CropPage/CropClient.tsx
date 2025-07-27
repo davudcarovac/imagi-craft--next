@@ -157,6 +157,28 @@ const CropClient = () => {
     toggleSidebar();
   };
 
+  const renderBackground = () => {
+    if (!file) return;
+
+    if (file?.type.split("/")[1] === "png") {
+      return {
+        backgroundImage: `
+      linear-gradient(45deg, #e5e7eb 25%, #ffffff 25%),
+      linear-gradient(-45deg, #e5e7eb 25%, #ffffff 25%),
+      linear-gradient(45deg, #ffffff 75%, #e5e7eb 75%),
+      linear-gradient(-45deg, #ffffff 75%, #e5e7eb 75%)
+    `,
+        backgroundSize: "20px 20px",
+        backgroundColor: "#f3f4f6", // Fallback boja
+      };
+    } else return {};
+  };
+
+  // useEffect(() => {
+  //   console.log("File ===> ", );
+  //   console.log("Image ===> ", image);
+  // }, [file, image]);
+
   return (
     // <div className="w-full ">
     <div>
@@ -246,16 +268,7 @@ const CropClient = () => {
                   movable: true,
                 }}
                 backgroundWrapperProps={{ className: "grid-overlay" }}
-                style={{
-                  backgroundImage: `
-      linear-gradient(45deg, #e5e7eb 25%, #ffffff 25%),
-      linear-gradient(-45deg, #e5e7eb 25%, #ffffff 25%),
-      linear-gradient(45deg, #ffffff 75%, #e5e7eb 75%),
-      linear-gradient(-45deg, #ffffff 75%, #e5e7eb 75%)
-    `,
-                  backgroundSize: "20px 20px",
-                  backgroundColor: "#f3f4f6", // Fallback boja
-                }}
+                style={renderBackground()}
                 onChange={handleCropChange}
               />
             </div>

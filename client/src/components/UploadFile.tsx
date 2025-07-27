@@ -29,6 +29,7 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { PLAN_LIMITS } from "@/utils/planLimits";
 import { bytesToMB } from "@/utils/bytesToMb";
 import { useToast } from "@/context/ToastContext";
+import { getAcceptTypes } from "@/utils/getAcceptTypes";
 
 type UploadFileType = {
   tooltip: string;
@@ -400,7 +401,7 @@ export default function UploadFile({
         ref={fileUploadRef}
         multiple={isMultiple}
         name="demo[]"
-        accept="image/*"
+        accept={getAcceptTypes(action)}
         // maxFileSize={maxTotalSize}
         // onUpload={onTemplateUpload}
         onSelect={onTemplateSelect}
