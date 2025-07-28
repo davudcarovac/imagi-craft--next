@@ -11,7 +11,7 @@ import fs from "fs";
 import archiver from "archiver";
 import canvas from "canvas";
 import faceapi from "face-api.js";
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction, Express } from "express";
 import type { FormatEnum, OutputInfo } from "sharp";
 import type { DownloadLinksType } from "../types/output.ts";
 import cropfaceFile from "../utils/cropfaceFile.ts";

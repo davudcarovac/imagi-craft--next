@@ -5,7 +5,7 @@ import prisma from "../lib/prisma.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
 
 interface TokenPayload extends JwtPayload {
-  id: string;
+  userId: string;
 }
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 
