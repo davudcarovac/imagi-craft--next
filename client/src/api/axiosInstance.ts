@@ -9,7 +9,7 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  if (config.url?.startsWith("http")) {
+  if (config.url?.startsWith("https")) {
     throw new Error("Absoulte URL's are not allowed!");
   }
   return config;
