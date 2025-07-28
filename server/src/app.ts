@@ -3,7 +3,6 @@ import morgan from "morgan";
 import cors from "cors";
 import router from "./routes/index.ts";
 import path from "path";
-// import fileDirName from "./utils/dirname.ts";
 import faceapi from "face-api.js";
 import { Canvas, Image, ImageData } from "canvas";
 import { errorHandler } from "./middlewares/error.ts";
@@ -15,6 +14,7 @@ faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 const allowedOrigins = [
   "https://imagi-craft-davud.netlify.app",
   "http://localhost:3000",
+  "https://www.frostyimage.com",
 ];
 
 const app = express();
@@ -50,7 +50,8 @@ app.use(errorHandler);
       path.join(__dirname, "models/ssd_mobilenetv1")
     );
 
-    const PORT = 4000;
+    const PORT = process.env.PORT || 5000;
+
     app.listen(PORT, () => {
       console.log(`Listening on port ${PORT}`);
     });
