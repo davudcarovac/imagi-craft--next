@@ -36,7 +36,7 @@ const ProfileClient = () => {
     : "--";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [_file, setFile] = useState<File | null>(null);
+  const [, setFile] = useState<File | null>(null);
   const [profileImg, setProfileImg] = useState<string | StaticImageData>(
     user?.profileImage || defaultProfileImage
   );
