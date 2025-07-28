@@ -29,6 +29,7 @@ app.use(cors({
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "x-xsrf-token", "Authorization"],
     credentials: true,
+    exposedHeaders: ["set-cookie"],
 }));
 app.use(cookieParser());
 app.use(morgan("dev"));

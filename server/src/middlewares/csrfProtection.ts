@@ -13,12 +13,10 @@ export const csrfProtection = (
     const token = generateCsrfToken();
     console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
-      secure: true, // HTTPS only
-      sameSite: "none", // Obavezno za cross-site
-      httpOnly: false, // Dozvoli čitanje u JavaScriptu
-      domain: "frosty-image-server.onrender.com", // Eksplicitno navedi domain
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      httpOnly: false,
       path: "/",
-      maxAge: 48 * 60 * 60 * 1000, // 24h
     });
     return next();
   }
