@@ -2,11 +2,7 @@
 
 import { useRef, useState } from "react";
 import UploadFile from "../UploadFile";
-import {
-  FileUpload,
-  FileUploadHandlerEvent,
-  FileUploadSelectEvent,
-} from "primereact/fileupload";
+import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
 import { Button } from "primereact/button";
 import dynamic from "next/dynamic";
 import ServiceIntro from "../ServiceIntro";
@@ -14,7 +10,6 @@ import { useWatermark } from "@/hooks/useWatermark";
 import DownloadArea from "../DownloadArea";
 import { deleteAllFiles } from "@/api/deleteAllApi";
 import LetsTryActions from "../LetsTryActions/LetsTryActions";
-import { Toast } from "primereact/toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { PLAN_LIMITS_WM } from "@/utils/planLimits";
 import { bytesToMB } from "@/utils/bytesToMb";

@@ -3,7 +3,6 @@ import {
   Check,
   X,
   ChevronRight,
-  Star,
   Zap,
   Image,
   Crop,
@@ -11,11 +10,7 @@ import {
   FileImage,
   FileInput,
   FileOutput,
-  Server,
-  Paintbrush,
   Headset,
-  Key,
-  Send,
 } from "lucide-react";
 
 export const pricingPlans: PricingPlan[] = [

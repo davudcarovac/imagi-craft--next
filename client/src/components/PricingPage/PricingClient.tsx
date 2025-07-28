@@ -1,8 +1,6 @@
 "use client";
 
 import { pricingPlans } from "@/utils/plans";
-import { Button } from "primereact/button";
-import { Card } from "primereact/card";
 import { SelectButton, SelectButtonChangeEvent } from "primereact/selectbutton";
 import React, { useState } from "react";
 import PricingCard from "./components/PricingCard";

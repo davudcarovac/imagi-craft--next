@@ -37,8 +37,7 @@ const LoginClient = () => {
 
   const router = useRouter();
   const { isPending, mutate } = useLogin();
-  const { mutate: mutateVerifyLogin, isPending: isPendingVerifyLogin } =
-    useVerifyLoginTwoFactor();
+  const { mutate: mutateVerifyLogin } = useVerifyLoginTwoFactor();
   const { dispatch } = useAuthContext();
   const queryClient = useQueryClient();
 

@@ -41,7 +41,7 @@ const MenuSidebar = ({
 
   const logout = () => {
     logoutMutate(undefined, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         dispatch({ type: "LOGOUT" });
         if (typeof window !== "undefined") {
           localStorage.removeItem("user");

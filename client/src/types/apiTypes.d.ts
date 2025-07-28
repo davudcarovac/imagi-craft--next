@@ -88,8 +88,8 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  isPremium: boolean;
-  premiumExpires: string | null;
+  plan: "STARTER" | "PROFESSIONAL" | "BUSINESS";
+  planExpires: Date | null;
   createdAt: string;
   updatedAt: string;
   profileImage: string;

@@ -23,21 +23,20 @@ const ProfileClient = () => {
   const { mutate: mutateRemovePicture, isPending: isPendingRemovePicture } =
     useProfilePictureRemove();
   const { mutate, isPending: isPendingUploadPicture } = useUploadProfileImage();
-  const { mutate: mutateChangeName, isPending: isPendingChangeName } =
-    useChangeUsername();
+  const { mutate: mutateChangeName } = useChangeUsername();
   const router = useRouter();
   const { mutate: logoutMutate } = useLogout();
   const toast = useRef<Toast>(null);
 
   const { dispatch } = useAuthContext();
   const formattedDate = user?.createdAt ? formatDate(user.createdAt) : "--";
-  const plan = user?.isPremium ? "Premium" : "Basic";
-  const premiumExpires = user?.premiumExpires
-    ? formatDate(user.premiumExpires)
+  const plan = user?.plan;
+  const premiumExpires = user?.planExpires
+    ? formatDate(user?.planExpires)
     : "--";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [_, setFile] = useState<File | null>(null);
   const [profileImg, setProfileImg] = useState<string | StaticImageData>(
     user?.profileImage || defaultProfileImage
   );

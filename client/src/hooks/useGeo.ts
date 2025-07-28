@@ -1,6 +1,5 @@
 import { axiosInstance } from "@/api/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 type GeoResponse = {
   country: string;

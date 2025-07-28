@@ -1,6 +1,5 @@
 "use client";
 
-import { TabMenuPassThroughOptions } from "primereact/tabmenu";
 import { TabMenu } from "primereact/tabmenu";
 import { usePathname, useRouter } from "next/navigation";
 

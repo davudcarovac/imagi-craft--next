@@ -16,16 +16,16 @@ type CollageTestProps = {
   >;
 };
 
-const templates = [
-  { value: "CLASSIC", name: "2x2" },
-  { value: "PRINT_POSTER", name: "A4 Poster" },
-  { value: "INSTAGRAM_GRID", name: "Instagram grid" },
-  { value: "PINTEREST_PIN", name: "Pinterest pin" },
-  { value: "INSTAGRAM_STORY", name: "Instagram Story Split" },
-  { value: "PHOTO_BOOTH", name: "Photo Booth Strip" },
-  { value: "BEFORE_AFTER", name: "Before / After" },
-  { value: "MAGAZINE_SPREAD", name: "Magazine spread" },
-];
+// const templates = [
+//   { value: "CLASSIC", name: "2x2" },
+//   { value: "PRINT_POSTER", name: "A4 Poster" },
+//   { value: "INSTAGRAM_GRID", name: "Instagram grid" },
+//   { value: "PINTEREST_PIN", name: "Pinterest pin" },
+//   { value: "INSTAGRAM_STORY", name: "Instagram Story Split" },
+//   { value: "PHOTO_BOOTH", name: "Photo Booth Strip" },
+//   { value: "BEFORE_AFTER", name: "Before / After" },
+//   { value: "MAGAZINE_SPREAD", name: "Magazine spread" },
+// ];
 
 const CollageLayout: React.FC<CollageTestProps> = ({
   templateName = "INSTAGRAM_GRID",

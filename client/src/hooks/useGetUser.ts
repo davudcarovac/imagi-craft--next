@@ -3,10 +3,10 @@
 import { getUser } from "@/api/user/getUserApi";
 import { getUserResponse } from "@/types/apiTypes";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthContext } from "./useAuthContext";
+// import { useAuthContext } from "./useAuthContext";
 
 export const useGetUser = () => {
-  const { user: localUser } = useAuthContext();
+  // const { user: localUser } = useAuthContext();
   const { data, isPending, error } = useQuery<getUserResponse>({
     queryKey: ["user"],
     queryFn: async () => getUser(),

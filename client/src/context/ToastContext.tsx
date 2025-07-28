@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useRef } from "react";
 import { Toast } from "primereact/toast";
-import type { ToastProps } from "primereact/toast";
 
 type ToastContextType = {
   showToast: (

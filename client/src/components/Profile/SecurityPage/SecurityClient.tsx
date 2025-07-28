@@ -4,7 +4,7 @@ import ShowContent from "@/components/ShowContent";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useChangePassword } from "@/hooks/useChangePassword";
 import { Toast } from "primereact/toast";
 import { InputOtp } from "primereact/inputotp";
@@ -14,6 +14,7 @@ import { useVerifyEnableTwoFactor } from "@/hooks/useVerifyEnableTwoFactor";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDisableTwoFactor } from "@/hooks/useDisbaleTwoFactor";
+import Image from "next/image";
 
 const changePasswordSchema = Yup.object({
   currentPassword: Yup.string().required("Required field"),
@@ -30,7 +31,7 @@ const changePasswordSchema = Yup.object({
 
 const SecurityClient = () => {
   const toast = useRef<Toast>(null);
-  const { user, isPending: isPendingUser } = useGetUser();
+  const { user } = useGetUser();
 
   const [isShownChange, setIsShownChange] = useState(false);
   const [isShown2FaSetup, setIsShown2FaSetup] = useState(false);
@@ -44,14 +45,12 @@ const SecurityClient = () => {
   const queryClient = useQueryClient();
   const { mutate: mutateChangePassword, isPending: isPendingPassword } =
     useChangePassword();
-  const { mutate: mutateTwoFactorSetup, isPending: isPendingTwoFactorSetup } =
-    useTwoFactorSetup();
+  const { mutate: mutateTwoFactorSetup } = useTwoFactorSetup();
   const {
     mutate: mutateVerifyEnableTwoFactor,
     isPending: isPendingVerifyEnableTwoFactor,
   } = useVerifyEnableTwoFactor();
-  const { mutate: mutateDisableTwoFactor, isPending: isPendingTwoFactor } =
-    useDisableTwoFactor();
+  const { mutate: mutateDisableTwoFactor } = useDisableTwoFactor();
 
   const initialValues = {
     currentPassword: "",
@@ -319,7 +318,11 @@ const SecurityClient = () => {
                 <strong> Microsoft Authenticator</strong>.
               </p>
 
-              <img src={qrCode} alt="QR Code" className="w-48 h-48 mx-auto" />
+              <Image
+                src={qrCode as string}
+                alt="QR Code"
+                className="w-48 h-48 mx-auto"
+              />
               <div className="space-y-6">
                 {/* ✅ Prvi input ostaje netaknut */}
                 <div className="p-inputgroup">

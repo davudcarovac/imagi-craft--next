@@ -9,7 +9,6 @@ import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useSignup } from "@/hooks/useSignup";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { User } from "@/context/AuthContext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
+import { Inplace, InplaceContent } from "primereact/inplace";
 
 type ShowContentType = {
   children: ReactNode;
@@ -10,12 +10,7 @@ type ShowContentType = {
   setIsShown: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ShowContent = ({
-  children,
-  label,
-  isShown,
-  setIsShown,
-}: ShowContentType) => {
+const ShowContent = ({ children, isShown, setIsShown }: ShowContentType) => {
   return (
     <Inplace active={isShown} onToggle={(e) => setIsShown(e.value)}>
       {/* <InplaceDisplay></InplaceDisplay> */}

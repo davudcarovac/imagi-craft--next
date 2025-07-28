@@ -31,18 +31,18 @@ export const TemplateInfo = ({
 }: TemplateInfoProps) => {
   const [visible, setVisible] = useState<boolean>(false);
 
-  const getBackgroundColor = () => {
-    if (!template.backgroundColor) return undefined;
+  // const getBackgroundColor = () => {
+  //   if (!template.backgroundColor) return undefined;
 
-    if (typeof template.backgroundColor === "string") {
-      return template.backgroundColor.startsWith("#")
-        ? template.backgroundColor
-        : `#${template.backgroundColor}`;
-    } else {
-      const { r, g, b, alpha = 1 } = template.backgroundColor;
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
-  };
+  //   if (typeof template.backgroundColor === "string") {
+  //     return template.backgroundColor.startsWith("#")
+  //       ? template.backgroundColor
+  //       : `#${template.backgroundColor}`;
+  //   } else {
+  //     const { r, g, b, alpha = 1 } = template.backgroundColor;
+  //     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  //   }
+  // };
 
   return (
     <div className={`bg-white border-b border-gray-100 shadow-sm ${className}`}>

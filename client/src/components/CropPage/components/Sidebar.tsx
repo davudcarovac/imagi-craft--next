@@ -5,20 +5,17 @@ import { SelectButton } from "primereact/selectbutton";
 import { InputSwitch } from "primereact/inputswitch";
 
 import {
-  LayoutPanelLeft,
   Grid,
   Crop,
   Circle,
   RectangleHorizontal,
   Square,
-  ArrowLeft,
   Move,
   Ruler,
   ArrowLeftRight,
   ArrowUpDown,
   ChevronLeft,
 } from "lucide-react";
-import { Button } from "primereact/button";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -43,7 +40,7 @@ type SidebarProps = {
 };
 
 const Sidebar = ({
-  options,
+  // options,
   ratio,
   isGridActive,
   rounded,
@@ -56,8 +53,8 @@ const Sidebar = ({
   toggleStencil,
   toggleSidebar,
   setHandlersValue,
-  cancelCrop,
-}: SidebarProps) => {
+}: // cancelCrop,
+SidebarProps) => {
   return (
     <aside
       className={`h-[90vh] flex flex-col fixed top-20 left-0 w-[270px] xs:w-[350px] bg-white p-6 z-40 

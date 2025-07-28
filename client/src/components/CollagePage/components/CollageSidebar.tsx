@@ -44,8 +44,8 @@ const Sidebar = ({
   setGridPadding,
   onClose,
   setTemplate,
-  children,
-}: SidebarProps) => {
+}: // children,
+SidebarProps) => {
   const fileUploadRef = useRef<FileUpload>(null);
 
   const uploadHandler = async (event: { files: File[] }) => {

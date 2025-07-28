@@ -5,7 +5,6 @@ import ActionCard from "../ActionCard";
 import ServiceIntro from "../ServiceIntro";
 import { CheckCircle } from "lucide-react"; // ili iz primereact, zavisi šta koristiš
 import HomePageVideo from "./HomePageVideo";
-import { useEffect } from "react";
 
 const HomeClient = () => {
   return (

@@ -13,7 +13,7 @@ const UserMenu = () => {
   const menuRef = useRef<TieredMenu | null>(null);
   // const toast = useRef<Toast>(null);
   const router = useRouter();
-  const { dispatch, user: localUser } = useAuthContext();
+  const { dispatch } = useAuthContext();
   const { user } = useGetUser();
   const { mutate } = useLogout();
   const [profileImage, setProfileImg] = useState(

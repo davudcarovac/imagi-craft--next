@@ -13,7 +13,7 @@ export interface User {
   email: string;
   name: string;
   role: Role;
-  isPremium: boolean;
+  // isPremium: boolean;
   profileImage: string;
   plan: "STARTER" | "PROFESSIONAL" | "BUSINESS";
   planExpires: Date | null;

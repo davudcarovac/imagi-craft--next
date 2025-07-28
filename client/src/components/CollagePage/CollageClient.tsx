@@ -46,7 +46,7 @@ const CollageClient = () => {
   >(Array(rows * cols).fill(null));
 
   // submit collage
-  const { mutate: mutateCollage, isPending: isPendingCollage } = useCollage();
+  const { mutate: mutateCollage } = useCollage();
   const formData = new FormData();
 
   // sidebar

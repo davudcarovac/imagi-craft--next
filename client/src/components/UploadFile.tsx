@@ -58,7 +58,7 @@ export default function UploadFile({
   isPending,
   formatOptions,
   globalFormat,
-  setErrorMessage,
+  // setErrorMessage,
   setImage,
   setFile,
   setFiles,
@@ -137,9 +137,9 @@ export default function UploadFile({
     return true;
   };
 
-  const calculateFilesSize = (files: File[]) => {
-    return files.reduce((total, file) => total + (file.size || 0), 0);
-  };
+  // const calculateFilesSize = (files: File[]) => {
+  //   return files.reduce((total, file) => total + (file.size || 0), 0);
+  // };
 
   const processSelectedFiles = (files: File[]) => {
     if (!Array.isArray(files) || files.length === 0) return;
