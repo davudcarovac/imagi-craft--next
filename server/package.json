@@ -8,7 +8,7 @@
     "build": "tsc && npm run postbuild",
     "postbuild": "tsc-alias && npm run create-dirs && npm run copy-assets",
     "create-dirs": "mkdir -p dist/models dist/outputs dist/outputsForZip dist/uploads dist/uploadsWm dist/zipOutput",
-    "copy-assets": "cp -R src/models/* dist/models/ && cp -R src/outputs/* dist/outputs/ && cp -R src/outputsForZip/* dist/outputsForZip/ && cp -R src/uploads/* dist/uploads/ && cp -R src/uploadsWm/* dist/uploadsWm/ && cp -R src/zipOutput/* dist/zipOutput/",
+    "copy-assets": "cp -R src/models/* dist/models/ || true && ( [ -d src/outputs ] && cp -R src/outputs/* dist/outputs/ || true ) && ( [ -d src/outputsForZip ] && cp -R src/outputsForZip/* dist/outputsForZip/ || true ) && ( [ -d src/uploads ] && cp -R src/uploads/* dist/uploads/ || true ) && ( [ -d src/uploadsWm ] && cp -R src/uploadsWm/* dist/uploadsWm/ || true ) && ( [ -d src/zipOutput ] && cp -R src/zipOutput/* dist/zipOutput/ || true )",
     "start": "node dist/app.js"
   },
   "keywords": [],
