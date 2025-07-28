@@ -6,11 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "tsc && npm run postbuild",
-    "postbuild": "tsc-alias",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node src/app.ts",
-    "start": "node dist/app.js",
-    "copy-models": "copyfiles -u 1 src/models/**/* dist/models"
+    "postbuild": "tsc-alias && npm run create-dirs && npm run copy-assets",
+    "create-dirs": "mkdir -p dist/models dist/outputs dist/outputsForZip dist/uploads dist/uploadsWm dist/zipOutput",
+    "copy-assets": "cp -R src/models/* dist/models/ && cp -R src/outputs/* dist/outputs/ && cp -R src/outputsForZip/* dist/outputsForZip/ && cp -R src/uploads/* dist/uploads/ && cp -R src/uploadsWm/* dist/uploadsWm/ && cp -R src/zipOutput/* dist/zipOutput/",
+    "start": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -60,6 +59,7 @@
     "@types/pg": "^8.15.4",
     "@types/qrcode": "^1.5.5",
     "@types/speakeasy": "^2.0.10",
+    "copyfiles": "^2.4.1",
     "prisma": "^6.10.1",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
