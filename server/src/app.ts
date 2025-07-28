@@ -12,9 +12,9 @@ import cookieParser from "cookie-parser";
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
 const allowedOrigins = [
-  "https://imagi-craft-davud.netlify.app",
-  "http://localhost:3000",
   "https://www.frostyimage.com",
+  // "https://imagi-craft-davud.netlify.app",
+  "http://localhost:3000",
 ];
 
 const app = express();
@@ -52,7 +52,12 @@ app.use(errorHandler);
 
     const PORT = process.env.PORT || 5000;
 
+    app.get("/", (req, res) => {
+      res.send("Server je live! 🚀");
+    });
+
     app.listen(PORT, () => {
+      console.log("URL ", process.env.PORT);
       console.log(`Listening on port ${PORT}`);
     });
   } catch (error) {

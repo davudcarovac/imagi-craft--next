@@ -10,9 +10,9 @@ import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 const allowedOrigins = [
-    "https://imagi-craft-davud.netlify.app",
-    "http://localhost:3000",
     "https://www.frostyimage.com",
+    // "https://imagi-craft-davud.netlify.app",
+    "http://localhost:3000",
 ];
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -40,7 +40,11 @@ app.use(errorHandler);
     try {
         await faceapi.nets.ssdMobilenetv1.loadFromDisk(path.join(__dirname, "models/ssd_mobilenetv1"));
         const PORT = process.env.PORT || 5000;
+        app.get("/", (req, res) => {
+            res.send("Server je live! 🚀");
+        });
         app.listen(PORT, () => {
+            console.log("URL ", process.env.PORT);
             console.log(`Listening on port ${PORT}`);
         });
     }
