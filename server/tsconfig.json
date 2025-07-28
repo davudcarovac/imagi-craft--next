@@ -17,8 +17,11 @@
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
     "module": "NodeNext",
-    "noEmit": true,
+    "outDir": "./dist", // Mesto gde će JS fajlovi biti smešteni
+    "rootDir": "./src", // Gde se nalazi tvoj izvorni kod (.ts fajlovi)
+    "noEmit": false,
     /* If your code doesn't run in the DOM: */
     "lib": ["es2022"]
-  }
+  },
+  "include": ["src/**/*"] // Dodaj ovo!
 }
