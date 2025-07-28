@@ -69,13 +69,23 @@ const ResetPasswordClient = ({ resetToken }: { resetToken: string }) => {
                 onSuccess: (response) => {
                   console.log("Response from signup ===> ", response);
 
-                  const { name, email, id, ispremium, role } = response.user;
+                  const {
+                    name,
+                    email,
+                    id,
+                    plan,
+                    planExpires,
+                    profileImage,
+                    role,
+                  } = response.user;
                   const user = {
                     name,
                     email,
                     id,
-                    isPremium: ispremium,
-                    token: response.token,
+                    plan: plan,
+                    // token: response.token,
+                    planExpires: planExpires,
+                    profileImage: profileImage,
                     role,
                   };
                   localStorage.setItem("user", JSON.stringify(user));
