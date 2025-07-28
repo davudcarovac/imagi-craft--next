@@ -8,12 +8,6 @@ import HomePageVideo from "./HomePageVideo";
 import { useEffect } from "react";
 
 const HomeClient = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_NODE_ENV;
-
-  useEffect(() => {
-    console.log(baseUrl);
-  }, [baseUrl]);
-
   return (
     <div className="min-h-screen w-full  flex justify-center flex-col">
       <div className="flex justify-center py-10 flex-col items-center">

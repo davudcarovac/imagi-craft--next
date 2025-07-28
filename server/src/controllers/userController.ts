@@ -13,6 +13,7 @@ import cloudinary from "../config/cloudinary.ts";
 import prisma from "../lib/prisma.ts";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
+import type { User } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -192,7 +193,7 @@ export async function forgotPassword(
   next: NextFunction
 ) {
   const { email } = req.body;
-  let user = null;
+  let user: User | null = null;
 
   try {
     // 1. Nađi korisnika
