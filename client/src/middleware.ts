@@ -10,7 +10,7 @@ async function verifyJWT(token: string) {
   try {
     const { payload } = await jwtVerify(token, secret);
     return payload;
-  } catch (_) {
+  } catch (_err) {
     return null;
   }
 }

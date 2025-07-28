@@ -1,6 +1,5 @@
 import { PricingPlan } from "@/types/types";
 import { Check } from "lucide-react";
-import { Button } from "primereact/button";
 
 const PricingCard = ({ plan }: { plan: PricingPlan }) => (
   <div className="shadow-xl bg-white rounded-2xl p-8 border-t-3 border-[#1aac83]">
