@@ -23,5 +23,6 @@
     /* If your code doesn't run in the DOM: */
     "lib": ["es2022"]
   },
-  "include": ["src/**/*"] // Dodaj ovo!
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
