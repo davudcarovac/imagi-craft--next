@@ -9,7 +9,11 @@ import { errorHandler } from "./middlewares/error.js";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
-const allowedOrigins = ["https://www.frostyimage.com", "http://localhost:3000"];
+const allowedOrigins = [
+    "https://frostyimage.com",
+    "https://www.frostyimage.com",
+    "http://localhost:3000",
+];
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

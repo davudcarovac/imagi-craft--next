@@ -12,21 +12,13 @@ export const csrfProtection = (
   // Konfiguracija za cookie
 
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
-    // console.log(
-    //   "Envy ===> ",
-    //   process.env.NODE_ENV === "production",
-    //   process.env.NODE_ENV === "production" ? "none" : "lax"
-    // );
     const token = generateCsrfToken();
+
     console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: false,
-      domain: "frosty-image-server.onrender.com",
-      // process.env.NODE_ENV === "production"
-      //   ? "frosty-image-server.onrender.com" // Render domen bez https://
-      //   : undefined, // Lokalno razvojno okruženje
       path: "/",
       maxAge: 48 * 60 * 60 * 1000,
     });
