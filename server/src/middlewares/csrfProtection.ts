@@ -22,6 +22,10 @@ export const csrfProtection = (
   };
 
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+    console.log(
+      process.env.NODE_ENV === "production",
+      process.env.NODE_ENV === "production" ? "none" : "lax"
+    );
     const token = generateCsrfToken();
     console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
@@ -38,7 +42,7 @@ export const csrfProtection = (
   const csrfCookie = req.cookies["XSRF-TOKEN"];
   const csrfHeader = req.headers["x-xsrf-token"];
 
-  console.log("headers ===> ", req.headers);
+  console.log("headers ===> ", csrfHeader === "");
   console.log("csrf cookie => ", csrfCookie);
   console.log("csrf header => ", csrfHeader);
   // console.log(csrfCookie, csrfCookie === csrfHeader);
