@@ -25,7 +25,6 @@ export const csrfProtection = (req, res, next) => {
     }
     const csrfCookie = req.cookies["XSRF-TOKEN"];
     const csrfHeader = req.headers["x-xsrf-token"];
-    console.log("headers ===> ", csrfHeader === "");
     console.log("csrf cookie => ", csrfCookie);
     console.log("csrf header => ", csrfHeader);
     // console.log(csrfCookie, csrfCookie === csrfHeader);

@@ -15,5 +15,14 @@ axiosInstance.interceptors.request.use((config) => {
   if (config.url?.startsWith("http")) {
     throw new Error("Absoulte URL's are not allowed!");
   }
+
+  const csrfToken = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("XSRF-TOKEN="))
+    ?.split("=")[1];
+
+  if (csrfToken) {
+    config.headers["x-xsrf-token"] = csrfToken;
+  }
   return config;
 });

@@ -11,12 +11,7 @@ import cookieParser from "cookie-parser";
 
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
-const allowedOrigins = [
-  "https://www.frostyimage.com",
-  // "https://imagi-craft-davud.netlify.app",
-  "http://localhost:3000",
-  "https://frosty-image-server.onrender.com",
-];
+const allowedOrigins = ["https://www.frostyimage.com", "http://localhost:3000"];
 
 const app = express();
 
@@ -39,6 +34,7 @@ app.use(
   })
 );
 
+app.options("*", cors());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
