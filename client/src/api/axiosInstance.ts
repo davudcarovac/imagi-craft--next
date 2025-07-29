@@ -6,6 +6,7 @@ import axios from "axios";
 //     : "http://localhost:4000";
 export const axiosInstance = axios.create({
   baseURL: "https://frosty-image-server.onrender.com",
+  withCredentials: true, // 👈 Obavezno za slanje cookie-a
 });
 
 axiosInstance.interceptors.request.use((config) => {

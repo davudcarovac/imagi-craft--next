@@ -13,12 +13,12 @@ export const csrfProtection = (
     const token = generateCsrfToken();
     console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
-      secure: true, // HTTPS only (obavezno za Render)
-      sameSite: "none", // Dozvoli cross-site (Vercel ↔ Render)
+      secure: true,
+      sameSite: "none",
       httpOnly: false, // Dozvoli čitanje u JS (axios mora da vidi cookie)
-      domain: "frosty-image-server.onrender.com", // Eksplicitno navedi Render domen
+      // domain: "frosty-image-server.onrender.com", // Eksplicitno navedi Render domen
       path: "/",
-      maxAge: 24 * 60 * 60 * 1000, // 24h
+      maxAge: 48 * 60 * 60 * 1000, // 48h
     });
     return next();
   }
