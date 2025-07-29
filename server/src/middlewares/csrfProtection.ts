@@ -9,17 +9,7 @@ export const csrfProtection = (
   res: Response,
   next: NextFunction
 ) => {
-  const isProduction = process.env.NODE_ENV === "production";
-
   // Konfiguracija za cookie
-  const cookieOptions = {
-    secure: isProduction, // HTTPS samo u produkciji
-    sameSite: isProduction ? "none" : "lax", // "none" za Render, "lax" za localhost
-    httpOnly: false, // Dozvoljava čitanje u JS
-    path: "/",
-    maxAge: 48 * 60 * 60 * 1000, // 48h
-    domain: isProduction ? ".onrender.com" : undefined, // Samo za produkciju
-  };
 
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     console.log(
