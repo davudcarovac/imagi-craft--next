@@ -6,14 +6,14 @@ export const getCsrfToken = async () => {
       withCredentials: true,
     });
 
-    console.log("", typeof window === "undefined");
+    // console.log("", typeof window === "undefined");
 
-    const csrfToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("XSRF-TOKEN="))
-      ?.split("=")[1];
+    // const csrfToken = document.cookie
+    //   .split("; ")
+    //   .find((row) => row.startsWith("XSRF-TOKEN="))
+    //   ?.split("=")[1];
 
-    console.log(csrfToken);
+    // console.log(csrfToken);
 
     console.log("Get CSRF token api ===> ", response);
     return response.data;

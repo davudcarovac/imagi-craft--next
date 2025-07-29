@@ -7,9 +7,9 @@ export const csrfProtection = (req, res, next) => {
         const token = generateCsrfToken();
         console.log("Get token ===> ", token);
         res.cookie("XSRF-TOKEN", token, {
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            httpOnly: false,
+            secure: true, // mora biti true ako koristiš SameSite: 'none'
+            sameSite: "none", // mora biti 'none' za cross-site
+            httpOnly: false, // mora biti false ako želiš da čitaš iz document.cookie
             path: "/",
             maxAge: 48 * 60 * 60 * 1000,
         });

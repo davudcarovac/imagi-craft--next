@@ -16,7 +16,7 @@ export const loginUser = async (
     //   ?.split("=")[1];
 
     const csrfToken = formatCsrfToken();
-    console.log(csrfToken);
+    console.log("Token iz cookies ===> ", csrfToken);
 
     const response = await axiosInstance.post<LoginResponse>("/login", data, {
       headers: {
