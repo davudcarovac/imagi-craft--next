@@ -14,7 +14,7 @@ export const loginUser = async (
       .find((row) => row.startsWith("XSRF-TOKEN="))
       ?.split("=")[1];
 
-    console.log(csrfToken);
+    console.log(document.cookie);
 
     const response = await axiosInstance.post<LoginResponse>("/login", data, {
       headers: {

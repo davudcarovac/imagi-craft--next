@@ -13,10 +13,12 @@ export const csrfProtection = (
     const token = generateCsrfToken();
     console.log("Get token ===> ", token);
     res.cookie("XSRF-TOKEN", token, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      httpOnly: false,
+      secure: true, // HTTPS only (obavezno za Render)
+      sameSite: "none", // Dozvoli cross-site (Vercel ↔ Render)
+      httpOnly: false, // Dozvoli čitanje u JS (axios mora da vidi cookie)
+      domain: "frosty-image-server.onrender.com", // Eksplicitno navedi Render domen
       path: "/",
+      maxAge: 24 * 60 * 60 * 1000, // 24h
     });
     return next();
   }
@@ -26,7 +28,7 @@ export const csrfProtection = (
 
   console.log("csrf cookie => ", csrfCookie);
   console.log("csrf header => ", csrfHeader);
-  console.log(csrfCookie, csrfCookie === csrfHeader);
+  // console.log(csrfCookie, csrfCookie === csrfHeader);
 
   if (!csrfCookie || csrfCookie !== csrfHeader) {
     throw new ErrorResponse("CSRF token invalid or missing", 403);

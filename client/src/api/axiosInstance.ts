@@ -5,7 +5,7 @@ const BASE_URL =
     ? process.env.NEXT_PUBLIC_BASE_URL
     : "http://localhost:4000";
 export const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "https://frosty-image-server.onrender.com",
 });
 
 axiosInstance.interceptors.request.use((config) => {
