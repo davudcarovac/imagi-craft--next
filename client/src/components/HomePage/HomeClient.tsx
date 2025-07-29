@@ -5,8 +5,15 @@ import ActionCard from "../ActionCard";
 import ServiceIntro from "../ServiceIntro";
 import { CheckCircle } from "lucide-react"; // ili iz primereact, zavisi šta koristiš
 import HomePageVideo from "./HomePageVideo";
+// import { useEffect } from "react";
 
 const HomeClient = () => {
+  // const csrfToken = document.cookie
+  //   .split("; ")
+  //   .find((row) => row.startsWith("XSRF-TOKEN="))
+  //   ?.split("=")[1];
+
+  // useEffect(() => console.log(csrfToken), [document.cookie]);
   return (
     <div className="min-h-screen w-full  flex justify-center flex-col">
       <div className="flex justify-center py-10 flex-col items-center">
