@@ -7,7 +7,7 @@ export const csrfProtection = (req, res, next) => {
         res.cookie("XSRF-TOKEN", token, {
             secure: true,
             sameSite: "none",
-            domain: ".frostyimage.com", // Dodajte tačku za poddomene
+            // domain: ".frostyimage.com", // Dodajte tačku za poddomene
             httpOnly: false, // Da biste mogli da čitate sa frontenda
         });
         // Dodajte token u response body za dodatnu sigurnost
