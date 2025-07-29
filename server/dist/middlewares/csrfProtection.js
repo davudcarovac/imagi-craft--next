@@ -8,8 +8,10 @@ export const csrfProtection = (req, res, next) => {
         const token = generateCsrfToken();
         console.log("Get token ===> ", token);
         res.cookie("XSRF-TOKEN", token, {
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            // secure: process.env.NODE_ENV === "production",
+            secure: false,
+            // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            sameSite: "lax",
             httpOnly: false,
             path: "/",
             maxAge: 48 * 60 * 60 * 1000,
