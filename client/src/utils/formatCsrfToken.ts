@@ -1,20 +1,19 @@
-// Poboljšana funkcija za čitanje CSRF tokena
-export function formatCsrfToken() {
+export function formatCsrfToken(): string {
   if (typeof window === "undefined") return "";
 
-  // Pročitaj sve kolačiće
-  const cookieString = document.cookie;
-  console.log("Svi kolačići:", cookieString); // Debug
+  // Proverite različite varijante imena cookie-a
+  const cookieNames = ["XSRF-TOKEN", "xsrf-token", "XSRF_TOKEN"];
 
-  // Pronađi CSRF token
-  const cookie = cookieString
-    .split("; ")
-    .find((row) => row.trim().startsWith("XSRF-TOKEN="));
+  for (const name of cookieNames) {
+    const cookie = document.cookie
+      .split("; ")
+      .find((row) => row.trim().startsWith(`${name}=`));
 
-  if (!cookie) {
-    console.error("CSRF token nije pronađen u kolačićima");
-    return "";
+    if (cookie) {
+      return cookie.split("=")[1];
+    }
   }
 
-  return cookie.split("=")[1];
+  console.warn("CSRF token not found in cookies");
+  return "";
 }
