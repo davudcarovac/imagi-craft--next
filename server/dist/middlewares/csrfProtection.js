@@ -12,6 +12,7 @@ export const csrfProtection = (req, res, next) => {
             httpOnly: false, // mora biti false ako želiš da čitaš iz document.cookie
             path: "/",
             maxAge: 48 * 60 * 60 * 1000,
+            domain: "frostyimage.com",
         });
         return next();
     }
