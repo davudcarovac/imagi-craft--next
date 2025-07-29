@@ -11,7 +11,7 @@ export const getCsrfToken = async () => {
       .find((row) => row.startsWith("XSRF-TOKEN="))
       ?.split("=")[1];
 
-    console.log(csrfToken);
+    // console.log(csrfToken);
 
     console.log("Get CSRF token api ===> ", response);
     return response.data;
