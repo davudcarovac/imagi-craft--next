@@ -15,6 +15,7 @@ const allowedOrigins = [
   "https://www.frostyimage.com",
   // "https://imagi-craft-davud.netlify.app",
   "http://localhost:3000",
+  "https://frosty-image-server.onrender.com",
 ];
 
 const app = express();
