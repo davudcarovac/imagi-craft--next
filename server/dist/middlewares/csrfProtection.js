@@ -15,9 +15,10 @@ export const csrfProtection = (req, res, next) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             httpOnly: false,
-            domain: process.env.NODE_ENV === "production"
-                ? "frosty-image-server.onrender.com" // Render domen bez https://
-                : undefined, // Lokalno razvojno okruženje
+            domain: "frosty-image-server.onrender.com",
+            // process.env.NODE_ENV === "production"
+            //   ? "frosty-image-server.onrender.com" // Render domen bez https://
+            //   : undefined, // Lokalno razvojno okruženje
             path: "/",
             maxAge: 48 * 60 * 60 * 1000,
         });

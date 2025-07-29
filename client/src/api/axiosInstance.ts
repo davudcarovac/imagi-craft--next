@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatCsrfToken } from "@/utils/formatCsrfToken";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_NODE_ENV === "production"
@@ -16,10 +17,7 @@ axiosInstance.interceptors.request.use((config) => {
     throw new Error("Absoulte URL's are not allowed!");
   }
 
-  const csrfToken = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("XSRF-TOKEN="))
-    ?.split("=")[1];
+  const csrfToken = formatCsrfToken();
 
   if (csrfToken) {
     config.headers["x-xsrf-token"] = csrfToken;

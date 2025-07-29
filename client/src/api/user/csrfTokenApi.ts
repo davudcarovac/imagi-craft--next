@@ -6,6 +6,8 @@ export const getCsrfToken = async () => {
       withCredentials: true,
     });
 
+    console.log("", typeof window === "undefined");
+
     const csrfToken = document.cookie
       .split("; ")
       .find((row) => row.startsWith("XSRF-TOKEN="))
