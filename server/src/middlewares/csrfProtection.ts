@@ -29,7 +29,7 @@ export const csrfProtection = (
   console.log("from cookies => ", tokenInCookie);
 
   if (!tokenInCookie || tokenInCookie !== tokenInHeader) {
-    return res.status(403).json({ error: "CSRF token invalid or missing" }); // Ključno: `return`
+    throw new ErrorResponse("CSRF token invalid or missing", 403);
   }
 
   next();
