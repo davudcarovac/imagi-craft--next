@@ -16,8 +16,8 @@ export const csrfProtection = (req, res, next) => {
     }
     const tokenInHeader = req.headers["x-csrf-token"];
     const tokenInSession = req.session.csrfToken;
-    // console.log("token in header => ", tokenInHeader);
-    // console.log("token in session => ", tokenInSession);
+    console.log("token in header => ", tokenInHeader);
+    console.log("token in session => ", tokenInSession);
     if (!tokenInHeader || tokenInHeader !== tokenInSession) {
         throw new ErrorResponse("Csrf token invalid or missing", 403);
     }
