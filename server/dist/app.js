@@ -8,6 +8,7 @@ import { Canvas, Image, ImageData } from "canvas";
 import { errorHandler } from "./middlewares/error.js";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 const allowedOrigins = [
     "https://frostyimage.com",
@@ -15,23 +16,33 @@ const allowedOrigins = [
     "http://localhost:3000",
 ];
 const app = express();
+app.use(session({
+    secret: process.env.SESSION_SECRET || "someSecretKey",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false, // true ako koristiš HTTPS
+        httpOnly: true,
+        sameSite: "lax", // ili "none" ako koristiš različite domene
+    },
+}));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(cors({
-    origin: "https://www.frostyimage.com",
-    //  function (origin, callback) {
-    //   if (!origin || allowedOrigins.includes(origin)) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error("Not allowed by CORS"));
-    //   }
-    // },
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "x-xsrf-token", "Authorization"],
+    allowedHeaders: ["Content-Type", "x-csrf-token", "Authorization"],
     credentials: true,
     exposedHeaders: ["set-cookie"],
 }));
-app.options("*", cors());
+// app.options("*", cors());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());

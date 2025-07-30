@@ -2,25 +2,17 @@ import axios, { AxiosError } from "axios";
 import { LoginResponse, LoginUserData } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
 import { getCsrfToken } from "./csrfTokenApi";
-import { formatCsrfToken } from "@/utils/formatCsrfToken";
 
 export const loginUser = async (
   data: LoginUserData
 ): Promise<LoginResponse> => {
   try {
-    await getCsrfToken();
-
-    // const csrfToken = document.cookie
-    //   .split("; ")
-    //   .find((row) => row.startsWith("XSRF-TOKEN="))
-    //   ?.split("=")[1];
-
-    const csrfToken = formatCsrfToken();
-    console.log("Token iz cookies ===> ", csrfToken);
+    const csrfTokenResponse = await getCsrfToken();
+    // console.log("Token ===> ", csrfTokenResponse);
 
     const response = await axiosInstance.post<LoginResponse>("/login", data, {
       headers: {
-        "x-xsrf-token": csrfToken || "",
+        "x-csrf-token": csrfTokenResponse.csrfToken || "",
       },
       withCredentials: true,
     });

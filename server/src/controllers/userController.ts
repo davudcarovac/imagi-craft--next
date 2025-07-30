@@ -113,7 +113,7 @@ export async function loginUser(
 
     const user = await prisma.user.findUnique({ where: { email } });
 
-    console.log("User ===> ", user);
+    // console.log("User ===> ", user);
     if (!user) throw new ErrorResponse("User not found", 404);
 
     const isMatch = await comparePasswords(password, user.password);
@@ -386,18 +386,27 @@ export async function logoutUser(
   res: Response,
   next: NextFunction
 ) {
-  res.clearCookie("auth_token", {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    domain: process.env.DOMAIN || "localhost",
-  });
-  res.json({ success: true, message: "Logged out" });
-}
+  try {
+    req.session.destroy((error) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "Logging out failed" });
+        return;
+      }
 
-export async function getCsrfToken(req: Request, res: Response) {
-  res.status(200).json({ status: "CSRF token set in cookies." });
+      res.clearCookie("auth_token", {
+        httpOnly: true,
+        secure: NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        domain: process.env.DOMAIN || "localhost",
+      });
+
+      res.clearCookie("connect.sid");
+      return res.status(200).json({ success: true, message: "Logged out" });
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function getGeo(req: Request, res: Response, next: NextFunction) {

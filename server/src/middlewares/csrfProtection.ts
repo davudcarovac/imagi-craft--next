@@ -1,36 +1,36 @@
 import type { NextFunction, Request, Response } from "express";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
-import crypto from "crypto";
-
-const generateCsrfToken = () => crypto.randomBytes(32).toString("hex");
+import { generateCsrfToken } from "../utils/generateCsrfToken.ts";
 
 export const csrfProtection = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
-    const token = generateCsrfToken();
-
-    res.cookie("XSRF-TOKEN", token, {
-      secure: true,
-      sameSite: "none",
-      // domain: ".frostyimage.com", // Dodajte tačku za poddomene
-      httpOnly: false, // Da biste mogli da čitate sa frontenda
-    });
-
-    // Dodajte token u response body za dodatnu sigurnost
-    return res.json({ csrfToken: token });
+  if (!req.session) {
+    throw new ErrorResponse("Session not initialized", 500);
   }
 
-  const csrfCookie = req.cookies["XSRF-TOKEN"];
-  const csrfHeader = req.headers["x-xsrf-token"];
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+    const csrfToken = generateCsrfToken();
+    req.session.csrfToken = csrfToken;
 
-  console.log("cookie ===> ", csrfCookie);
-  console.log("headers ===> ", csrfHeader);
+    res.status(200).json({
+      success: true,
+      message: "Csrf token set in session",
+      csrfToken: csrfToken,
+    });
+    return;
+  }
 
-  if (!csrfCookie || csrfCookie !== csrfHeader) {
-    throw new ErrorResponse("CSRF token invalid or missing", 403);
+  const tokenInHeader = req.headers["x-csrf-token"];
+  const tokenInSession = req.session.csrfToken;
+
+  // console.log("token in header => ", tokenInHeader);
+  // console.log("token in session => ", tokenInSession);
+
+  if (!tokenInHeader || tokenInHeader !== tokenInSession) {
+    throw new ErrorResponse("Csrf token invalid or missing", 403);
   }
 
   next();

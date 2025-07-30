@@ -7,17 +7,12 @@ export const signupUser = async (
   data: SignupUserData
 ): Promise<SignupResponse> => {
   try {
-    await getCsrfToken();
-
-    const csrfToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("XSRF-TOKEN="))
-      ?.split("=")[1];
+    const csrfTokenResponse = await getCsrfToken();
 
     const response = await axiosInstance.post<SignupResponse>("/signup", data, {
       withCredentials: true,
       headers: {
-        "x-xsrf-token": csrfToken || "",
+        "x-csrf-token": csrfTokenResponse.csrfToken || "",
       },
     });
     return response.data;

@@ -105,6 +105,13 @@ export type SignupResponse = {
   user: User;
 };
 
+export type GetCsrfTokenResponse = {
+  success: boolean;
+  message: string;
+  // token: string;
+  csrfToken: string;
+};
+
 export type LoginResponse =
   | SignupResponse
   | { success: boolean; message: string; twoFactor: boolean; userId: string };

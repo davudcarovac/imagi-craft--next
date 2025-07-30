@@ -7,8 +7,6 @@ export const getUser = async (): Promise<getUserResponse> => {
     const response = await axiosInstance.get("/user", {
       withCredentials: true,
     });
-
-    // console.log(response);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -10,16 +10,11 @@ export const verifyLoginTwoFactor = async (
   data: VerifyLoginTwoFactorData
 ): Promise<VerifyLoginTwoFactorResponse> => {
   try {
-    await getCsrfToken();
-
-    const csrfToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("XSRF-TOKEN="))
-      ?.split("=")[1];
+    const csrfTokenResponse = await getCsrfToken();
 
     const response = await axiosInstance.post("/2fa/verify-login", data, {
       headers: {
-        "x-xsrf-token": csrfToken || "",
+        "x-csrf-token": csrfTokenResponse.csrfToken || "",
       },
       withCredentials: true,
     });
