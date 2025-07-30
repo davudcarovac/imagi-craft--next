@@ -18,17 +18,19 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(cors({
-    origin: process.env.NODE_ENV === "production"
-        ? allowedOrigins[0]
-        : allowedOrigins[2],
-    //  function (origin, callback) {
-    //   if (!origin || allowedOrigins.includes(origin)) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error("Not allowed by CORS"));
-    //   }
-    // },
-    methods: ["GET", "POST", "DELETE"],
+    origin: function (origin, callback) {
+        // Dozvoli zahteve bez origin headera (npr. Postman) u developmentu
+        if (!origin && process.env.NODE_ENV !== "production") {
+            return callback(null, true);
+        }
+        if (origin && allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"], // Dodate metode
     allowedHeaders: ["Content-Type", "x-csrf-token", "Authorization"],
     credentials: true,
     exposedHeaders: ["set-cookie"],
