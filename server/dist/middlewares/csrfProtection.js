@@ -16,6 +16,7 @@ export const csrfProtection = (req, res, next) => {
     }
     const tokenInHeader = req.headers["x-csrf-token"];
     const tokenInSession = req.session.csrfToken;
+    console.log("session  => ", req.session);
     console.log("token in header => ", tokenInHeader);
     console.log("token in session => ", tokenInSession);
     if (!tokenInHeader || tokenInHeader !== tokenInSession) {

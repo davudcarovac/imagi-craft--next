@@ -16,14 +16,15 @@ const allowedOrigins = [
     "http://localhost:3000",
 ];
 const app = express();
+app.use(cookieParser());
 app.use(session({
     secret: process.env.SESSION_SECRET || "someSecretKey",
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false, // true ako koristiš HTTPS
+        secure: process.env.NODE_ENV === "production", // true ako koristiš HTTPS
         httpOnly: true,
-        sameSite: "lax", // ili "none" ako koristiš različite domene
+        sameSite: "none", // ili "none" ako koristiš različite domene
     },
 }));
 const __filename = fileURLToPath(import.meta.url);
@@ -43,7 +44,6 @@ app.use(cors({
     exposedHeaders: ["set-cookie"],
 }));
 // app.options("*", cors());
-app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(router);
