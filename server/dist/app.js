@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(cors({
     origin: process.env.NODE_ENV === "production"
-        ? allowedOrigins[1]
+        ? allowedOrigins[0]
         : allowedOrigins[2],
     //  function (origin, callback) {
     //   if (!origin || allowedOrigins.includes(origin)) {
