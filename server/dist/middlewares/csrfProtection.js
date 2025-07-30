@@ -1,30 +1,22 @@
 import ErrorResponse from "../utils/CustomErrorResponse.js";
 import { generateCsrfToken } from "../utils/generateCsrfToken.js";
 export const csrfProtection = (req, res, next) => {
-    if (!req.session) {
-        throw new ErrorResponse("Session not initialized", 500);
-    }
     if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
         const csrfToken = generateCsrfToken();
-        req.session.csrfToken = csrfToken;
-        req.session.save((err) => {
-            if (err) {
-                return next(new ErrorResponse("Failed to save session", 500));
-            }
+        res.cookie("XSRF-TOKEN", csrfToken, {
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            httpOnly: false,
+            maxAge: 24 * 60 * 60 * 1000,
         });
-        return res.status(200).json({
-            success: true,
-            message: "Csrf token set in session",
-            csrfToken: csrfToken,
-        });
+        return next(); // Dodajte `return` ovde kao dobru praksu
     }
     const tokenInHeader = req.headers["x-csrf-token"];
-    const tokenInSession = req.session.csrfToken;
-    console.log("session  => ", req.session);
-    console.log("token in header => ", tokenInHeader);
-    console.log("token in session => ", tokenInSession);
-    if (!tokenInHeader || tokenInHeader !== tokenInSession) {
-        throw new ErrorResponse("Csrf token invalid or missing", 403);
+    const tokenInCookie = req.cookies["XSRF-TOKEN"];
+    console.log("from headers => ", tokenInHeader);
+    console.log("from cookies => ", tokenInCookie);
+    if (!tokenInCookie || tokenInCookie !== tokenInHeader) {
+        return res.status(403).json({ error: "CSRF token invalid or missing" }); // Ključno: `return`
     }
     next();
 };

@@ -8,7 +8,6 @@ import { Canvas, Image, ImageData } from "canvas";
 import { errorHandler } from "./middlewares/error.ts";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
-import session from "express-session";
 
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
@@ -20,33 +19,22 @@ const allowedOrigins = [
 
 const app = express();
 
-app.use(
-  session({
-    name: "connect.sid", // možeš promeniti ako hoćeš
-    secret: process.env.SESSION_SECRET || "someSecretKey",
-    resave: false,
-    saveUninitialized: false, // bolje false
-    cookie: {
-      secure: process.env.NODE_ENV === "production", // mora biti true za cross-site cookies
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // jer su frontend i backend na različitim domenima
-      maxAge: 1000 * 60 * 60, // npr. 1h
-    },
-  })
-);
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin:
+      process.env.NODE_ENV === "production"
+        ? allowedOrigins[1]
+        : allowedOrigins[2],
+    //  function (origin, callback) {
+    //   if (!origin || allowedOrigins.includes(origin)) {
+    //     callback(null, true);
+    //   } else {
+    //     callback(new Error("Not allowed by CORS"));
+    //   }
+    // },
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "x-csrf-token", "Authorization"],
     credentials: true,

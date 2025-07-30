@@ -32,6 +32,12 @@ export const registerSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
 });
+export async function getCsrfToken(req, res, next) {
+    res.status(200).json({
+        success: true,
+        message: "Csrf token set in cookies",
+    });
+}
 export async function signupUser(req, res, next) {
     const validation = registerSchema.safeParse(req.body);
     if (!validation.success) {
@@ -299,21 +305,19 @@ export async function changePassword(req, res, next) {
 }
 export async function logoutUser(req, res, next) {
     try {
-        req.session.destroy((error) => {
-            if (error) {
-                res.status(500).json({ success: false, message: "Logging out failed" });
-                return;
-            }
-            res.clearCookie("auth_token", {
-                httpOnly: true,
-                secure: NODE_ENV === "production",
-                sameSite: "strict",
-                path: "/",
-                domain: process.env.DOMAIN || "localhost",
-            });
-            res.clearCookie("connect.sid");
-            return res.status(200).json({ success: true, message: "Logged out" });
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            domain: process.env.DOMAIN || "localhost",
         });
+        res.clearCookie("XSRF-TOKEN", {
+            path: "/",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
+        return res.status(200).json({ success: true, message: "Logged out" });
     }
     catch (error) {
         next(error);
