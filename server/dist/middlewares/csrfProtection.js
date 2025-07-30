@@ -7,12 +7,16 @@ export const csrfProtection = (req, res, next) => {
     if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
         const csrfToken = generateCsrfToken();
         req.session.csrfToken = csrfToken;
-        res.status(200).json({
+        req.session.save((err) => {
+            if (err) {
+                return next(new ErrorResponse("Failed to save session", 500));
+            }
+        });
+        return res.status(200).json({
             success: true,
             message: "Csrf token set in session",
             csrfToken: csrfToken,
         });
-        return;
     }
     const tokenInHeader = req.headers["x-csrf-token"];
     const tokenInSession = req.session.csrfToken;

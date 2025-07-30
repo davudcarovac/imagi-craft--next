@@ -20,16 +20,17 @@ const allowedOrigins = [
 
 const app = express();
 
-app.use(cookieParser());
 app.use(
   session({
+    name: "connect.sid", // možeš promeniti ako hoćeš
     secret: process.env.SESSION_SECRET || "someSecretKey",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // bolje false
     cookie: {
-      secure: process.env.NODE_ENV === "production", // true ako koristiš HTTPS
+      secure: process.env.NODE_ENV === "production", // mora biti true za cross-site cookies
       httpOnly: true,
-      sameSite: "none", // ili "none" ako koristiš različite domene
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // jer su frontend i backend na različitim domenima
+      maxAge: 1000 * 60 * 60, // npr. 1h
     },
   })
 );
@@ -54,6 +55,8 @@ app.use(
 );
 
 // app.options("*", cors());
+app.use(cookieParser());
+
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(router);

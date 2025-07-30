@@ -11,6 +11,5 @@ declare module "express-session" {
   interface SessionData {
     csrfToken: string;
     userId?: string;
-    // Dodaj sve druge custom vrednosti koje čuvaš u sesiji
   }
 }
