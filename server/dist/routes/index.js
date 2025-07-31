@@ -24,7 +24,7 @@ router.get("/convert-image/delete-all", deleteAll);
 // users
 router.get("/users", getUsers);
 router.get("/user", verifyToken, getUser);
-router.get("/csrf-token", csrfProtection, getCsrfToken);
+router.get("/csrf-token", csrfProtection);
 router.post("/signup", csrfProtection, signupUser);
 router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);

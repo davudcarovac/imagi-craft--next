@@ -9,12 +9,16 @@ export const signupUser = async (
   try {
     const csrfTokenResponse = await getCsrfToken();
 
-    const response = await axiosInstance.post<SignupResponse>("/signup", data, {
-      withCredentials: true,
-      headers: {
-        "x-csrf-token": csrfTokenResponse.csrfToken || "",
-      },
-    });
+    const response = await axiosInstance.post<SignupResponse>(
+      "/signup",
+      { ...data, csrfToken: csrfTokenResponse.csrfToken },
+      {
+        withCredentials: true,
+        headers: {
+          "x-csrf-token": csrfTokenResponse.csrfToken || "",
+        },
+      }
+    );
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

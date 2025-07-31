@@ -12,12 +12,16 @@ export const verifyLoginTwoFactor = async (
   try {
     const csrfTokenResponse = await getCsrfToken();
 
-    const response = await axiosInstance.post("/2fa/verify-login", data, {
-      headers: {
-        "x-csrf-token": csrfTokenResponse.csrfToken || "",
-      },
-      withCredentials: true,
-    });
+    const response = await axiosInstance.post(
+      "/2fa/verify-login",
+      { ...data, csrfToken: csrfTokenResponse.csrfToken },
+      {
+        headers: {
+          "x-csrf-token": csrfTokenResponse.csrfToken || "",
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
