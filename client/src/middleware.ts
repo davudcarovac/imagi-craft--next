@@ -18,6 +18,7 @@ async function verifyJWT(token: string) {
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const pathname = request.nextUrl.pathname;
+  console.log("auth token middleware ===> ", token);
 
   if (pathname.startsWith("/profile")) {
     if (!token) {

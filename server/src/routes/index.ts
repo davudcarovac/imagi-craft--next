@@ -19,7 +19,6 @@ import {
   changeUsername,
   disableTwoFactor,
   forgotPassword,
-  getCsrfToken,
   getGeo,
   getUser,
   getUsers,

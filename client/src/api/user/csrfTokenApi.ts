@@ -11,7 +11,7 @@ export const getCsrfToken = async (): Promise<GetCsrfTokenResponse> => {
       }
     );
 
-    console.log("Get CSRF token api ===> ", response);
+    // console.log("Get CSRF token api ===> ", response);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

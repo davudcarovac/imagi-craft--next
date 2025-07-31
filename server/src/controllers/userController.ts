@@ -38,17 +38,6 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
-export async function getCsrfToken(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  res.status(200).json({
-    success: true,
-    message: "Csrf token set in cookies",
-  });
-}
-
 export async function signupUser(
   req: Request,
   res: Response,

@@ -8,7 +8,7 @@ export const loginUser = async (
 ): Promise<LoginResponse> => {
   try {
     const csrfTokenResponse = await getCsrfToken();
-    console.log("csrf token response ===> ", csrfTokenResponse);
+    // console.log("csrf token response ===> ", csrfTokenResponse);
 
     const response = await axiosInstance.post<LoginResponse>(
       "/login",
