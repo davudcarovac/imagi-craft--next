@@ -135,11 +135,14 @@ export async function loginUser(
     const authToken = createToken(user.id, user.plan);
     res.cookie("auth_token", authToken, {
       httpOnly: true,
-      secure: true, // SAMO HTTPS
-      sameSite: "none", // Obavezno za cross-domain (Render/Vercel)
-      domain: ".frostyimage.com", // Tačka ispred za poddomene
-      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? ".frostyimage.com"
+          : "localhost",
       maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     const safeUser = {

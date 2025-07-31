@@ -11,20 +11,35 @@ import cookieParser from "cookie-parser";
 
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
-const allowedOrigins = [
-  "https://frostyimage.com",
-  "https://www.frostyimage.com",
-  "http://localhost:3000",
-];
-
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const allowedOrigins = [
+  "https://frostyimage.com",
+  "https://www.frostyimage.com",
+  "http://localhost:3000", // za development
+];
+
+// Dodajte pre svih ruta
+app.options("*", (req, res) => {
+  const origin = req.headers.origin;
+
+  // Proverite da li origin postoji i da li je u allowedOrigins
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+  }
+  res.sendStatus(200);
+});
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      // U developmentu, dozvoli zahteve bez origin headera (npr. Postman)
+      // Dozvoli zahteve bez origin headera u developmentu
       if (!origin && process.env.NODE_ENV !== "production") {
         return callback(null, true);
       }
@@ -35,9 +50,9 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
+    credentials: true, // Ovo je ključno za cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
