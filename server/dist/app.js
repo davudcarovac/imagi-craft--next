@@ -13,6 +13,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const allowedOrigins = [
+    "https://api.frostyimage.com",
     "https://frostyimage.com",
     "https://www.frostyimage.com",
     "http://localhost:3000", // za development
