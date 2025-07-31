@@ -21,7 +21,7 @@ export const loginUser = async (
       withCredentials: true,
     });
 
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

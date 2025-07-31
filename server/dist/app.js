@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(cors({
     origin: function (origin, callback) {
-        // Dozvoli zahteve bez origin headera (npr. Postman) u developmentu
+        // U developmentu, dozvoli zahteve bez origin headera (npr. Postman)
         if (!origin && process.env.NODE_ENV !== "production") {
             return callback(null, true);
         }
@@ -30,10 +30,9 @@ app.use(cors({
             callback(new Error("Not allowed by CORS"));
         }
     },
-    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"], // Dodate metode
-    allowedHeaders: ["Content-Type", "x-csrf-token", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    exposedHeaders: ["set-cookie"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
 }));
 // app.options("*", cors());
 app.use(cookieParser());
