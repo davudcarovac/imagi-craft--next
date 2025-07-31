@@ -34,7 +34,7 @@ app.use(cors({
     origin: allowedOrigins,
     credentials: true, // Ovo je ključno za cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
 }));
 // app.options("*", cors());
 app.use(cookieParser());
