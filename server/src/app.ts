@@ -44,7 +44,6 @@ app.use(
 
 // app.options("*", cors());
 app.use(cookieParser());
-
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(router);

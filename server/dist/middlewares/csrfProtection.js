@@ -12,7 +12,7 @@ export const csrfProtection = (req, res, next) => {
                 : "localhost",
             maxAge: 24 * 60 * 60 * 1000,
         });
-        return next(); // Dodajte `return` ovde kao dobru praksu
+        return next();
     }
     const tokenInHeader = req.headers["x-csrf-token"];
     const tokenInCookie = req.cookies["XSRF-TOKEN"];
