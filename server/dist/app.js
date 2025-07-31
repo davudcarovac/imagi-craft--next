@@ -19,30 +19,19 @@ const allowedOrigins = [
     "http://localhost:3000", // za development
 ];
 // Dodajte pre svih ruta
-app.options("*", (req, res) => {
-    const origin = req.headers.origin;
-    // Proverite da li origin postoji i da li je u allowedOrigins
-    if (origin && allowedOrigins.includes(origin)) {
-        res.header("Access-Control-Allow-Origin", origin);
-        res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        res.header("Access-Control-Allow-Credentials", "true");
-    }
-    res.sendStatus(200);
-});
+// app.options("*", (req, res) => {
+//   const origin = req.headers.origin;
+//   // Proverite da li origin postoji i da li je u allowedOrigins
+//   if (origin && allowedOrigins.includes(origin)) {
+//     res.header("Access-Control-Allow-Origin", origin);
+//     res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//     res.header("Access-Control-Allow-Credentials", "true");
+//   }
+//   res.sendStatus(200);
+// });
 app.use(cors({
-    origin: function (origin, callback) {
-        // Dozvoli zahteve bez origin headera u developmentu
-        if (!origin && process.env.NODE_ENV !== "production") {
-            return callback(null, true);
-        }
-        if (origin && allowedOrigins.includes(origin)) {
-            callback(null, true);
-        }
-        else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
+    origin: allowedOrigins,
     credentials: true, // Ovo je ključno za cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
