@@ -110,7 +110,10 @@ export async function loginUser(req, res, next) {
         res.cookie("auth_token", authToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
             maxAge: 24 * 60 * 60 * 1000,
             path: "/",
         });

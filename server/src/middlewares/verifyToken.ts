@@ -17,7 +17,8 @@ export const verifyToken = async (
   // const { authorization } = req.headers;
   const token = req.cookies.auth_token;
 
-  // console.log(token);
+  console.log("cookies ===> ", req.cookies);
+  console.log("from verify token ===> ", token);
 
   // if (!authorization) {
   //   res.status(401).json({ message: "Authorization token required." });
