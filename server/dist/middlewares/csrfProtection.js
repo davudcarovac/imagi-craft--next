@@ -8,10 +8,9 @@ export const csrfProtection = (req, res, next) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             httpOnly: false,
-            // domain:
-            //   process.env.NODE_ENV === "production"
-            //     ? "https://www.frostyimage.com"
-            //     : "localhost",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
             maxAge: 24 * 60 * 60 * 1000,
         });
         return next();
