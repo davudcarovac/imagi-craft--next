@@ -16,7 +16,8 @@ export const csrfProtection = (
       httpOnly: false,
       domain:
         process.env.NODE_ENV === "production"
-          ? ".frostyimage.com"
+          ? // ? ".frostyimage.com"
+            undefined
           : "localhost",
       maxAge: 24 * 60 * 60 * 1000,
     });
