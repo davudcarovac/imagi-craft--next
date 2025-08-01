@@ -7,12 +7,12 @@ export const csrfProtection = (req, res, next) => {
         const csrfTokenHashed = hashCsrfToken(csrfToken);
         res.cookie("csrf-token", csrfTokenHashed, {
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
         });
         res.cookie("csrf-token-client", csrfToken, {
             httpOnly: false,
-            sameSite: "strict",
+            sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             domain: process.env.NODE_ENV === "production"
                 ? ".frostyimage.com"
