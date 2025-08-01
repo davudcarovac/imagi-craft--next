@@ -1,21 +1,32 @@
 import ErrorResponse from "../utils/CustomErrorResponse.js";
 import { generateCsrfToken } from "../utils/generateCsrfToken.js";
+import { hashCsrfToken } from "../utils/hashCsrfToken.js";
 export const csrfProtection = (req, res, next) => {
     if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
         const csrfToken = generateCsrfToken();
-        return res.status(200).json({
-            success: true,
-            message: "Csrf token sent",
-            csrfToken: csrfToken,
+        const csrfTokenHashed = hashCsrfToken(csrfToken);
+        res.cookie("csrf-token", csrfTokenHashed, {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
         });
+        res.cookie("csrf-token-client", csrfToken, {
+            httpOnly: false,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+        });
+        return next();
     }
-    const { csrfToken: tokenInBody } = req.body;
+    const tokenInCookie = req.cookies["csrf-token"];
     const tokenInHeader = req.headers["x-csrf-token"];
-    // const tokenInCookie = req.cookies["XSRF-TOKEN"];
-    console.log("from body => ", tokenInBody);
+    console.log("from cookie => ", tokenInCookie);
     console.log("from headers => ", tokenInHeader);
-    if (!tokenInBody || tokenInBody !== tokenInHeader) {
-        throw new ErrorResponse("CSRF token invalid or missing", 403);
+    if (!tokenInHeader || !tokenInCookie) {
+        throw new ErrorResponse("Missing CSRF token", 403);
+    }
+    const hashedTokenFromHeader = hashCsrfToken(tokenInHeader);
+    if (hashedTokenFromHeader !== tokenInCookie) {
+        throw new ErrorResponse("Invalid CSRF token", 403);
     }
     next();
 };

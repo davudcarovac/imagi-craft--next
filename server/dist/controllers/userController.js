@@ -32,6 +32,11 @@ export const registerSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
 });
+export async function getCsrfToken(req, res, next) {
+    return res
+        .status(200)
+        .json({ success: true, message: "Token set in cookies" });
+}
 export async function signupUser(req, res, next) {
     const validation = registerSchema.safeParse(req.body);
     if (!validation.success) {

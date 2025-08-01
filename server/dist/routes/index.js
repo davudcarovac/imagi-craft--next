@@ -4,7 +4,7 @@ import { deleteAll, getDownloadAllFiles, getDownloadFileById, postCollageMaker,
 postCompressImage, postConvertImage, postCropFace, postCropImage, postResizeImage, postWatermarkingImage, } from "../controllers/index.js";
 import { uploadsMiddleware } from "../middlewares/uploads.js";
 import { uploadsWmMiddleware } from "../middlewares/watermarkUploads.js";
-import { changePassword, changeUsername, disableTwoFactor, forgotPassword, getGeo, getUser, getUsers, loginUser, logoutUser, removeProfileImg, removeTokens, resetPassword, setupTwoFactor, signupUser, uploadProfileImg, verifyEnableTwoFactor, verifyLoginTwoFactor, } from "../controllers/userController.js";
+import { changePassword, changeUsername, disableTwoFactor, forgotPassword, getCsrfToken, getGeo, getUser, getUsers, loginUser, logoutUser, removeProfileImg, removeTokens, resetPassword, setupTwoFactor, signupUser, uploadProfileImg, verifyEnableTwoFactor, verifyLoginTwoFactor, } from "../controllers/userController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { csrfProtection } from "../middlewares/csrfProtection.js";
 import { profileImageUpload } from "../middlewares/profileImageUpload.js";
@@ -24,7 +24,7 @@ router.get("/convert-image/delete-all", deleteAll);
 // users
 router.get("/users", getUsers);
 router.get("/user", verifyToken, getUser);
-router.get("/csrf-token", csrfProtection);
+router.get("/csrf-token", csrfProtection, getCsrfToken);
 router.post("/signup", csrfProtection, signupUser);
 router.post("/login", csrfProtection, loginUser);
 router.post("/logout", logoutUser);
