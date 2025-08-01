@@ -14,6 +14,9 @@ export const csrfProtection = (req, res, next) => {
             httpOnly: false,
             sameSite: "strict",
             secure: process.env.NODE_ENV === "production",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
         });
         return next();
     }
