@@ -172,6 +172,34 @@ export async function loginUser(
   }
 }
 
+export async function logoutUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    res.clearCookie("auth_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? ".frostyimage.com"
+          : "localhost",
+      path: "/",
+    });
+
+    res.clearCookie("XSRF-TOKEN", {
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+    return res.status(200).json({ success: true, message: "Logged out" });
+  } catch (error) {
+    next(error);
+  }
+}
+
 interface UserWithResetFields {
   resetPasswordToken?: string | null;
   resetPasswordExpire?: Date | null;
@@ -380,31 +408,6 @@ export async function changePassword(
     });
 
     res.status(200).json({ success: true, message: "Password changed" });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function logoutUser(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    res.clearCookie("auth_token", {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      domain: process.env.DOMAIN || "localhost",
-    });
-
-    res.clearCookie("XSRF-TOKEN", {
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    });
-    return res.status(200).json({ success: true, message: "Logged out" });
   } catch (error) {
     next(error);
   }

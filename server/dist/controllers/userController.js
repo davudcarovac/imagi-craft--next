@@ -142,6 +142,28 @@ export async function loginUser(req, res, next) {
         next(error);
     }
 }
+export async function logoutUser(req, res, next) {
+    try {
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
+            path: "/",
+        });
+        res.clearCookie("XSRF-TOKEN", {
+            path: "/",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
+        return res.status(200).json({ success: true, message: "Logged out" });
+    }
+    catch (error) {
+        next(error);
+    }
+}
 export function generateResetPasswordToken(user) {
     const resetToken = crypto.randomBytes(20).toString("hex");
     const hashedResetPasswordToken = crypto
@@ -295,26 +317,6 @@ export async function changePassword(req, res, next) {
             maxAge: 24 * 60 * 60 * 1000,
         });
         res.status(200).json({ success: true, message: "Password changed" });
-    }
-    catch (error) {
-        next(error);
-    }
-}
-export async function logoutUser(req, res, next) {
-    try {
-        res.clearCookie("auth_token", {
-            httpOnly: true,
-            secure: NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            domain: process.env.DOMAIN || "localhost",
-        });
-        res.clearCookie("XSRF-TOKEN", {
-            path: "/",
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        });
-        return res.status(200).json({ success: true, message: "Logged out" });
     }
     catch (error) {
         next(error);
