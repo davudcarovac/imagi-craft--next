@@ -26,12 +26,12 @@ const DownloadButton = ({
       ? process.env.NEXT_PUBLIC_BASE_URL
       : "http://localhost:4000";
 
-  console.log(`${BASE_URL}/download/${link}`);
   return (
     <a
       onClick={() => {
         const transformedLink = `${link}-${index}`;
         onClick?.(transformedLink);
+        console.log(`${BASE_URL}/download/${link}`);
       }}
       href={`${BASE_URL}/download/${link}`}
       download
