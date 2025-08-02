@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import downloadIcon from "../assets/button images/download-file2.png";
+import { useEffect } from "react";
 
 type DownloadButtonType = {
   link: string;
@@ -14,6 +15,11 @@ type DownloadButtonType = {
   onClick: ((link: string) => void) | null;
 };
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:4000";
+
 const DownloadButton = ({
   link,
   index,
@@ -21,17 +27,14 @@ const DownloadButton = ({
   isDisabledDownload,
   onClick,
 }: DownloadButtonType) => {
-  const BASE_URL =
-    process.env.NEXT_PUBLIC_NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : "http://localhost:4000";
-
+  useEffect(() => {
+    console.log(`${BASE_URL}/download/${link}`);
+  }, [BASE_URL]);
   return (
     <a
       onClick={() => {
         const transformedLink = `${link}-${index}`;
         onClick?.(transformedLink);
-        console.log(`${BASE_URL}/download/${link}`);
       }}
       href={`${BASE_URL}/download/${link}`}
       download
