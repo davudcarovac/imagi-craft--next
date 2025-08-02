@@ -31,7 +31,7 @@ const SingleDownloadButton = ({
         height={20}
         width={20}
       />
-      <a href={`${BASE_URL}/${link}`} className="font-semibold">
+      <a href={`${BASE_URL}/download/${link}`} className="font-semibold">
         {children}
       </a>
     </button>
