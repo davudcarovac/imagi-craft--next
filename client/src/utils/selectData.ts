@@ -22,15 +22,15 @@ export const formats: SelectFormatType[] = [
     value: "tiff",
   },
   {
-    name: "giff",
-    value: "giff",
+    name: "gif",
+    value: "gif",
   },
   {
     name: "heif",
     value: "heif",
   },
-  {
-    name: "raw",
-    value: "raw",
-  },
+  // {
+  //   name: "raw",
+  //   value: "raw",
+  // },
 ];
