@@ -322,12 +322,16 @@ export async function changePassword(req, res, next) {
                 password: hashedNewPassword,
             },
         });
-        const token = createToken(user.id, user.plan);
-        res.cookie("auth_token", token, {
+        const newToken = createToken(user.id, user.plan);
+        res.cookie("auth_token", newToken, {
             httpOnly: true,
-            secure: NODE_ENV === "production",
-            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
             maxAge: 24 * 60 * 60 * 1000,
+            path: "/",
         });
         res.status(200).json({ success: true, message: "Password changed" });
     }
