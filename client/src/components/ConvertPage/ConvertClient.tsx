@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ConvertOptions from "./ConvertOptions";
 import ServiceIntro from "../ServiceIntro";
+import { useToast } from "@/context/ToastContext";
 
 const formatOptions = [
   { name: "PNG", value: "png" },
@@ -33,6 +34,7 @@ const ConvertClient = () => {
   const formData = new FormData();
 
   const { mutate, isPending } = useConvert();
+  const { showToast } = useToast();
 
   const submitConversion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +51,7 @@ const ConvertClient = () => {
         setDownloadLinks(transformedLinks);
       },
       onError: (error) => {
-        console.error("Error occured ===> ", error);
+        showToast("error", "Cannot process", error.message, 5000);
       },
     });
   };

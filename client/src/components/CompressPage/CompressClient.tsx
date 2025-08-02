@@ -13,6 +13,7 @@ import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
 import CompressOptions from "./CompressOptions";
 import { formats } from "@/utils/selectData";
 import ServiceIntro from "../ServiceIntro";
+import { useToast } from "@/context/ToastContext";
 
 const greyscaleOptions = ["Off", "On"];
 
@@ -29,6 +30,7 @@ const CompressClient = () => {
   const formData = new FormData();
 
   const { mutate, isPending } = useCompress();
+  const { showToast } = useToast();
 
   const submitCompression = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +51,8 @@ const CompressClient = () => {
         setDownloadLinks(transformedLinks);
       },
       onError: (error) => {
-        console.error("Error occured ===> ", error);
+        showToast("error", "Cannot process", "", 4000);
+        console.log("Error occured ===> ", error.message);
       },
     });
   };

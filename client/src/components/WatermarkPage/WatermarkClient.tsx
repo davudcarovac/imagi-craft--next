@@ -101,7 +101,7 @@ const WatermarkClient = () => {
         }
       },
       onError: (error) => {
-        console.error("Error occured ===> ", error);
+        showToast("error", "Cannot process", error.message, 5000);
       },
     });
   };

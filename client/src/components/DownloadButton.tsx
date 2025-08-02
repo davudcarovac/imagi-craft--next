@@ -21,13 +21,17 @@ const DownloadButton = ({
   isDisabledDownload,
   onClick,
 }: DownloadButtonType) => {
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_BASE_URL
+      : "http://localhost:4000";
   return (
     <a
       onClick={() => {
         const transformedLink = `${link}-${index}`;
         onClick?.(transformedLink);
       }}
-      href={`http://localhost:4000/download/${link}`}
+      href={`${BASE_URL}/download/${link}`}
       download
       className={`
       ${

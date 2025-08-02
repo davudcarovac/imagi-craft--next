@@ -13,6 +13,7 @@ export default async function compressFile(
     const image = sharp(filePath);
     const forZip = sharp(filePath);
     const { format } = await image.metadata();
+    console.log("Format slike ===> ", format);
 
     const q = +qualityLevel;
 
@@ -36,6 +37,10 @@ export default async function compressFile(
           return instance.png({ compressionLevel: Math.round(q / 10) });
         case "tiff":
           return instance.tiff({ compression: "jpeg", quality: q });
+        case "heif":
+          return instance.heif({ quality: q, compression: "av1" });
+        // case "avif":
+        //   return instance.avif({ quality: q, effort: 4, lossless: false });
         default:
           throw new Error("Unsupported image format for compression");
       }
@@ -57,7 +62,7 @@ export default async function compressFile(
     await forZip.toFile(outputZipDir);
     return info;
   } catch (error: any) {
-    console.error("Compress error:", error);
+    console.error("Compress error:", error.message);
     throw new ErrorResponse(error.message, 400);
   }
 }

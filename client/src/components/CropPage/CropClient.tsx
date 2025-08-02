@@ -18,6 +18,7 @@ import Sidebar from "@/components/CropPage/components/Sidebar";
 import ServiceIntro from "../ServiceIntro";
 import { PanelLeftOpen } from "lucide-react";
 import { Button } from "primereact/button";
+import { useToast } from "@/context/ToastContext";
 
 const aspectRatios = [
   { value: 1 / 1, name: "1/1" },
@@ -56,6 +57,7 @@ const CropClient = () => {
 
   const formData = new FormData();
   const { mutate, isPending } = useCrop();
+  const { showToast } = useToast();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -124,7 +126,7 @@ const CropClient = () => {
         }
       },
       onError: (error) => {
-        console.error("Error occured ===> ", error);
+        showToast("error", "Cannot process", error.message, 5000);
       },
     });
   };

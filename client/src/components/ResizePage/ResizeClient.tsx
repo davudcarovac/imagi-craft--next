@@ -16,6 +16,7 @@ import ResizeOptions from "@/components/ResizePage/ResizeOptions";
 import DownloadArea from "@/components/DownloadArea";
 import LetsTryActions from "@/components/LetsTryActions/LetsTryActions";
 import ServiceIntro from "../ServiceIntro";
+import { useToast } from "@/context/ToastContext";
 
 const ResizeClient = () => {
   const [files, setFiles] = useState<FileTypeResize[]>([]);
@@ -34,6 +35,7 @@ const ResizeClient = () => {
   const [disabledLinks, setDisabledLinks] = useState<string[]>([]);
   const formData = new FormData();
   const { mutate, isPending } = useResize();
+  const { showToast } = useToast();
 
   // const [imageLoading, setImageLoading] = useState(false);
   // const [imageError, setImageError] = useState<null | string>(null);
@@ -109,7 +111,7 @@ const ResizeClient = () => {
       },
 
       onError: (error) => {
-        console.error("Error occured ===> ", error);
+        showToast("error", "Cannot process", error.message, 5000);
       },
     });
   };
@@ -141,33 +143,6 @@ const ResizeClient = () => {
       resetOptions();
     }
   }, [files]);
-
-  // const BASE_URL = import.meta.env.VITE_BASE_URL;
-  // const downloadFile = async (fileId: string) => {
-  //   setImageLoading(true);
-  //   setImageError(null);
-
-  //   try {
-  //     const response = await axios.get(`${BASE_URL}/download/${fileId}`, {
-  //       responseType: "blob",
-  //     });
-
-  //     const blob = response.data;
-
-  //     const url = window.URL.createObjectURL(blob);
-
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = fileId;
-  //     a.click();
-
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     setImageError("Javio se error");
-  //   } finally {
-  //     setImageLoading(false);
-  //   }
-  // }
 
   return (
     <div>

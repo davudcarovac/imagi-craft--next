@@ -3,7 +3,7 @@
 import React, {
   Dispatch,
   SetStateAction,
-  useEffect,
+  // useEffect,
   useRef,
   useState,
 } from "react";
@@ -75,7 +75,7 @@ export default function UploadFile({
   const currentPlan = user?.plan || "STARTER";
   const { maxFiles, maxTotalSize } = PLAN_LIMITS[currentPlan];
 
-  useEffect(() => console.log(currentPlan), [user]);
+  // useEffect(() => console.log(currentPlan), [user]);
 
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
     if (!e.files || e.files.length === 0) return false;
