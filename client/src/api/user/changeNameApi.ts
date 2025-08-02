@@ -8,8 +8,11 @@ export const changeName = async (
   try {
     const response = await axiosInstance.post<ChangeNameResponse>(
       "/change-username",
+
       { newName: newName },
-      { withCredentials: true }
+      {
+        withCredentials: true,
+      }
     );
     return response.data;
   } catch (error) {

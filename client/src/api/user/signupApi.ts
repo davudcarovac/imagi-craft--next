@@ -7,18 +7,11 @@ export const signupUser = async (
   data: SignupUserData
 ): Promise<SignupResponse> => {
   try {
-    const csrfTokenResponse = await getCsrfToken();
+    const response = await axiosInstance.post<SignupResponse>("/signup", data, {
+      withCredentials: true,
+    });
 
-    const response = await axiosInstance.post<SignupResponse>(
-      "/signup",
-      { ...data, csrfToken: csrfTokenResponse.csrfToken },
-      {
-        withCredentials: true,
-        headers: {
-          "x-csrf-token": csrfTokenResponse.csrfToken || "",
-        },
-      }
-    );
+    await getCsrfToken();
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

@@ -6,6 +6,7 @@ import { Saira, Inter } from "next/font/google";
 import "primereact/resources/themes/saga-green/theme.css"; // ili druga tema po želji
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css"; // ikone
+import CsrfInitializer from "./CsrfInitializer";
 
 export const metadata = {
   title: "Next.js",
@@ -28,7 +29,7 @@ export default function RootLayout({
           <div className="flex flex-col min-h-screen">
             {/* Header je fiksiran na vrhu sa poznatom visinom */}
             <Header />
-
+            <CsrfInitializer />
             {/* Main sadržaj ima padding-top da ne bi bio ispod headera */}
             <main className="flex-1">{children}</main>
           </div>

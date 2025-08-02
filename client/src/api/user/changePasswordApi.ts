@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { ChangePasswordData, ChangePasswordResponse } from "@/types/apiTypes";
 import { axiosInstance } from "../axiosInstance";
+import { getCsrfToken } from "./csrfTokenApi";
 
 export const changePasswordUser = async (
   data: ChangePasswordData
@@ -13,6 +14,9 @@ export const changePasswordUser = async (
         withCredentials: true,
       }
     );
+
+    await getCsrfToken();
+
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

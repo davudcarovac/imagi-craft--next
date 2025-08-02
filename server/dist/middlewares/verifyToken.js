@@ -6,8 +6,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 export const verifyToken = async (req, res, next) => {
     // const { authorization } = req.headers;
     const token = req.cookies.auth_token;
-    console.log("verify token value ===> ", token);
-    console.log("cookies ===> ", req.cookies);
+    // console.log("verify token value ===> ", token);
+    // console.log("cookies ===> ", req.cookies);
     // if (!authorization) {
     //   res.status(401).json({ message: "Authorization token required." });
     //   return;

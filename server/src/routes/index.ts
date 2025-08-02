@@ -4,7 +4,6 @@ import {
   getDownloadAllFiles,
   getDownloadFileById,
   postCollageMaker,
-  // getHomePage,
   postCompressImage,
   postConvertImage,
   postCropFace,
@@ -26,7 +25,6 @@ import {
   loginUser,
   logoutUser,
   removeProfileImg,
-  removeTokens,
   resetPassword,
   setupTwoFactor,
   signupUser,
@@ -62,9 +60,9 @@ router.get("/users", getUsers);
 router.get("/user", verifyToken, getUser);
 
 router.get("/csrf-token", csrfProtection, getCsrfToken);
-router.post("/signup", csrfProtection, signupUser);
-router.post("/login", csrfProtection, loginUser);
-router.post("/logout", logoutUser);
+router.post("/signup", signupUser);
+router.post("/login", loginUser);
+router.post("/logout", csrfProtection, verifyToken, logoutUser);
 router.post(
   "/upload-profile-image",
   profileImageUpload,
@@ -79,12 +77,17 @@ router.get("/geo", getGeo);
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword);
-router.post("/change-password", verifyToken, changePassword);
-router.post("/change-username", verifyToken, changeUsername);
+router.post("/change-password", verifyToken, csrfProtection, changePassword);
+router.post("/change-username", verifyToken, csrfProtection, changeUsername);
 
-router.post("/2fa/setup", verifyToken, setupTwoFactor);
-router.post("/2fa/verify-enable", verifyToken, verifyEnableTwoFactor);
-router.post("/2fa/verify-login", csrfProtection, verifyLoginTwoFactor);
-router.post("/2fa/disable", verifyToken, disableTwoFactor);
+router.post("/2fa/setup", verifyToken, csrfProtection, setupTwoFactor);
+router.post(
+  "/2fa/verify-enable",
+  verifyToken,
+  csrfProtection,
+  verifyEnableTwoFactor
+);
+router.post("/2fa/verify-login", verifyLoginTwoFactor);
+router.post("/2fa/disable", verifyToken, csrfProtection, disableTwoFactor);
 
 export default router;

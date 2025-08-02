@@ -158,10 +158,18 @@ export async function logoutUser(req, res, next) {
                 : "localhost",
             path: "/",
         });
-        res.clearCookie("XSRF-TOKEN", {
-            path: "/",
+        res.clearCookie("csrf-token", {
+            httpOnly: true,
+            sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
+        res.clearCookie("csrf-token-client", {
+            httpOnly: false,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            domain: process.env.NODE_ENV === "production"
+                ? ".frostyimage.com"
+                : "localhost",
         });
         return res.status(200).json({ success: true, message: "Logged out" });
     }
