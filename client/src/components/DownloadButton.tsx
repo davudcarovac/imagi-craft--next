@@ -25,6 +25,8 @@ const DownloadButton = ({
     process.env.NEXT_PUBLIC_NODE_ENV === "production"
       ? process.env.NEXT_PUBLIC_BASE_URL
       : "http://localhost:4000";
+
+  console.log(`${BASE_URL}/download/${link}`);
   return (
     <a
       onClick={() => {

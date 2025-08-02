@@ -488,6 +488,9 @@ export async function getDownloadFileById(req, res) {
                     }
                     else {
                         console.log("File by ID deleted successfully ===> ", filePath);
+                        res
+                            .status(200)
+                            .json({ success: true, message: `File ${filePath} deleted` });
                     }
                 });
             });

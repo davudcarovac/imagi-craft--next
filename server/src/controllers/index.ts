@@ -807,6 +807,9 @@ export async function getDownloadFileById(req: Request, res: Response) {
             console.log("Greska prilikom brisanja ==> ", error);
           } else {
             console.log("File by ID deleted successfully ===> ", filePath);
+            res
+              .status(200)
+              .json({ success: true, message: `File ${filePath} deleted` });
           }
         });
       });
