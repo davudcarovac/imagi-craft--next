@@ -10,6 +10,11 @@ type SingleDownloadButtonProps = {
   children: ReactNode;
 };
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "http://localhost:4000";
+
 const SingleDownloadButton = ({
   link,
   resetAll,
@@ -26,10 +31,7 @@ const SingleDownloadButton = ({
         height={20}
         width={20}
       />
-      <a
-        href={`http://localhost:4000/download/${link}`}
-        className="font-semibold"
-      >
+      <a href={`${BASE_URL}/${link}`} className="font-semibold">
         {children}
       </a>
     </button>
