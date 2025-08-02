@@ -36,7 +36,7 @@ const DownloadButton = ({
         const transformedLink = `${link}-${index}`;
         onClick?.(transformedLink);
       }}
-      href={`${BASE_URL}/download/${link}`}
+      href={`https://api.frostyimage.com/download/${link}`}
       download
       className={`
       ${
