@@ -18,6 +18,7 @@ import cropfaceFile from "../utils/cropfaceFile.ts";
 import sharp from "sharp";
 import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.ts";
 import { processImageForCell } from "../utils/collageFile.ts";
+import { logMemory } from "../utils/memoryCheck.ts";
 
 const { __dirname } = fileDirName(import.meta);
 
@@ -155,6 +156,8 @@ export async function postConvertImage(
     res.status(201).json({ downloadLinks: downloadLinks, success: true });
   } catch (error) {
     next(error);
+  } finally {
+    logMemory();
   }
 }
 
@@ -269,6 +272,8 @@ export async function postResizeImage(
     res.status(201).json({ downloadLinks: downloadLinks, success: true });
   } catch (error) {
     next(error);
+  } finally {
+    logMemory();
   }
 }
 
@@ -341,6 +346,8 @@ export async function postCropImage(
     res.status(200).json({ downloadLinks: downloadLinks, success: true });
   } catch (error) {
     next(error);
+  } finally {
+    logMemory();
   }
 }
 
@@ -467,6 +474,8 @@ export async function postCompressImage(
     res.status(200).json({ success: true, downloadLinks: downloadLinks });
   } catch (error) {
     next(error);
+  } finally {
+    logMemory();
   }
 }
 
@@ -552,6 +561,8 @@ export async function postWatermarkingImage(
   } catch (error) {
     // Ako je došlo do greške, pozivamo next() da proslijedimo grešku dalje
     next(error); // Prosljeđivanje greške u sledeći error handler
+  } finally {
+    logMemory();
   }
 }
 
@@ -641,6 +652,8 @@ export async function postCropFace(
     });
   } catch (error) {
     next(error);
+  } finally {
+    logMemory();
   }
 }
 
@@ -759,6 +772,8 @@ export const postCollageMaker = async (
     next(error);
   } finally {
     files.forEach((item) => deleteFile(item.path));
+
+    logMemory();
   }
 };
 

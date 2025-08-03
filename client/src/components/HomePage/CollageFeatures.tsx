@@ -1,8 +1,8 @@
-import Image from "next/image";
+// import Image from "next/image";
 import { Check } from "lucide-react";
-import stil1 from "./assets/stil1.jpg";
-import stil2 from "./assets/stil2.jpg";
-import stil3 from "./assets/stil3.jpg";
+// import stil1 from "./assets/stil1.jpg";
+// import stil2 from "./assets/stil2.jpg";
+// import stil3 from "./assets/stil3.jpg";
 
 export default function CollageFeaturesSection() {
   return (
@@ -86,7 +86,7 @@ export default function CollageFeaturesSection() {
         </div>
 
         {/* Additional Examples */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
           {[stil1, stil2, stil3].map((item, index) => (
             <div
               key={index}
@@ -99,6 +99,64 @@ export default function CollageFeaturesSection() {
               />
             </div>
           ))}
+        </div> */}
+        <div className="mt-24">
+          <h3 className="text-2xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+              Šabloni svih oblika
+            </span>{" "}
+            za svaku potrebu
+          </h3>
+
+          {/* Masonry Grid sa CSS Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+            {[
+              { id: 1, width: 1080, height: 1080 }, // Kvadrat
+              { id: 2, width: 1000, height: 1500 }, // Portret
+              { id: 3, width: 1500, height: 1000 }, // Pejzaž
+              { id: 4, width: 1200, height: 800 }, // Široki
+              { id: 5, width: 800, height: 1200 }, // Visoki
+              { id: 6, width: 1080, height: 1350 }, // Vertikalni
+            ].map((template) => {
+              const aspectRatio = template.width / template.height;
+              const rowSpan =
+                aspectRatio > 1.3
+                  ? "lg:row-span-1"
+                  : aspectRatio < 0.7
+                  ? "lg:row-span-2"
+                  : "lg:row-span-1";
+
+              return (
+                <div
+                  key={template.id}
+                  className={`relative rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:z-10 ${rowSpan}`}
+                  style={{
+                    aspectRatio: `${template.width}/${template.height}`,
+                  }}
+                >
+                  {/* Placeholder za sliku - zamijeniti pravim Image komponentom */}
+                  <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                    <span className="text-gray-500 font-medium">
+                      {template.width}x{template.height}
+                    </span>
+                  </div>
+
+                  {/* Overlay sa informacijama */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                    <h4 className="text-white font-bold text-lg">
+                      Šablon #{template.id}
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      {template.width}×{template.height}px
+                    </p>
+                    <button className="mt-2 self-end bg-white/90 hover:bg-white text-gray-800 px-3 py-1 rounded-full text-xs font-medium transition">
+                      Primeni
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

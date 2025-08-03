@@ -15,6 +15,7 @@ import cropfaceFile from "../utils/cropfaceFile.js";
 import sharp from "sharp";
 import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.js";
 import { processImageForCell } from "../utils/collageFile.js";
+import { logMemory } from "../utils/memoryCheck.js";
 const { __dirname } = fileDirName(import.meta);
 export async function getHomePage(req, res) {
     try {
@@ -87,6 +88,9 @@ export async function postConvertImage(req, res, next) {
     catch (error) {
         next(error);
     }
+    finally {
+        logMemory();
+    }
 }
 export async function postResizeImage(req, res, next) {
     try {
@@ -148,6 +152,9 @@ export async function postResizeImage(req, res, next) {
     catch (error) {
         next(error);
     }
+    finally {
+        logMemory();
+    }
 }
 export async function postCropImage(req, res, next) {
     try {
@@ -192,6 +199,9 @@ export async function postCropImage(req, res, next) {
     }
     catch (error) {
         next(error);
+    }
+    finally {
+        logMemory();
     }
 }
 export async function postCompressImage(req, // Tipizacija req.body
@@ -263,6 +273,9 @@ res, next) {
     catch (error) {
         next(error);
     }
+    finally {
+        logMemory();
+    }
 }
 // Funkcija za dodavanje vodenog žiga
 export async function postWatermarkingImage(req, res, next) {
@@ -308,6 +321,9 @@ export async function postWatermarkingImage(req, res, next) {
     catch (error) {
         // Ako je došlo do greške, pozivamo next() da proslijedimo grešku dalje
         next(error); // Prosljeđivanje greške u sledeći error handler
+    }
+    finally {
+        logMemory();
     }
 }
 export async function postCropFace(req, res, next) {
@@ -367,6 +383,9 @@ export async function postCropFace(req, res, next) {
     }
     catch (error) {
         next(error);
+    }
+    finally {
+        logMemory();
     }
 }
 export const postCollageMaker = async (req, res, next) => {
@@ -443,6 +462,7 @@ export const postCollageMaker = async (req, res, next) => {
     }
     finally {
         files.forEach((item) => deleteFile(item.path));
+        logMemory();
     }
 };
 export function deleteAllFilesInDirectory(directory) {

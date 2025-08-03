@@ -43,7 +43,12 @@ app.use(
     origin: allowedOrigins,
     credentials: true, // Ovo je ključno za cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "x-csrf-token",
+      "Access-Control-Allow-Origin",
+    ],
   })
 );
 
@@ -54,13 +59,13 @@ app.use(express.json());
 app.use(router);
 app.use(errorHandler);
 
-const uploads = fs.readdirSync(path.join(__dirname, "uploads"));
-const outputs = fs.readdirSync(path.join(__dirname, "outputs"));
-const outputsZip = fs.readdirSync(path.join(__dirname, "zipOutput"));
+// const uploads = fs.readdirSync(path.join(__dirname, "uploads"));
+// const outputs = fs.readdirSync(path.join(__dirname, "outputs"));
+// const outputsZip = fs.readdirSync(path.join(__dirname, "zipOutput"));
 
-console.log("Broj uploads fajlova:", uploads.length);
-console.log("Broj outputs fajlova:", outputs.length);
-console.log("Broj zip fajlova:", outputsZip.length);
+// console.log("Broj uploads fajlova:", uploads.length);
+// console.log("Broj outputs fajlova:", outputs.length);
+// console.log("Broj zip fajlova:", outputsZip.length);
 
 // ✅ Učitaj modele i zatim pokreni server
 (async () => {
