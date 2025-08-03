@@ -5,6 +5,8 @@ import ActionCard from "../ActionCard";
 import ServiceIntro from "../ServiceIntro";
 import { CheckCircle } from "lucide-react";
 import HomePageVideo from "./HomePageVideo";
+import CollageFeatureSection from "./CollageFeatures";
+import CollageFeaturesSection from "./CollageFeatures";
 
 const HomeClient = () => {
   return (
@@ -77,6 +79,8 @@ const HomeClient = () => {
                 Upgrade Now
               </button>
             </section>
+
+            <CollageFeaturesSection />
           </div>
         </div>
       </div>
