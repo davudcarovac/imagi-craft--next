@@ -1,9 +1,8 @@
-export function logMemory() {
+export function logMemory(label: string) {
   const used = process.memoryUsage();
-  console.log("Memory usage:");
-  for (let key in used) {
-    console.log(
-      `${key}: ${(used[key as keyof typeof used] / 1024 / 1024).toFixed(2)} MB`
-    );
+  console.log(`--- ${label} ---`);
+  for (const key in used) {
+    const val = used[key as keyof typeof used];
+    console.log(`${key}: ${(val / 1024 / 1024).toFixed(2)} MB`);
   }
 }

@@ -1,4 +1,5 @@
-import sharp, { type OutputInfo, type FormatEnum } from "sharp";
+// utils/compressFile.ts
+import sharp, { type FormatEnum, type OutputInfo } from "sharp";
 import ErrorResponse from "./CustomErrorResponse.ts";
 
 export default async function compressFile(
@@ -10,23 +11,22 @@ export default async function compressFile(
   greyscale?: string
 ): Promise<OutputInfo> {
   try {
-    const image = sharp(filePath);
-    const forZip = sharp(filePath);
-    const { format } = await image.metadata();
-    console.log("Format slike ===> ", format);
+    let image = sharp(filePath);
+    const metadata = await image.metadata();
+    const format = metadata.format;
+
+    if (!format) {
+      throw new Error("Unable to determine image format.");
+    }
 
     const q = +qualityLevel;
 
-    // Ako je uključena grayscale opcija
+    // Apply grayscale if needed
     if (greyscale === "On") {
-      image.grayscale();
-      forZip.grayscale();
+      image = image.grayscale();
     }
 
-    const applyCompression = (
-      instance: sharp.Sharp,
-      formatType: string | undefined
-    ) => {
+    const applyCompression = (instance: sharp.Sharp, formatType: string) => {
       switch (formatType) {
         case "jpeg":
         case "jpg":
@@ -39,27 +39,27 @@ export default async function compressFile(
           return instance.tiff({ compression: "jpeg", quality: q });
         case "heif":
           return instance.heif({ quality: q, compression: "av1" });
-        // case "avif":
-        //   return instance.avif({ quality: q, effort: 4, lossless: false });
         default:
           throw new Error("Unsupported image format for compression");
       }
     };
 
-    // Ako korisnik želi konverziju u drugi format
     if (convertTo) {
-      const compressed = image.toFormat(convertTo, { quality: q });
-      const info = await compressed.toFile(outputPath);
-      await forZip.toFile(outputZipDir);
+      // convert to new format
+      const converted = image.toFormat(convertTo, { quality: q });
+      const info = await converted.toFile(outputPath);
+
+      // create zip version from processed file
+      await sharp(outputPath).toFile(outputZipDir);
       return info;
     }
 
-    // Inače, kompresuj u originalnom formatu
+    // compress using original format
     applyCompression(image, format);
-    applyCompression(forZip, format);
-
     const info = await image.toFile(outputPath);
-    await forZip.toFile(outputZipDir);
+
+    // create zip version from already saved file
+    await sharp(outputPath).toFile(outputZipDir);
     return info;
   } catch (error: any) {
     console.error("Compress error:", error.message);
