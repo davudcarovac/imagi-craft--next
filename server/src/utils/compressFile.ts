@@ -2,6 +2,8 @@
 import sharp, { type FormatEnum, type OutputInfo } from "sharp";
 import ErrorResponse from "./CustomErrorResponse.ts";
 
+sharp.cache(false);
+
 export default async function compressFile(
   filePath: string,
   outputPath: string,
@@ -20,6 +22,28 @@ export default async function compressFile(
     }
 
     const q = +qualityLevel;
+
+    // ✅ Resize ako je veće od 2000px
+    const MAX_DIMENSION = 2000;
+    if (
+      (metadata.width && metadata.width > MAX_DIMENSION) ||
+      (metadata.height && metadata.height > MAX_DIMENSION)
+    ) {
+      const resizeOptions: { width?: number; height?: number } = {};
+
+      // proporcionalno smanjenje dimenzija
+      if (
+        metadata.width &&
+        metadata.height &&
+        metadata.width > metadata.height
+      ) {
+        resizeOptions.width = MAX_DIMENSION;
+      } else {
+        resizeOptions.height = MAX_DIMENSION;
+      }
+
+      image = image.resize(resizeOptions);
+    }
 
     // Apply grayscale if needed
     if (greyscale === "On") {

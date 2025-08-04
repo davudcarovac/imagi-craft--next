@@ -88,9 +88,6 @@ export async function postConvertImage(req, res, next) {
     catch (error) {
         next(error);
     }
-    finally {
-        logMemory();
-    }
 }
 export async function postResizeImage(req, res, next) {
     try {
@@ -152,9 +149,6 @@ export async function postResizeImage(req, res, next) {
     catch (error) {
         next(error);
     }
-    finally {
-        logMemory();
-    }
 }
 export async function postCropImage(req, res, next) {
     try {
@@ -200,35 +194,25 @@ export async function postCropImage(req, res, next) {
     catch (error) {
         next(error);
     }
-    finally {
-        logMemory();
-    }
 }
-export async function postCompressImage(req, // Tipizacija req.body
-res, next) {
+export async function postCompressImage(req, res, next) {
     try {
-        // Tipizacija req.files kao niz fajlova ili objekat sa nizovima fajlova
         const files = req.files;
-        // Provera da li je kvalitet nivo kompresije prisutan
-        const qualityLevel = req.body.qualityLevel;
-        const convertTo = req.body.convertTo;
-        const greyscale = req.body.greyscale;
-        // Provera da li su fajlovi prisutni
+        const { qualityLevel, convertTo, greyscale } = req.body;
         if (!files || (Array.isArray(files) && files.length === 0)) {
             throw new ErrorResponse("Please upload file", 400);
         }
         const downloadLinks = [];
-        // Ako je req.files niz (array)
-        if (Array.isArray(files)) {
-            for (const file of files) {
+        const handleFiles = async (fileList) => {
+            for (const file of fileList) {
                 const formatedName = convertTo
                     ? file.originalname.split(".")[0] + "." + convertTo
                     : file.originalname;
-                // folder for downloading files by ID
                 const outputFileDir = path.join(__dirname, "..", "outputs", formatedName);
-                // folder for zip items
                 const outputZipDir = path.join(__dirname, "..", "outputsForZip", formatedName);
+                logMemory(`Before compressing ${formatedName}`);
                 const compressedFile = await compressFile(file.path, outputFileDir, outputZipDir, qualityLevel, convertTo, greyscale);
+                logMemory(`After compressing ${formatedName}`);
                 await deleteFile(file.path);
                 downloadLinks.push({
                     name: formatedName,
@@ -238,43 +222,24 @@ res, next) {
                     format: compressedFile.format,
                 });
             }
+        };
+        if (Array.isArray(files)) {
+            await handleFiles(files);
         }
         else {
-            // Ako je req.files objekat sa poljima fajlova
             for (const fieldname in files) {
                 if (Object.prototype.hasOwnProperty.call(files, fieldname)) {
                     const fileArray = files[fieldname];
                     if (fileArray && fileArray.length > 0) {
-                        for (const file of fileArray) {
-                            const formatedName = convertTo
-                                ? file.originalname.split(".")[0] + "." + convertTo
-                                : file.originalname;
-                            // folder for downloading files by ID
-                            const outputFileDir = path.join(__dirname, "..", "outputs", formatedName);
-                            // folder for zip items
-                            const outputZipDir = path.join(__dirname, "..", "outputsForZip", formatedName);
-                            const compressedFile = await compressFile(file.path, outputFileDir, outputZipDir, qualityLevel, convertTo, greyscale);
-                            await deleteFile(file.path);
-                            downloadLinks.push({
-                                name: formatedName,
-                                size: compressedFile.size,
-                                height: compressedFile.height,
-                                width: compressedFile.width,
-                                format: compressedFile.format,
-                            });
-                        }
+                        await handleFiles(fileArray);
                     }
                 }
             }
         }
-        // return
-        res.status(200).json({ success: true, downloadLinks: downloadLinks });
+        res.status(200).json({ success: true, downloadLinks });
     }
     catch (error) {
         next(error);
-    }
-    finally {
-        logMemory();
     }
 }
 // Funkcija za dodavanje vodenog žiga
@@ -321,9 +286,6 @@ export async function postWatermarkingImage(req, res, next) {
     catch (error) {
         // Ako je došlo do greške, pozivamo next() da proslijedimo grešku dalje
         next(error); // Prosljeđivanje greške u sledeći error handler
-    }
-    finally {
-        logMemory();
     }
 }
 export async function postCropFace(req, res, next) {
@@ -383,9 +345,6 @@ export async function postCropFace(req, res, next) {
     }
     catch (error) {
         next(error);
-    }
-    finally {
-        logMemory();
     }
 }
 export const postCollageMaker = async (req, res, next) => {
@@ -462,7 +421,6 @@ export const postCollageMaker = async (req, res, next) => {
     }
     finally {
         files.forEach((item) => deleteFile(item.path));
-        logMemory();
     }
 };
 export function deleteAllFilesInDirectory(directory) {

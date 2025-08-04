@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import downloadIcon from "../assets/button images/download-file2.png";
-import { useEffect } from "react";
 
 type DownloadButtonType = {
   link: string;
@@ -27,9 +26,6 @@ const DownloadButton = ({
   isDisabledDownload,
   onClick,
 }: DownloadButtonType) => {
-  useEffect(() => {
-    console.log(`${BASE_URL}/download/${link}`);
-  }, [BASE_URL]);
   return (
     <a
       onClick={() => {
