@@ -461,6 +461,8 @@ export async function postWatermarkingImage(
     let files: Express.Multer.File[] | undefined;
     let inputFile: Express.Multer.File | undefined;
 
+    logMemory("🔹 Pre početka logike");
+
     if (Array.isArray(req.files)) {
       files = req.files; // Ako je req.files niz, koristimo ga direktno
     } else {
@@ -500,6 +502,8 @@ export async function postWatermarkingImage(
 
     // Brisanje fajla sa vodenim žigom
     await deleteFile(inputFile.path);
+
+    logMemory("🔹 Posle  logike");
 
     //return
     res.status(200).json({
@@ -608,6 +612,7 @@ export const postCollageMaker = async (
   next: NextFunction
 ) => {
   const files = req.files as Express.Multer.File[];
+
   try {
     const { templateName, customPadding, backgroundColor, borderRadius } =
       req.body;
@@ -615,6 +620,8 @@ export const postCollageMaker = async (
     const downloadLinks: DownloadLinksType[] & {
       dimensions?: { width: number; height: number };
     } = [];
+
+    logMemory("🔹 Pre početka logike");
 
     console.log(
       "data ===> ",
@@ -635,6 +642,7 @@ export const postCollageMaker = async (
     if (!template) {
       throw new ErrorResponse("No template", 400);
     }
+
     const padding =
       typeof customPadding === "string"
         ? parseInt(customPadding)
@@ -644,7 +652,6 @@ export const postCollageMaker = async (
 
     const totalCells = template.rows * template.cols;
 
-    // 1. Izračunaj dimenzije ćelije
     const cellWidth = Math.floor(
       (template.width - (padding || 0) * (template.cols + 1)) / template.cols
     );
@@ -652,7 +659,8 @@ export const postCollageMaker = async (
       (template.height - (padding || 0) * (template.rows + 1)) / template.rows
     );
 
-    // 2. Obradi sve slike
+    logMemory("🔹 Pre obrade slika");
+
     const processedImages = await Promise.all(
       files
         .slice(0, totalCells)
@@ -661,7 +669,8 @@ export const postCollageMaker = async (
         )
     );
 
-    // 3. Pripremi slojeve za kompoziciju
+    // logMemory("🔹 Posle obrade slika");
+
     const layers = processedImages.map((buffer, index) => {
       const row = Math.floor(index / template.cols);
       const col = index % template.cols;
@@ -676,13 +685,14 @@ export const postCollageMaker = async (
 
     const date = Date.now();
 
-    // 4. Kreiraj collage
     const outputFilePath = path.join(
       __dirname,
       "..",
       "outputs",
       `collage-${date}.jpg`
     );
+
+    // logMemory("🔹 Pre kreiranja collage-a");
 
     const processedImage = await sharp({
       create: {
@@ -699,6 +709,10 @@ export const postCollageMaker = async (
       })
       .toFile(outputFilePath);
 
+    // logMemory("🔹 Posle kreiranja collage-a");
+
+    console.log("Slika ===> ", processedImage);
+
     downloadLinks.push({
       name: `collage-${date}.jpg`,
       size: (await processedImage).size,
@@ -706,6 +720,8 @@ export const postCollageMaker = async (
       height: template.height,
       format: "jpeg",
     });
+
+    logMemory("✅ Kraj funkcije");
 
     res.status(200).json({
       success: true,
@@ -744,7 +760,11 @@ export function deleteAllFilesInDirectory(directory: string) {
 }
 
 // download
-export async function getDownloadFileById(req: Request, res: Response) {
+export async function getDownloadFileById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { fileId } = req.params;
     console.log("File ID ===> ", fileId);
@@ -752,29 +772,26 @@ export async function getDownloadFileById(req: Request, res: Response) {
       const filePath = path.join(__dirname, "..", "outputs", fileId);
       console.log("Fajl path ===> ", filePath);
       if (!fs.existsSync(filePath)) {
-        res.status(404).json({ error: "File not found!" });
-        return;
+        throw new ErrorResponse("File not found!", 404);
       }
       res.download(filePath, (error) => {
         if (error) {
-          return res.status(404).json({ error: "Downloading failed." });
+          throw new ErrorResponse("Downloading failed", 400);
         }
 
         fs.unlink(filePath, (error) => {
           if (error) {
             console.log("Greska prilikom brisanja ==> ", error);
+            throw new ErrorResponse(error.message, 400);
           } else {
             console.log("File by ID deleted successfully ===> ", filePath);
-            res
-              .status(200)
-              .json({ success: true, message: `File ${filePath} deleted` });
           }
         });
       });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed" });
+    next(error);
   }
 }
 

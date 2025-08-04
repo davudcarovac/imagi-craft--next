@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import fs from "fs/promises";
 
 export const processImageForCell = async (
   imagePath: string,
@@ -6,6 +7,13 @@ export const processImageForCell = async (
   cellHeight: number,
   borderRadius: number = 0
 ): Promise<Buffer> => {
+  const { size } = await fs.stat(imagePath);
+  console.log("Real image size in bytes ===>", size);
+
+  // Dobij ostale metapodatke (širina, visina, format...)
+  const metadata = await sharp(imagePath).metadata();
+  console.log("Image metadata ===>", metadata);
+
   if (borderRadius <= 0) {
     return sharp(imagePath)
       .rotate()

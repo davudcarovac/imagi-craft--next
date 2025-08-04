@@ -1,8 +1,52 @@
 // import Image from "next/image";
 import { Check } from "lucide-react";
-// import stil1 from "./assets/stil1.jpg";
-// import stil2 from "./assets/stil2.jpg";
-// import stil3 from "./assets/stil3.jpg";
+import stil1 from "./assets/stil1.jpg";
+import stil2 from "./assets/stil2.jpg";
+import stil3 from "./assets/stil3.jpg";
+import stil4 from "./assets/stil4.jpg";
+import stil5 from "./assets/stil5.jpg";
+import stil6 from "./assets/stil6.jpg";
+
+import Image from "next/image";
+
+const imageTemplates = [
+  { id: 2, width: 1080, height: 1080, src: stil1, templateName: "2x2" },
+  {
+    id: 3,
+    width: 1000,
+    height: 1500,
+    src: stil2,
+    templateName: "Pinterest pin",
+  },
+  {
+    id: 4,
+    width: 1600,
+    height: 800,
+    src: stil3,
+    templateName: "Magazine spread",
+  },
+  {
+    id: 1,
+    width: 1080,
+    height: 1080,
+    src: stil4,
+    templateName: "Instagram grid 3x3",
+  },
+  {
+    id: 5,
+    width: 1280,
+    height: 720,
+    src: stil5,
+    templateName: "Youtube thumbnail",
+  },
+  {
+    id: 6,
+    width: 1920,
+    height: 1080,
+    src: stil6,
+    templateName: "Facebook event cover",
+  },
+];
 
 export default function CollageFeaturesSection() {
   return (
@@ -101,23 +145,16 @@ export default function CollageFeaturesSection() {
           ))}
         </div> */}
         <div className="mt-24">
-          <h3 className="text-2xl font-bold text-center mb-12">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-              Šabloni svih oblika
+          <h3 className="text-2xl font-bold text-center mb-12 saira-font">
+            <span className="text-[#1aac83] bg-clip-text">
+              Versatile Templates
             </span>{" "}
-            za svaku potrebu
+            for Every Visual Format and Platform
           </h3>
 
           {/* Masonry Grid sa CSS Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
-            {[
-              { id: 1, width: 1080, height: 1080 }, // Kvadrat
-              { id: 2, width: 1000, height: 1500 }, // Portret
-              { id: 3, width: 1500, height: 1000 }, // Pejzaž
-              { id: 4, width: 1200, height: 800 }, // Široki
-              { id: 5, width: 800, height: 1200 }, // Visoki
-              { id: 6, width: 1080, height: 1350 }, // Vertikalni
-            ].map((template) => {
+            {imageTemplates.map((template) => {
               const aspectRatio = template.width / template.height;
               const rowSpan =
                 aspectRatio > 1.3
@@ -134,23 +171,23 @@ export default function CollageFeaturesSection() {
                     aspectRatio: `${template.width}/${template.height}`,
                   }}
                 >
-                  {/* Placeholder za sliku - zamijeniti pravim Image komponentom */}
-                  <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                    <span className="text-gray-500 font-medium">
-                      {template.width}x{template.height}
-                    </span>
-                  </div>
+                  <Image
+                    src={template.src}
+                    alt={`Template ${template.id}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
 
-                  {/* Overlay sa informacijama */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-                    <h4 className="text-white font-bold text-lg">
-                      Šablon #{template.id}
+                    <h4 className="text-white font-bold text-lg saira-font">
+                      {template.templateName}
                     </h4>
                     <p className="text-gray-300 text-sm">
-                      {template.width}×{template.height}px
+                      {template.width} × {template.height}px
                     </p>
-                    <button className="mt-2 self-end bg-white/90 hover:bg-white text-gray-800 px-3 py-1 rounded-full text-xs font-medium transition">
-                      Primeni
+                    <button className="cursor-pointer mt-2 self-end bg-[#1aac83]/90 hover:bg-[#1aac83] text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                      Apply
                     </button>
                   </div>
                 </div>

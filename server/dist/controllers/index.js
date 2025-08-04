@@ -251,6 +251,7 @@ export async function postWatermarkingImage(req, res, next) {
         }
         let files;
         let inputFile;
+        logMemory("🔹 Pre početka logike");
         if (Array.isArray(req.files)) {
             files = req.files; // Ako je req.files niz, koristimo ga direktno
         }
@@ -276,6 +277,7 @@ export async function postWatermarkingImage(req, res, next) {
         }
         // Brisanje fajla sa vodenim žigom
         await deleteFile(inputFile.path);
+        logMemory("🔹 Posle  logike");
         //return
         res.status(200).json({
             success: true,
@@ -352,6 +354,7 @@ export const postCollageMaker = async (req, res, next) => {
     try {
         const { templateName, customPadding, backgroundColor, borderRadius } = req.body;
         const downloadLinks = [];
+        logMemory("🔹 Pre početka logike");
         console.log("data ===> ", templateName, customPadding, backgroundColor, borderRadius);
         if (!files?.length) {
             throw new Error("Minimum 1 image required");
@@ -367,14 +370,13 @@ export const postCollageMaker = async (req, res, next) => {
                 ? customPadding
                 : template.cellPadding || 0;
         const totalCells = template.rows * template.cols;
-        // 1. Izračunaj dimenzije ćelije
         const cellWidth = Math.floor((template.width - (padding || 0) * (template.cols + 1)) / template.cols);
         const cellHeight = Math.floor((template.height - (padding || 0) * (template.rows + 1)) / template.rows);
-        // 2. Obradi sve slike
+        logMemory("🔹 Pre obrade slika");
         const processedImages = await Promise.all(files
             .slice(0, totalCells)
             .map((file) => processImageForCell(file.path, cellWidth, cellHeight, borderRadius)));
-        // 3. Pripremi slojeve za kompoziciju
+        // logMemory("🔹 Posle obrade slika");
         const layers = processedImages.map((buffer, index) => {
             const row = Math.floor(index / template.cols);
             const col = index % template.cols;
@@ -386,8 +388,8 @@ export const postCollageMaker = async (req, res, next) => {
             };
         });
         const date = Date.now();
-        // 4. Kreiraj collage
         const outputFilePath = path.join(__dirname, "..", "outputs", `collage-${date}.jpg`);
+        // logMemory("🔹 Pre kreiranja collage-a");
         const processedImage = await sharp({
             create: {
                 width: template.width,
@@ -402,6 +404,8 @@ export const postCollageMaker = async (req, res, next) => {
             mozjpeg: true,
         })
             .toFile(outputFilePath);
+        // logMemory("🔹 Posle kreiranja collage-a");
+        console.log("Slika ===> ", processedImage);
         downloadLinks.push({
             name: `collage-${date}.jpg`,
             size: (await processedImage).size,
@@ -409,6 +413,7 @@ export const postCollageMaker = async (req, res, next) => {
             height: template.height,
             format: "jpeg",
         });
+        logMemory("✅ Kraj funkcije");
         res.status(200).json({
             success: true,
             downloadLinks: downloadLinks,
@@ -445,7 +450,7 @@ export function deleteAllFilesInDirectory(directory) {
     });
 }
 // download
-export async function getDownloadFileById(req, res) {
+export async function getDownloadFileById(req, res, next) {
     try {
         const { fileId } = req.params;
         console.log("File ID ===> ", fileId);
@@ -453,22 +458,19 @@ export async function getDownloadFileById(req, res) {
             const filePath = path.join(__dirname, "..", "outputs", fileId);
             console.log("Fajl path ===> ", filePath);
             if (!fs.existsSync(filePath)) {
-                res.status(404).json({ error: "File not found!" });
-                return;
+                throw new ErrorResponse("File not found!", 404);
             }
             res.download(filePath, (error) => {
                 if (error) {
-                    return res.status(404).json({ error: "Downloading failed." });
+                    throw new ErrorResponse("Downloading failed", 400);
                 }
                 fs.unlink(filePath, (error) => {
                     if (error) {
                         console.log("Greska prilikom brisanja ==> ", error);
+                        throw new ErrorResponse(error.message, 400);
                     }
                     else {
                         console.log("File by ID deleted successfully ===> ", filePath);
-                        res
-                            .status(200)
-                            .json({ success: true, message: `File ${filePath} deleted` });
                     }
                 });
             });
@@ -476,7 +478,7 @@ export async function getDownloadFileById(req, res) {
     }
     catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Failed" });
+        next(error);
     }
 }
 export async function getDownloadAllFiles(req, res) {
