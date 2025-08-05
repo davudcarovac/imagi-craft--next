@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
 
     const plan = decoded.plan;
 
-    console.log("User plan ===> ", plan === "PROFESSIONAL");
+    // console.log("User plan ===> ", plan === "PROFESSIONAL");
 
     if (plan === "PROFESSIONAL" || plan === "BUSINESS") {
       return NextResponse.next();

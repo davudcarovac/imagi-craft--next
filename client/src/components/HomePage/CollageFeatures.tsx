@@ -1,52 +1,8 @@
 // import Image from "next/image";
 import { Check } from "lucide-react";
-import stil1 from "./assets/stil1.jpg";
-import stil2 from "./assets/stil2.jpg";
-import stil3 from "./assets/stil3.jpg";
-import stil4 from "./assets/stil4.jpg";
-import stil5 from "./assets/stil5.jpg";
-import stil6 from "./assets/stil6.jpg";
-
 import Image from "next/image";
-
-const imageTemplates = [
-  { id: 2, width: 1080, height: 1080, src: stil1, templateName: "2x2" },
-  {
-    id: 3,
-    width: 1000,
-    height: 1500,
-    src: stil2,
-    templateName: "Pinterest pin",
-  },
-  {
-    id: 4,
-    width: 1600,
-    height: 800,
-    src: stil3,
-    templateName: "Magazine spread",
-  },
-  {
-    id: 1,
-    width: 1080,
-    height: 1080,
-    src: stil4,
-    templateName: "Instagram grid 3x3",
-  },
-  {
-    id: 5,
-    width: 1280,
-    height: 720,
-    src: stil5,
-    templateName: "Youtube thumbnail",
-  },
-  {
-    id: 6,
-    width: 1920,
-    height: 1080,
-    src: stil6,
-    templateName: "Facebook event cover",
-  },
-];
+import { imageTemplates } from "./utils/imageTemplates";
+import Link from "next/link";
 
 export default function CollageFeaturesSection() {
   return (
@@ -100,8 +56,8 @@ export default function CollageFeaturesSection() {
 
           {/* Text Side (Right) */}
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-gray-800">
-              Transformišite obične fotografije u umetnička dela
+            <h3 className="text-3xl font-bold  saira-font">
+              Transform photos into content
             </h3>
 
             <ul className="space-y-4">
@@ -120,7 +76,7 @@ export default function CollageFeaturesSection() {
 
             <div className="pt-4">
               <button className="bg-[#1aac83] hover:bg-[#1aac83] cursor-pointer text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-300 shadow-lg hover:shadow-xl">
-                Try collage editor
+                <Link href={"/collage-image"}>Try collage editor</Link>
               </button>
               {/* <p className="mt-3 text-gray-500 text-sm">
                 Nije potrebna registracija - počnite odmah!
@@ -154,45 +110,64 @@ export default function CollageFeaturesSection() {
 
           {/* Masonry Grid sa CSS Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
-            {imageTemplates.map((template) => {
-              const aspectRatio = template.width / template.height;
-              const rowSpan =
-                aspectRatio > 1.3
-                  ? "lg:row-span-1"
-                  : aspectRatio < 0.7
-                  ? "lg:row-span-2"
-                  : "lg:row-span-1";
+            {imageTemplates
+              .sort((a, b) => a.width - b.width) // Sortiraj po širini za bolji flow
+              .map((template) => {
+                const aspectRatio = template.width / template.height;
+                const rowSpan =
+                  aspectRatio > 1.3
+                    ? "lg:row-span-1"
+                    : aspectRatio < 0.7
+                    ? "lg:row-span-2"
+                    : "lg:row-span-1";
+                const isVertical = aspectRatio < 0.9;
+                const isHorizontal = aspectRatio > 1.1;
 
-              return (
-                <div
-                  key={template.id}
-                  className={`relative rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:z-10 ${rowSpan}`}
-                  style={{
-                    aspectRatio: `${template.width}/${template.height}`,
-                  }}
-                >
-                  <Image
-                    src={template.src}
-                    alt={`Template ${template.id}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
+                return (
+                  <div
+                    key={template.id}
+                    className={`relative rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:z-10 hover:scale-[1.02] ${
+                      isVertical
+                        ? "vertical-layout"
+                        : isHorizontal
+                        ? "horizontal-layout"
+                        : "square-layout"
+                    } ${rowSpan}`}
+                    style={{
+                      aspectRatio: `${template.width}/${template.height}`,
+                    }}
+                  >
+                    <Image
+                      src={template.src}
+                      alt={`${template.templateName} template`}
+                      fill
+                      className="object-cover w-full h-full"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={template.id <= 3} // Lazy load samo za elemente ispod folda
+                    />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-                    <h4 className="text-white font-bold text-lg saira-font">
-                      {template.templateName}
-                    </h4>
-                    <p className="text-gray-300 text-sm">
-                      {template.width} × {template.height}px
-                    </p>
-                    <button className="cursor-pointer mt-2 self-end bg-[#1aac83]/90 hover:bg-[#1aac83] text-white px-3 py-1 rounded-full text-xs font-medium transition">
-                      Apply
-                    </button>
+                    {/* Overlay sa poboljšanim kontrastom */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                      <div className="flex items-center justify-between transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <div>
+                          <h4 className="text-white font-bold text-lg mb-1 drop-shadow-md">
+                            {template.templateName}
+                          </h4>
+                          <p className="text-gray-200 text-sm mb-3 drop-shadow-md">
+                            {template.width} × {template.height}px
+                          </p>
+                        </div>
+                        <button
+                          className="cursor-pointer self-start bg-[#1aac83] hover:bg-[#148a6a] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-md"
+                          aria-label={`Apply ${template.templateName} template`}
+                        >
+                          <Link href={"/collage-image"}>Apply Template</Link>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       </div>
