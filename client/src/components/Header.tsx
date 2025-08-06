@@ -12,6 +12,7 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Toast } from "primereact/toast";
 import UserMenu from "./UserMenu";
+import Navbar from "./Navbar";
 
 const navItems = [
   { href: "/compress-image", label: "compress Image" },
@@ -91,7 +92,7 @@ const Header = () => {
       </Link>
 
       {/* Navigacija za veće ekrane */}
-      <nav className="hidden lg2:flex items-center gap-7">
+      {/* <nav className="hidden lg2:flex items-center gap-7">
         {navItems.map(({ href, label }) => (
           <Link
             key={href}
@@ -105,7 +106,11 @@ const Header = () => {
             {label}
           </Link>
         ))}
-      </nav>
+      </nav> */}
+
+      <div>
+        <Navbar />
+      </div>
 
       {/* Korisnički deo */}
       {renderUser()}
