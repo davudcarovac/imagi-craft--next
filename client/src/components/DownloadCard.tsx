@@ -7,7 +7,6 @@ import DownloadButton from "./DownloadButton";
 import { isDisabledDownload } from "../utils/isDisabledDownload";
 import { Fade } from "react-awesome-reveal";
 import Image from "next/image";
-import { useState } from "react";
 
 const DownloadCard = ({
   size,
@@ -21,14 +20,6 @@ const DownloadCard = ({
   disabledLinks: string[];
   handleDisableLink: ((link: string) => void) | null;
 }) => {
-  const [isCopied, setIsCopied] = useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(link);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
   return (
     <Fade direction="left" cascade damping={0.5} triggerOnce>
       <div
@@ -51,10 +42,6 @@ const DownloadCard = ({
               <p className="text-sm font-medium text-gray-800 truncate">
                 {link.split("/").pop()}
               </p>
-
-              {isCopied && (
-                <span className="text-xs text-[#1aac83]">Copied!</span>
-              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-3 mt-1">

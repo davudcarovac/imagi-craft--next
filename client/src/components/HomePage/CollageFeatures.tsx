@@ -75,7 +75,10 @@ export default function CollageFeaturesSection() {
             </ul>
 
             <div className="pt-4">
-              <button className="bg-[#1aac83] hover:bg-[#1aac83] cursor-pointer text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-300 shadow-lg hover:shadow-xl">
+              <button
+                className="bg-[#1aac83] hover:bg-[#1a9a82] text-white font-semibold px-8 py-3 text-lg shadow-md hover:shadow-lg saira-font 
+             transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center flex-row gap-1"
+              >
                 <Link href={"/collage-image"}>Try collage editor</Link>
               </button>
               {/* <p className="mt-3 text-gray-500 text-sm">

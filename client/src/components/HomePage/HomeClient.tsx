@@ -3,17 +3,10 @@
 import { actions } from "@/utils/actions";
 import ActionCard from "../ActionCard";
 import ServiceIntro from "../ServiceIntro";
-import {
-  Sparkles,
-  ImageIcon,
-  Crop,
-  Wand2,
-  ZoomIn,
-  Shield,
-  MoveHorizontal,
-} from "lucide-react";
+import { Crop, Wand2 } from "lucide-react";
 import HomePageVideo from "./HomePageVideo";
 import CollageFeaturesSection from "./CollageFeatures";
+import Link from "next/link";
 
 const HomeClient = () => {
   return (
@@ -61,99 +54,36 @@ const HomeClient = () => {
 
             {/* Premium plan section */}
             <section className="relative bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-              {/* Decorative elements */}
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-              </div>
+              {/* Dekorativni blur krugovi */}
 
               <div className="relative z-10 p-8 md:p-12">
-                <div className="flex flex-col lg:flex-row gap-12 items-center">
-                  {/* Left side - Feature showcase */}
-                  <div className="flex-1">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-full text-sm font-bold mb-4 shadow-sm border border-blue-100">
-                      <Wand2 className="w-4 h-4" />
-                      NEW AI FEATURE
-                    </div>
-
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                      <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Smart Face Crop
-                      </span>
-                    </h2>
-
-                    <p className="text-lg text-gray-600 mb-6 max-w-lg">
-                      Automatically detect and perfectly crop faces with our
-                      AI-powered tool. Ideal for profile pictures, passports,
-                      and social media.
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                      {[
-                        {
-                          icon: <ZoomIn className="w-5 h-5 text-blue-500" />,
-                          text: "Precision edge detection",
-                        },
-                        {
-                          icon: <Shield className="w-5 h-5 text-purple-500" />,
-                          text: "Privacy focused - no data storage",
-                        },
-                        {
-                          icon: <Sparkles className="w-5 h-5 text-amber-500" />,
-                          text: "One-click background removal",
-                        },
-                        {
-                          icon: <Crop className="w-5 h-5 text-emerald-500" />,
-                          text: "Multiple aspect ratios",
-                        },
-                      ].map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-3 bg-white/80 p-3 rounded-lg border border-gray-100"
-                        >
-                          <div className="flex-shrink-0 p-1 bg-blue-50 rounded-full">
-                            {feature.icon}
-                          </div>
-                          <span className="text-gray-700">{feature.text}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all">
-                      <Crop className="w-5 h-5" />
-                      Try Face Crop Now
-                    </button>
+                <div className="max-w-3xl ">
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-500 rounded-full text-sm font-bold mb-4 shadow-sm border border-blue-100">
+                    <Wand2 className="w-4 h-4" />
+                    NEW AI FEATURE
                   </div>
 
-                  {/* Right side - Image demo */}
-                  <div className="relative w-full lg:w-1/2">
-                    <div className="relative aspect-square max-w-md mx-auto">
-                      {/* Before/After Slider */}
-                      <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                          <div className="text-center p-6">
-                            <ImageIcon className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                            <p className="text-gray-400">Face crop preview</p>
-                          </div>
-                        </div>
+                  {/* Naslov */}
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <span className="text-[#1aac83] bg-clip-text saira-font">
+                      Smart Face Crop
+                    </span>
+                  </h2>
 
-                        {/* Slider handle */}
-                        <div className="absolute top-0 bottom-0 left-1/2 w-1 bg-white cursor-col-resize shadow-xl"></div>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-blue-500">
-                          <MoveHorizontal className="w-5 h-5 text-blue-500" />
-                        </div>
-                      </div>
-
-                      {/* Badges */}
-                      <div className="absolute -bottom-4 -left-4 bg-white px-3 py-1 rounded-full shadow-md text-sm font-medium flex items-center gap-1">
-                        <Wand2 className="w-4 h-4 text-purple-500" />
-                        <span>AI Powered</span>
-                      </div>
-                      <div className="absolute -top-4 -right-4 bg-white px-3 py-1 rounded-full shadow-md text-sm font-medium">
-                        98% Accuracy
-                      </div>
-                    </div>
-                  </div>
+                  {/* Opis */}
+                  <p className="text-lg text-gray-600">
+                    Automatically detect and perfectly crop faces with our
+                    AI-powered tool. Ideal for profile pictures, passports, and
+                    social media.
+                  </p>
+                  <Link
+                    href={"/crop-face"}
+                    className="bg-[#1aac83] hover:bg-[#1a9a82] text-white font-semibold px-8 py-3 my-6 text-lg shadow-md hover:shadow-lg saira-font 
+             transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center flex-row gap-1 w-fit"
+                  >
+                    Crop face <Crop />
+                  </Link>
                 </div>
               </div>
             </section>
