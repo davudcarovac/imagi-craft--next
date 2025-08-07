@@ -62,9 +62,9 @@ const UserMenu = () => {
       ),
     },
     {
-      label: "Services",
-      icon: "pi pi-cog",
-      command: () => router.push("/"),
+      label: "Security",
+      icon: "pi pi-lock",
+      command: () => router.push("/profile/security"),
       template: (item, options) => (
         <div
           onClick={options.onClick}
@@ -78,18 +78,15 @@ const UserMenu = () => {
       ),
     },
     {
-      label: "Premium",
+      label: "Plan",
       icon: "pi pi-crown",
-      template: (item, options) => (
-        <div
-          onClick={options.onClick}
-          className="flex items-center justify-between px-4 py-2 hover:bg-[#f9f9f9] cursor-pointer"
-        >
+      template: (item) => (
+        <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-2">
             <i className={`${item.icon} text-yellow-500`} />
             <span className="font-medium text-sm">{item.label}</span>
           </div>
-          <span className="text-xs text-[#888] italic">PRO</span>
+          <span className="text-xs text-[#888] italic">{user?.plan}</span>
         </div>
       ),
     },

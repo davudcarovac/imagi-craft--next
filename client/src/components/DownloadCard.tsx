@@ -7,6 +7,7 @@ import DownloadButton from "./DownloadButton";
 import { isDisabledDownload } from "../utils/isDisabledDownload";
 import { Fade } from "react-awesome-reveal";
 import Image from "next/image";
+import { useState } from "react";
 
 const DownloadCard = ({
   size,
@@ -20,27 +21,61 @@ const DownloadCard = ({
   disabledLinks: string[];
   handleDisableLink: ((link: string) => void) | null;
 }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(link);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
   return (
-    <Fade direction="left" cascade damping={0.5}>
+    <Fade direction="left" cascade damping={0.5} triggerOnce>
       <div
         key={id}
-        className=" bg-[#f6fff8] border-[0.5px] border-solid border-[#E0F2E4] rounded-sm  p-3 pr-6 flex flex-row justify-between gap-5 items-center"
+        className="group bg-white hover:bg-[#f6fff8] border border-gray-200 hover:border-[#1aac83]/50 rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4 items-center transition-all duration-300 shadow-sm hover:shadow-md"
       >
-        <div className="flex flex-row gap-4 items-center">
-          <Image src={downloadFileImg} alt="file-img" height={50} width={50} />
-          <div className="flex flex-col gap-1">
-            <p className="text-sm">{link}</p>
-            {size && <p className="text-xs">{formatFileSize(size)}</p>}
+        <div className="flex flex-row gap-4 items-center w-full">
+          <div className="p-2 bg-[#1aac83]/10 rounded-lg">
+            <Image
+              src={downloadFileImg}
+              alt="file-icon"
+              height={40}
+              width={40}
+              className="object-contain"
+            />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-gray-800 truncate">
+                {link.split("/").pop()}
+              </p>
+
+              {isCopied && (
+                <span className="text-xs text-[#1aac83]">Copied!</span>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 mt-1">
+              {size && (
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                  {formatFileSize(size)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        <DownloadButton
-          link={link}
-          index={index || 1}
-          isDisabledDownload={isDisabledDownload}
-          disabledLinks={disabledLinks}
-          onClick={handleDisableLink}
-        />
+        <div className="w-full sm:w-auto">
+          <DownloadButton
+            link={link}
+            index={index || 1}
+            isDisabledDownload={isDisabledDownload}
+            disabledLinks={disabledLinks}
+            onClick={handleDisableLink}
+          />
+        </div>
       </div>
     </Fade>
   );

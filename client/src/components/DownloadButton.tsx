@@ -1,6 +1,5 @@
 "use client";
-import Image from "next/image";
-import downloadIcon from "../assets/button images/download-file2.png";
+import { Download } from "lucide-react";
 
 type DownloadButtonType = {
   link: string;
@@ -49,7 +48,8 @@ ${isDisabledDownload(link, index, disabledLinks) ? "pointer-events-none" : ""}
 
    `}
     >
-      <Image src={downloadIcon} alt="download-icon" height={22} width={22} />
+      {/* <Image src={downloadIcon} alt="download-icon" height={22} width={22} /> */}
+      <Download className="text-blue-500" size={24} />
     </a>
   );
 };

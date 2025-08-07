@@ -91,23 +91,6 @@ const Header = () => {
         />
       </Link>
 
-      {/* Navigacija za veće ekrane */}
-      {/* <nav className="hidden lg2:flex items-center gap-7">
-        {navItems.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`text-[15px] transition-colors ${
-              pathname === href
-                ? "text-[#22C7A8]"
-                : "text-[#555] hover:text-[#22C7A8]"
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
-      </nav> */}
-
       <div>
         <Navbar />
       </div>

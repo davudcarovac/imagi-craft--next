@@ -172,6 +172,12 @@ export default function UploadFile({
     }
   };
 
+  // const handleFormatChange = (newFormat: string) => {
+  //   if (setFiles) {
+  //     setFiles((prev) => prev.map((item) => ({ ...item, format: newFormat })));
+  //   }
+  // };
+
   // const onTemplateUpload = (e: FileUploadUploadEvent) => {
   //   let _totalSize = 0;
 
@@ -231,6 +237,13 @@ export default function UploadFile({
               />
             </div>
           </div>
+
+          {/* convert all */}
+          {/* <div>
+            {action === "convert" && (
+             
+            )}
+          </div> */}
 
           {/* Desna strana — samo Submit dugme */}
           <div className="flex-shrink-0">
@@ -302,11 +315,11 @@ export default function UploadFile({
             </small>
           </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <div className="flex items-center gap-2 sm:gap-3  flex-1">
           <Tag
             value={options.formatSize}
             severity="success"
-            className="px-2 py-1 text-xs sm:text-sm bg-[#1aac83]"
+            className="px-2 py-1 text-xs sm:text-sm bg-[#1aac83]  "
           />
           {action === "convert" && (
             <Dropdown

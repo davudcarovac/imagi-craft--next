@@ -95,7 +95,7 @@ const ConvertClient = () => {
       {files &&
         files.length > 0 &&
         downloadLinks &&
-        downloadLinks.length < 0 && (
+        downloadLinks.length === 0 && (
           <ConvertOptions
             globalFormat={globalFormat}
             formatOptions={formatOptions}

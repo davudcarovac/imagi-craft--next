@@ -13,11 +13,13 @@ const ToolsDropdown = () => {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   const items: DropdownItem[] = [
-    { label: "Compress Image", href: "/compress-image" },
-    { label: "Convert Image", href: "/convert-image" },
-    { label: "Crop Image", href: "/crop-image" },
-    { label: "Resize Image", href: "/resize-image" },
-    { label: "Watermark Image", href: "/watermark-image" },
+    { label: "compress image", href: "/compress-image" },
+    { label: "convert image", href: "/convert-image" },
+    { label: "crop image", href: "/crop-image" },
+    { label: "resize image", href: "/resize-image" },
+    { label: "watermark image", href: "/watermark-image" },
+    { label: "crop face", href: "/crop-face" },
+    { label: "collage maker", href: "/collage-image" },
   ];
 
   // Zatvori dropdown kada se klikne van njega
