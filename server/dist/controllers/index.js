@@ -310,6 +310,8 @@ export async function postCropFace(req, res, next) {
             // Učitaj i detektuj lice
             const img = await canvas.loadImage(preprocessedBuffer);
             const detections = await faceapi.detectSingleFace(img);
+            console.log("Img ===> ", img);
+            console.log("detection ===> ", detections);
             if (!detections) {
                 await deleteFile(file.path);
                 await deleteFile(preprocessedPath);
@@ -318,10 +320,6 @@ export async function postCropFace(req, res, next) {
                     error: "No face detected",
                 }); // Ako nije detektovano lice, dodaj prazan objekat
                 continue;
-                // throw new ErrorResponse(
-                //   `No face detected in ${file.originalname}`,
-                //   400
-                // ); // Ako nije detektovano lice, preskoči ovaj fajl
             }
             const { x, y, width, height } = detections.box;
             // Cropuj sa preprocesirane slike
@@ -428,6 +426,7 @@ export const postCollageMaker = async (req, res, next) => {
         files.forEach((item) => deleteFile(item.path));
     }
 };
+export async function preciseCropFace(req, res, next) { }
 export function deleteAllFilesInDirectory(directory) {
     fs.readdir(directory, (err, files) => {
         if (err) {

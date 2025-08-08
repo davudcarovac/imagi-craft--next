@@ -30,8 +30,6 @@ export const verifyToken = async (req, res, next) => {
         next();
     }
     catch (error) {
-        res.status(401).json({
-            error: "Request is not authorized.",
-        });
+        throw new ErrorResponse("Request is not authorized", 401);
     }
 };

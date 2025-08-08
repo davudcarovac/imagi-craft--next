@@ -57,7 +57,20 @@ app.use(errorHandler);
 // ✅ Učitaj modele i zatim pokreni server
 (async () => {
     try {
-        await faceapi.nets.ssdMobilenetv1.loadFromDisk(path.join(__dirname, "models/ssd_mobilenetv1"));
+        const modelsPath = path.join(__dirname, "models");
+        await Promise.all([
+            // Osnovni detektor lica (SSD Mobilenet)
+            faceapi.nets.ssdMobilenetv1.loadFromDisk(path.join(modelsPath, "ssd_mobilenetv1")),
+            // Model za landmarke (68 tačaka)
+            // faceapi.nets.faceLandmark68Net.loadFromDisk(
+            //   path.join(modelsPath, "face_landmark_68")
+            // ),
+            // Model za prepoznavanje lica (neophodan za landmarke)
+            // faceapi.nets.faceRecognitionNet.loadFromDisk(
+            //   path.join(modelsPath, "face_recognition")
+            // ),
+        ]);
+        console.log("Svi modeli su uspešno učitani!");
         const PORT = process.env.PORT || 5000;
         app.get("/", (req, res) => {
             res.send("Server je live! 🚀");

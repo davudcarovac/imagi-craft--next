@@ -6,13 +6,9 @@ import { changePassword, changeUsername, disableTwoFactor, forgotPassword, getCs
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { csrfProtection } from "../middlewares/csrfProtection.js";
 import { profileImageUpload } from "../middlewares/profileImageUpload.js";
+import { uploadLimiter } from "../middlewares/uploadLimiter.js";
 const router = Router();
 // router.get("/", getHomePage);
-router.post("/convert", uploadsMiddleware, postConvertImage);
-router.post("/resize", uploadsMiddleware, postResizeImage);
-router.post("/crop", uploadsMiddleware, postCropImage);
-router.post("/compress", uploadsMiddleware, postCompressImage);
-router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 // premium
 router.post("/crop-face", uploadsMiddleware, postCropFace);
 router.post("/collage", uploadsMiddleware, postCollageMaker);
@@ -38,4 +34,9 @@ router.post("/2fa/setup", verifyToken, csrfProtection, setupTwoFactor);
 router.post("/2fa/verify-enable", verifyToken, csrfProtection, verifyEnableTwoFactor);
 router.post("/2fa/verify-login", verifyLoginTwoFactor);
 router.post("/2fa/disable", verifyToken, csrfProtection, disableTwoFactor);
+router.post("/convert", uploadsMiddleware, postConvertImage);
+router.post("/resize", uploadsMiddleware, postResizeImage);
+router.post("/crop", uploadsMiddleware, postCropImage);
+router.post("/compress", uploadsMiddleware, uploadLimiter, postCompressImage);
+router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 export default router;
