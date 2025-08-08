@@ -27,3 +27,8 @@ export type ImageAsset = {
     col: number;
   };
 };
+
+export interface TokenPayload extends JwtPayload {
+  userId: string;
+  plan: string;
+}

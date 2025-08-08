@@ -35,15 +35,11 @@ import {
 import { verifyToken } from "../middlewares/verifyToken.ts";
 import { csrfProtection } from "../middlewares/csrfProtection.ts";
 import { profileImageUpload } from "../middlewares/profileImageUpload.ts";
+import { uploadLimiter } from "../middlewares/uploadLimiter.ts";
 
 const router = Router();
 
 // router.get("/", getHomePage);
-router.post("/convert", uploadsMiddleware, postConvertImage);
-router.post("/resize", uploadsMiddleware, postResizeImage);
-router.post("/crop", uploadsMiddleware, postCropImage);
-router.post("/compress", uploadsMiddleware, postCompressImage);
-router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 
 // premium
 router.post("/crop-face", uploadsMiddleware, postCropFace);
@@ -89,5 +85,11 @@ router.post(
 );
 router.post("/2fa/verify-login", verifyLoginTwoFactor);
 router.post("/2fa/disable", verifyToken, csrfProtection, disableTwoFactor);
+
+router.post("/convert", uploadsMiddleware, postConvertImage);
+router.post("/resize", uploadsMiddleware, postResizeImage);
+router.post("/crop", uploadsMiddleware, postCropImage);
+router.post("/compress", uploadsMiddleware, uploadLimiter, postCompressImage);
+router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
 
 export default router;

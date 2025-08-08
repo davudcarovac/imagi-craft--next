@@ -3,10 +3,8 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import "dotenv/config";
 import prisma from "../lib/prisma.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
+import type { TokenPayload } from "../types/output.js";
 
-interface TokenPayload extends JwtPayload {
-  userId: string;
-}
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
 
 export const verifyToken = async (
@@ -45,8 +43,6 @@ export const verifyToken = async (
 
     next();
   } catch (error) {
-    res.status(401).json({
-      error: "Request is not authorized.",
-    });
+    throw new ErrorResponse("Request is not authorized", 401);
   }
 };
