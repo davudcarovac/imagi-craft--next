@@ -42,8 +42,6 @@ const router = Router();
 // router.get("/", getHomePage);
 
 // premium
-router.post("/crop-face", uploadsMiddleware, postCropFace);
-router.post("/collage", uploadsMiddleware, postCollageMaker);
 
 router.get("/download/:fileId", getDownloadFileById);
 router.get("/download-all", getDownloadAllFiles);
@@ -86,10 +84,19 @@ router.post(
 router.post("/2fa/verify-login", verifyLoginTwoFactor);
 router.post("/2fa/disable", verifyToken, csrfProtection, disableTwoFactor);
 
-router.post("/convert", uploadsMiddleware, postConvertImage);
-router.post("/resize", uploadsMiddleware, postResizeImage);
-router.post("/crop", uploadsMiddleware, postCropImage);
+router.post("/convert", uploadsMiddleware, uploadLimiter, postConvertImage);
+router.post("/resize", uploadsMiddleware, uploadLimiter, postResizeImage);
+router.post("/crop", uploadsMiddleware, uploadLimiter, postCropImage);
 router.post("/compress", uploadsMiddleware, uploadLimiter, postCompressImage);
-router.post("/watermark", uploadsWmMiddleware, postWatermarkingImage);
+router.post(
+  "/watermark",
+  uploadsWmMiddleware,
+  uploadLimiter,
+  postWatermarkingImage
+);
+
+// premium
+router.post("/crop-face", uploadsMiddleware, postCropFace);
+router.post("/collage", uploadsMiddleware, postCollageMaker);
 
 export default router;

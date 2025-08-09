@@ -13,52 +13,96 @@ export const uploadLimiter = async (
   res: Response,
   next: NextFunction
 ) => {
+  const action = req.body.action;
   const token = req.cookies.auth_token;
   let userPlan: keyof typeof PLAN_LIMITS = "STARTER";
 
   try {
-    // if (!token) {
-    //   throw new ErrorResponse("Request is not authorized", 401);
-    // }
+    if (!token) {
+      throw new ErrorResponse("Request is not authorized", 401);
+    }
 
+    if (!req.files) {
+      throw new ErrorResponse("No files were uploaded.", 400);
+    }
+
+    // Verifikacija tokena i provera plana
     if (token) {
       const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
+      userPlan = decoded.plan as keyof typeof PLAN_LIMITS;
 
       if (!PLAN_LIMITS[userPlan]) {
         throw new ErrorResponse("Invalid user plan", 403);
       }
-      userPlan = decoded.plan as keyof typeof PLAN_LIMITS;
     }
 
     const { maxFiles, maxTotalSize } = PLAN_LIMITS[userPlan];
-    const { bgFileSize, maxTotalSize: maxTotalSizeWm } =
-      PLAN_LIMITS_WM[userPlan];
 
-    const files = req.files as Express.Multer.File[] | undefined;
+    // Watermark slučaj
+    if (action === "watermark") {
+      const wmFiles = req.files as {
+        files?: Express.Multer.File[];
+        file?: Express.Multer.File[];
+      };
 
-    if (files && files.length > maxFiles) {
-      throw new ErrorResponse(
-        `Maximum ${maxFiles} files allowed for ${userPlan} plan`,
-        403
-      );
+      // Provera da li postoje oba fajla
+      if (!wmFiles.files || wmFiles.files.length === 0 || !wmFiles.files[0]) {
+        throw new ErrorResponse("Background image is required", 400);
+      }
+
+      if (!wmFiles.file || wmFiles.file.length === 0 || !wmFiles.file[0]) {
+        throw new ErrorResponse("Watermark image is required", 400);
+      }
+
+      const bgFile = wmFiles.files[0];
+      const watermarkFile = wmFiles.file[0];
+
+      const { bgFileSize, maxTotalSize: maxTotalSizeWm } =
+        PLAN_LIMITS_WM[userPlan];
+
+      if (bgFile.size > bgFileSize) {
+        throw new ErrorResponse(
+          `Maximum background file size for ${userPlan} plan is ${bytesToMB(
+            bgFileSize
+          )}MB`,
+          413
+        );
+      }
+
+      if (watermarkFile.size > maxTotalSizeWm) {
+        throw new ErrorResponse(
+          `Maximum watermark file size for ${userPlan} plan is ${bytesToMB(
+            maxTotalSizeWm
+          )}MB`,
+          413
+        );
+      }
     }
+    // Regularni upload slučaj
+    else {
+      const files = req.files as Express.Multer.File[];
 
-    const hasOversizedFile = files?.some((item) => item.size > maxTotalSize);
-    if (hasOversizedFile) {
-      throw new ErrorResponse(
-        `Maximum file size for ${userPlan} plan is ${bytesToMB(
-          maxTotalSize
-        )}MB`,
-        413
-      );
+      if (files.length > maxFiles) {
+        throw new ErrorResponse(
+          `Maximum ${maxFiles} files allowed for ${userPlan} plan`,
+          403
+        );
+      }
+
+      const hasOversizedFile = files.some((item) => item.size > maxTotalSize);
+      if (hasOversizedFile) {
+        throw new ErrorResponse(
+          `Maximum file size for ${userPlan} plan is ${bytesToMB(
+            maxTotalSize
+          )}MB`,
+          413
+        );
+      }
     }
-
-    console.log(PLAN_LIMITS[userPlan]);
-    console.log(PLAN_LIMITS_WM[userPlan]);
 
     next();
   } catch (error) {
-    console.log(error);
+    console.error("Upload limiter error:", error);
     next(error);
   }
 };

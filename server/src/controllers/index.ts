@@ -364,7 +364,6 @@ export async function postCompressImage(
     if (!files || (Array.isArray(files) && files.length === 0)) {
       throw new ErrorResponse("Please upload file", 400);
     }
-
     const downloadLinks: DownloadLinksType[] = [];
 
     const handleFiles = async (fileList: File[]) => {
@@ -386,7 +385,7 @@ export async function postCompressImage(
           formatedName
         );
 
-        logMemory(`Before compressing ${formatedName}`);
+        // logMemory(`Before compressing ${formatedName}`);
         const compressedFile = await compressFile(
           file.path,
           outputFileDir,
@@ -395,7 +394,7 @@ export async function postCompressImage(
           convertTo,
           greyscale
         );
-        logMemory(`After compressing ${formatedName}`);
+        // logMemory(`After compressing ${formatedName}`);
 
         await deleteFile(file.path);
 
@@ -461,7 +460,7 @@ export async function postWatermarkingImage(
     let files: Express.Multer.File[] | undefined;
     let inputFile: Express.Multer.File | undefined;
 
-    logMemory("🔹 Pre početka logike");
+    // logMemory("🔹 Pre početka logike");
 
     if (Array.isArray(req.files)) {
       files = req.files; // Ako je req.files niz, koristimo ga direktno
@@ -481,6 +480,7 @@ export async function postWatermarkingImage(
 
     const watermarkOptions = req.body.watermarkOptions; // Pozicija vodeniog žiga
     const parsedOptions = JSON.parse(watermarkOptions);
+    console.log("options ===> ", parsedOptions);
     const downloadLinks: string[] = [];
 
     for (const file of files) {
@@ -503,7 +503,7 @@ export async function postWatermarkingImage(
     // Brisanje fajla sa vodenim žigom
     await deleteFile(inputFile.path);
 
-    logMemory("🔹 Posle  logike");
+    // logMemory("🔹 Posle  logike");
 
     //return
     res.status(200).json({
@@ -513,6 +513,7 @@ export async function postWatermarkingImage(
     });
   } catch (error) {
     // Ako je došlo do greške, pozivamo next() da proslijedimo grešku dalje
+    console.log(error);
     next(error); // Prosljeđivanje greške u sledeći error handler
   }
 }
@@ -734,12 +735,6 @@ export const postCollageMaker = async (
     files.forEach((item) => deleteFile(item.path));
   }
 };
-
-export async function preciseCropFace(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {}
 
 export function deleteAllFilesInDirectory(directory: string) {
   fs.readdir(directory, (err, files) => {

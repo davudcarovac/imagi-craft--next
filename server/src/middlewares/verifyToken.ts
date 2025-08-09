@@ -26,6 +26,7 @@ export const verifyToken = async (
   // const token = authorization?.split(" ")[1];
   // console.log("Token from cookies ===> ", token);
   try {
+    console.log("auth token ===> ", token);
     if (!token) {
       throw new ErrorResponse("Request is not authorized", 401);
     }
