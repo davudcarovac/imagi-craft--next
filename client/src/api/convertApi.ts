@@ -6,7 +6,9 @@ export const convertImage = async (
   convertData: FormData
 ): Promise<ResponseApiType | undefined> => {
   try {
-    const response = await axiosInstance.post("/convert", convertData);
+    const response = await axiosInstance.post("/convert", convertData, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

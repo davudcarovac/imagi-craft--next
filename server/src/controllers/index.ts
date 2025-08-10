@@ -11,9 +11,12 @@ import fs from "fs";
 import archiver from "archiver";
 import canvas from "canvas";
 import faceapi from "face-api.js";
+// import Tesseract from "tesseract.js";
+// import { franc } from "franc";
+// import langs from "langs";
 import type { Request, Response, NextFunction, Express } from "express";
 import type { FormatEnum, OutputInfo } from "sharp";
-import type { DownloadLinksType } from "../types/output.ts";
+import type { DownloadLinksType, EditableMetadata } from "../types/output.ts";
 import cropfaceFile from "../utils/cropfaceFile.ts";
 import sharp from "sharp";
 import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.ts";
@@ -735,6 +738,134 @@ export const postCollageMaker = async (
     files.forEach((item) => deleteFile(item.path));
   }
 };
+
+import { exiftool, type Tags } from "exiftool-vendored";
+import { splitMetadata } from "../utils/splitMetadata.ts";
+
+export const postExtractMetadata = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const files = req.files as Express.Multer.File[];
+  const metadatas: EditableMetadata[] = [];
+  try {
+    if (!files) {
+      throw new ErrorResponse("No file uploaded", 400);
+    }
+
+    for (const file of files) {
+      // {
+      //         Title,
+      //         Description,
+      //         Author,
+      //         Copyright,
+      //         Keywords,
+      //         DateTimeOriginal,
+      //         CreateDate,
+      //         ModifyDate,
+      //         GPSLatitude,
+      //         GPSLongitude,
+      //         GPSAltitude,
+      //         Rating,
+      //         Quality,
+      //         Make,
+      //         Model,
+      //         FileSource,
+      //         Orientation,
+      //         ImageWidth,
+      //         ImageHeight,
+      //         ExifImageHeight,
+      //         ExifImageWidth,
+      //         Sharpness,
+      //         ExifByteOrder,
+      //         Mime,
+      //         FileName,
+      //       }
+
+      const metadata = await exiftool.read(file.path);
+      splitMetadata(metadata);
+
+      // const metadataFormatted = {
+      //   title: Title,
+      //   description: Description,
+      //   author: Author,
+      //   copyright: Copyright,
+      //   keywords: Keywords,
+      //   dateTimeOriginal: DateTimeOriginal,
+      //   createDate: CreateDate,
+      //   modifyDate: ModifyDate,
+      //   gpsLatitude: GPSLatitude,
+      //   gpsLongitude: GPSLongitude,
+      //   gpsAltitude: GPSAltitude,
+      //   rating: Rating,
+
+      //   quality: Quality,
+      //   make: Make,
+      //   model: Model,
+      // };
+
+      // console.log("metadata formatted ===> ", metadataFormatted);
+
+      // metadatas.push(metadataFormatted);
+    }
+
+    res.status(200).json({ success: true, metadatas: metadatas });
+  } catch (error) {
+    console.log("Error while reading metadatas from images ===> ", error);
+    next(error);
+  }
+};
+
+// import { createWorker, PSM } from "tesseract.js";
+
+// export const postTextRecognition = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const files = req.files as Express.Multer.File[];
+//   const worker = await createWorker("eng+srp");
+
+//   try {
+//     const recognizedTexts: string[] = [];
+
+//     for (const file of files) {
+//       const processedImageBuffer = await sharp(file.path)
+//         .grayscale()
+//         .normalize()
+//         .threshold(150)
+//         .resize({ width: 2000, withoutEnlargement: true })
+//         .sharpen()
+//         .toBuffer();
+
+//       const {
+//         data: { text },
+//       } = await worker.recognize(file.path);
+//       console.log(formatOCRText(text));
+
+//       recognizedTexts.push(formatOCRText(text));
+//     }
+
+//     res.status(200).json({
+//       message: "Successful",
+//       results: recognizedTexts,
+//     });
+//   } catch (error) {
+//     next(error);
+//   } finally {
+//     worker.terminate();
+//   }
+// };
+
+// function formatOCRText(text: string): string {
+//   return text
+//     .replace(/\n+/g, "\n")
+//     .replace(/([а-яА-Яa-zA-Z])\s*-\s*([а-яА-Яa-zA-Z])/g, "$1-$2")
+//     .replace(/\s+/g, " ")
+//     .replace(/([.,!?])([а-яА-Яa-zA-Z])/g, "$1 $2")
+//     .trim();
+// }
 
 export function deleteAllFilesInDirectory(directory: string) {
   fs.readdir(directory, (err, files) => {

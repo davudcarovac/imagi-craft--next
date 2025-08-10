@@ -6,7 +6,9 @@ export const watermarkImage = async (
   data: FormData
 ): Promise<ResponseApiType | undefined> => {
   try {
-    const response = await axiosInstance.post("/watermark", data);
+    const response = await axiosInstance.post("/watermark", data, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -8,7 +8,9 @@ import {
   postConvertImage,
   postCropFace,
   postCropImage,
+  postExtractMetadata,
   postResizeImage,
+  // postTextRecognition,
   postWatermarkingImage,
 } from "../controllers/index.ts";
 import { uploadsMiddleware } from "../middlewares/uploads.ts";
@@ -98,5 +100,8 @@ router.post(
 // premium
 router.post("/crop-face", uploadsMiddleware, postCropFace);
 router.post("/collage", uploadsMiddleware, postCollageMaker);
+router.post("/extract-metadata", uploadsMiddleware, postExtractMetadata);
+
+// router.post("/text-recognition", uploadsMiddleware, postTextRecognition);
 
 export default router;

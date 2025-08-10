@@ -6,7 +6,9 @@ export const cropImage = async (
   data: FormData
 ): Promise<ResponseApiType | undefined> => {
   try {
-    const response = await axiosInstance.post("/crop", data);
+    const response = await axiosInstance.post("/crop", data, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
