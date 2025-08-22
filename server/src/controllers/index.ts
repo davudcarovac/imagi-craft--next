@@ -7,7 +7,7 @@ import cropFile from "../utils/cropFile.ts";
 import compressFile from "../utils/compressFile.ts";
 import watermarkFile from "../utils/watermarkFile.ts";
 import ErrorResponse from "../utils/CustomErrorResponse.ts";
-import fs from "fs";
+import fs, { read } from "fs";
 import archiver from "archiver";
 import canvas from "canvas";
 import faceapi from "face-api.js";
@@ -748,7 +748,8 @@ export const postExtractMetadata = async (
   next: NextFunction
 ) => {
   const files = req.files as Express.Multer.File[];
-  const metadatas: EditableMetadata[] = [];
+  const metadatas: any = [];
+
   try {
     if (!files) {
       throw new ErrorResponse("No file uploaded", 400);
@@ -784,7 +785,13 @@ export const postExtractMetadata = async (
       //       }
 
       const metadata = await exiftool.read(file.path);
-      splitMetadata(metadata);
+      const { readOnly, editable } = splitMetadata(metadata);
+
+      console.log("Full meta podaci ===> ", Object.entries(metadata).length);
+      console.log(
+        "Formated meta podaci ===> ",
+        Object.entries({ ...readOnly, ...editable }).length
+      );
 
       // const metadataFormatted = {
       //   title: Title,
@@ -807,7 +814,11 @@ export const postExtractMetadata = async (
 
       // console.log("metadata formatted ===> ", metadataFormatted);
 
-      // metadatas.push(metadataFormatted);
+      metadatas.push({
+        readOnly: readOnly,
+        editable: editable,
+        fullData: metadata,
+      });
     }
 
     res.status(200).json({ success: true, metadatas: metadatas });

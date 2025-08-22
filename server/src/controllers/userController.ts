@@ -177,7 +177,7 @@ export async function loginUser(
       user: safeUser,
     });
   } catch (error) {
-    console.log("Error ===> ", error);
+    console.log("Login error ===> ", error);
     next(error);
   }
 }

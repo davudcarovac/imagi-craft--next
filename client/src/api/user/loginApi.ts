@@ -15,7 +15,7 @@ export const loginUser = async (
 
     return response.data;
   } catch (error: unknown) {
-    console.log(error);
+    console.log("Login error ===> ", error);
     if (axios.isAxiosError(error)) {
       const err = error as AxiosError<{ error?: string; message?: string }>;
       throw err.response?.data ?? { error: "Unknown error" };

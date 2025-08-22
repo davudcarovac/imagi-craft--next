@@ -73,6 +73,33 @@ export type NoDetectedFacesType = {
   error: string;
 };
 
+// extract metadata
+export type ExifValue =
+  | string
+  | number
+  | boolean
+  | null
+  | Record<string, any>
+  | ExifValue[];
+
+// Generički tip za mapu EXIF podataka
+export type ExifData = {
+  [key: string]: ExifValue | undefined;
+};
+
+// Jedan set metapodataka za jednu sliku
+export type MetadataItem = {
+  readOnly: ExifData;
+  editable: ExifData;
+  fullData: ExifData;
+};
+
+// Odgovor backend-a za više fajlova
+export type ExtractMetadataResponse = {
+  success: boolean;
+  metadatas: MetadataItem[];
+};
+
 // user
 
 // Input podaci za signup
