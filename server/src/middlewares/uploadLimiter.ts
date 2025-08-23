@@ -18,9 +18,9 @@ export const uploadLimiter = async (
   let userPlan: keyof typeof PLAN_LIMITS = "STARTER";
 
   try {
-    if (!token) {
-      throw new ErrorResponse("Request is not authorized", 401);
-    }
+    // if (!token) {
+    //   throw new ErrorResponse("Request is not authorized", 401);
+    // }
 
     if (!req.files) {
       throw new ErrorResponse("No files were uploaded.", 400);

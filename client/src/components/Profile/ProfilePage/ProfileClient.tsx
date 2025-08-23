@@ -43,6 +43,7 @@ const ProfileClient = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    console.log("user response ===> ", user);
     if (user?.profileImage) {
       setProfileImg(user.profileImage);
     } else {
@@ -96,11 +97,11 @@ const ProfileClient = () => {
         if (typeof window !== "undefined") {
           localStorage.removeItem("user");
         }
-        queryClient.cancelQueries({ queryKey: ["user"] });
-        queryClient.removeQueries({ queryKey: ["user"] });
-        queryClient.invalidateQueries({ queryKey: ["user"] });
-
         router.push("/login");
+
+        // queryClient.cancelQueries({ queryKey: ["user"] });
+        // queryClient.removeQueries({ queryKey: ["user"] });
+        // queryClient.invalidateQueries({ queryKey: ["user"] });
       },
       onError: (error) => {
         console.log(error);
@@ -125,9 +126,9 @@ const ProfileClient = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   const saveUsername = (newName: string) => {
     mutateChangeName(newName, {

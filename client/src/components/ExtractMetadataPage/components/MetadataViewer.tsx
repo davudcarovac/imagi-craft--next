@@ -20,6 +20,10 @@ export default function MetadataViewer({
     onMetadataChange({ ...metadata, editable: updatedEditable });
   };
 
+  Object.entries(metadata.readOnly).forEach(([key, value]) => {
+    console.log(key);
+  });
+
   return (
     <div style={{ marginTop: "20px" }}>
       <h2 className="saira-font text-2xl text-[#1aac83] font-semibold">

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useLogout } from "@/hooks/useLogout";
 import { Toast } from "primereact/toast";
 import { useGetUser } from "@/hooks/useGetUser";
+import { useQueryClient } from "@tanstack/react-query";
 
 const UserMenu = () => {
   const menuRef = useRef<TieredMenu | null>(null);
@@ -19,8 +20,11 @@ const UserMenu = () => {
   const [profileImage, setProfileImg] = useState(
     user?.profileImage || defaultProfileImage
   );
+  const queryClient = useQueryClient();
 
   useEffect(() => {
+    // console.log("user from request ===> ", user);
+
     if (user) {
       setProfileImg(user.profileImage || defaultProfileImage);
     } else {
@@ -36,6 +40,9 @@ const UserMenu = () => {
         if (typeof window !== "undefined") {
           localStorage.removeItem("user");
         }
+        queryClient.cancelQueries({ queryKey: ["user"] });
+        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
         router.push("/login");
       },
       onError: (error) => {

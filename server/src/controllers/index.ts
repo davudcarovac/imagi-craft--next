@@ -787,11 +787,11 @@ export const postExtractMetadata = async (
       const metadata = await exiftool.read(file.path);
       const { readOnly, editable } = splitMetadata(metadata);
 
-      console.log("Full meta podaci ===> ", Object.entries(metadata).length);
-      console.log(
-        "Formated meta podaci ===> ",
-        Object.entries({ ...readOnly, ...editable }).length
-      );
+      // console.log("Full meta podaci ===> ", Object.entries(metadata).length);
+      // console.log(
+      //   "Formated meta podaci ===> ",
+      //   Object.entries({ ...readOnly, ...editable }).length
+      // );
 
       // const metadataFormatted = {
       //   title: Title,

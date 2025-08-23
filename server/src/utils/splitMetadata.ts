@@ -70,11 +70,22 @@ export function splitMetadata(metadata: Tags) {
   const readOnly: Record<string, unknown> = {};
   let editable: Record<string, unknown> = {};
 
-  console.log("deskripcija slike ===> ", metadata.Description);
+  // console.log("deskripcija slike ===> ", metadata.Description);
 
   for (const [key, value] of Object.entries(metadata)) {
     if (READ_ONLY_TAGS.includes(key)) {
-      readOnly[key] = value;
+      console.log(key);
+
+      if (key === "FileModifyDate") {
+        readOnly[key] = value.rawValue;
+      } else if (key === "FileAccessDate") {
+        readOnly[key] = value.rawValue;
+      } else if (key === "FileInodeChangeDate") {
+        readOnly[key] = value.rawValue;
+      } else {
+        readOnly[key] = value;
+      }
+
       continue;
     }
 
