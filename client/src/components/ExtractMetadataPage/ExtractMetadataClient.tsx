@@ -1,17 +1,19 @@
 "use client";
 
 import { useExtractMetadata } from "@/hooks/useExtractMetadata";
-import { FileType, TransformedDownloadLinks } from "@/types/apiTypes";
+import { TransformedDownloadLinks } from "@/types/apiTypes";
 import { Toast } from "primereact/toast";
 import React, { useRef, useState } from "react";
 import ServiceIntro from "../ServiceIntro";
 import UploadFile from "../UploadFile";
 import { useToast } from "@/context/ToastContext";
+import MetadataViewer from "./components/MetadataViewer";
 
 const ExtractMetadataClient = () => {
   const [file, setFile] = useState<File>();
   const [image, setImage] = useState<string | null>(null);
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
+  const [metadata, setMetadata] = useState<any>(null);
 
   const [downloadLinks, setDownloadLinks] = useState<
     TransformedDownloadLinks[]
@@ -34,6 +36,10 @@ const ExtractMetadataClient = () => {
     mutate(formData, {
       onSuccess: (response) => {
         console.log(response);
+
+        if (response?.success) {
+          setMetadata(response.metadatas[0]);
+        }
       },
       onError: (error) => {
         showToast("error", "Cannot process", error.message, 5000);
@@ -51,15 +57,17 @@ const ExtractMetadataClient = () => {
           Premium
         </span>
       </div>
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Image metadata"
-        titleAfterHighlight=""
-        description="View and edit image metadata with ease — from technical details to custom fields, giving you full control over your image information."
-      />
+      {!metadata && (
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Image metadata"
+          titleAfterHighlight=""
+          description="View and edit image metadata with ease — from technical details to custom fields, giving you full control over your image information."
+        />
+      )}
 
-      <form onSubmit={submitExtraction}>
-        {!downloadItem && (
+      {!metadata && (
+        <form onSubmit={submitExtraction}>
           <UploadFile
             tooltip="extract metadata image"
             action="extract-metadata"
@@ -67,10 +75,17 @@ const ExtractMetadataClient = () => {
             isMultiple={false}
             setFile={setFile}
           />
-        )}
 
-        {!downloadItem && file && <button type="submit">Submit</button>}
-      </form>
+          {file && <button type="submit">Submit</button>}
+        </form>
+      )}
+
+      {metadata && (
+        <MetadataViewer
+          metadata={metadata}
+          onMetadataChange={(updated) => setMetadata(updated)}
+        />
+      )}
     </div>
   );
 };
