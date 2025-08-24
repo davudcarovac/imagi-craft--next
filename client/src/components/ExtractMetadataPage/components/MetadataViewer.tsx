@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 type MetadataProps = {
   metadata: {
@@ -20,29 +20,51 @@ export default function MetadataViewer({
     onMetadataChange({ ...metadata, editable: updatedEditable });
   };
 
-  Object.entries(metadata.readOnly).forEach(([key, value]) => {
-    console.log(key);
-  });
+  // Object.entries(metadata.readOnly).forEach(([key, value]) => {
+  //   console.log(key);
+  // });
+
+  useEffect(() => {
+    console.log("metapodaci ===> ", metadata);
+  }, [metadata]);
+
+  function formatMetadataValue(value: any): string {
+    if (value == null) return "";
+
+    // Ako je ExifDateTime objekat
+    if (typeof value === "object" && "rawValue" in value) {
+      return (value as any).rawValue;
+    }
+
+    // Ako je niz
+    if (Array.isArray(value)) {
+      return value.join(", ");
+    }
+
+    return String(value);
+  }
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      <h2 className="saira-font text-2xl text-[#1aac83] font-semibold">
+    <div>
+      <h2 className="text-center my-5 saira-font text-3xl text-[#1aac83] font-semibold">
         Image Metadata
       </h2>
 
       {/* Read-Only podaci */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4  pb-2">
           Read-Only Metadata
         </h3>
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Object.entries(metadata.readOnly || {}).map(([key, value]) => (
             <div
               key={key}
               className="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-md shadow-sm"
             >
               <span className="font-medium text-gray-600">{key}</span>
-              <span className="text-gray-800">{String(value)}</span>
+              <span className="text-gray-800">
+                {formatMetadataValue(value)}
+              </span>
             </div>
           ))}
         </div>
@@ -52,13 +74,13 @@ export default function MetadataViewer({
         <h3 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
           Editable Metadata
         </h3>
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Object.entries(metadata.editable || {}).map(([key, value]) => (
             <div
               key={key}
-              className="flex items-center justify-between bg-white px-4 py-2 rounded-md shadow-sm"
+              className="flex flex-col sm:flex-row sm:items-center justify-between bg-white px-4 py-3 rounded-md shadow-sm"
             >
-              <label className="font-medium text-gray-600 mr-4 w-1/3">
+              <label className="font-medium text-gray-600 mb-2 sm:mb-0 sm:mr-4 sm:w-1/3">
                 {key}:
               </label>
               <input

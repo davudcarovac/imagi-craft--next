@@ -51,12 +51,12 @@ const ExtractMetadataClient = () => {
     <div className="p-4 space-y-6">
       {/* 🎯 Toast na početku */}
       <Toast ref={toast} />
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <span className="bg-white border border-solid border-slate-200 text-gray-500 font-semibold px-4 py-2 rounded-full text-md flex items-center gap-2 ">
           <i className="pi pi-crown text-yellow-500"></i>
           Premium
         </span>
-      </div>
+      </div> */}
       {!metadata && (
         <ServiceIntro
           titleBeforeHighlight=""

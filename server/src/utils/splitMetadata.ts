@@ -1,13 +1,15 @@
 import type { Tags } from "exiftool-vendored";
+import { ExifDateTime, BinaryField } from "exiftool-vendored";
 
 const READ_ONLY_TAGS: string[] = [
   "FileType",
   "FileSize",
+  "FileModifyDate",
+  "FileAccessDate",
+  "FileInodeChangeDate",
   "ImageWidth",
   "ImageHeight",
   "Megapixels",
-  "CreateDate",
-  "ModifyDate",
   "Make",
   "Model",
   "ISO",
@@ -32,6 +34,8 @@ const READ_ONLY_TAGS: string[] = [
   "Compression",
   "MimeType",
   "EncodingProcess",
+  "PreviewImage",
+  "ThumbnailImage",
 ];
 
 const IMPORTANT_EDITABLE_ORDER: string[] = [
@@ -56,7 +60,7 @@ const IMPORTANT_EDITABLE_ORDER: string[] = [
   "Instructions",
 ];
 
-// Mapa ekvivalencija naziva
+// Mapiranje različitih imena istih tagova
 const TAG_ALIASES: Record<string, string> = {
   "XMP:Title": "Title",
   ObjectName: "ObjectName",
@@ -66,50 +70,48 @@ const TAG_ALIASES: Record<string, string> = {
   ImageDescription: "Description",
 };
 
-export function splitMetadata(metadata: Tags) {
+export function splitMetadata(metadata: Tags, filename: string) {
   const readOnly: Record<string, unknown> = {};
   let editable: Record<string, unknown> = {};
 
-  // console.log("deskripcija slike ===> ", metadata.Description);
-
   for (const [key, value] of Object.entries(metadata)) {
-    if (READ_ONLY_TAGS.includes(key)) {
-      console.log(key);
+    // Mapiraj alias odmah
+    const normalizedKey = TAG_ALIASES[key] || key;
 
-      if (key === "FileModifyDate") {
-        readOnly[key] = value.rawValue;
-      } else if (key === "FileAccessDate") {
-        readOnly[key] = value.rawValue;
-      } else if (key === "FileInodeChangeDate") {
-        readOnly[key] = value.rawValue;
+    // Ako je u read-only listi
+    if (READ_ONLY_TAGS.includes(normalizedKey)) {
+      if (key === "FileName") {
+        readOnly[normalizedKey] = filename;
+      } else if (value instanceof ExifDateTime) {
+        readOnly[normalizedKey] = value.toISOString(); // npr. "2025-08-24T17:38:43Z"
+      } else if (value instanceof BinaryField) {
+        readOnly[normalizedKey] = "[Binary data]";
       } else {
-        readOnly[key] = value;
+        readOnly[normalizedKey] = value;
       }
-
       continue;
     }
 
+    // Ako može da se edituje (tekst ili broj)
     if (
       typeof value === "string" ||
-      (Array.isArray(value) && value.every((v) => typeof v === "string"))
+      typeof value === "number" ||
+      (Array.isArray(value) &&
+        value.every((v) => typeof v === "string" || typeof v === "number"))
     ) {
-      editable[key] = value;
+      editable[normalizedKey] = value;
     } else {
-      readOnly[key] = value;
+      readOnly[normalizedKey] = value;
     }
   }
 
+  // Sortiranje editable tagova po važnosti
   editable = Object.fromEntries(
     Object.entries(editable).sort(([keyA], [keyB]) => {
-      const normA = TAG_ALIASES[keyA] || keyA;
-      const normB = TAG_ALIASES[keyB] || keyB;
+      const indexA = IMPORTANT_EDITABLE_ORDER.indexOf(keyA);
+      const indexB = IMPORTANT_EDITABLE_ORDER.indexOf(keyB);
 
-      const indexA = IMPORTANT_EDITABLE_ORDER.indexOf(normA);
-      const indexB = IMPORTANT_EDITABLE_ORDER.indexOf(normB);
-
-      if (indexA === -1 && indexB === -1) {
-        return keyA.localeCompare(keyB);
-      }
+      if (indexA === -1 && indexB === -1) return keyA.localeCompare(keyB);
       if (indexA === -1) return 1;
       if (indexB === -1) return -1;
       return indexA - indexB;

@@ -43,7 +43,7 @@ const ProfileClient = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    console.log("user response ===> ", user);
+    // console.log("user response ===> ", user);
     if (user?.profileImage) {
       setProfileImg(user.profileImage);
     } else {
