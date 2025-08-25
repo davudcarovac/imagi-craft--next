@@ -1,4 +1,4 @@
-import path, { dirname } from "path";
+import path, { dirname, parse } from "path";
 import fileDirName from "../utils/dirname.ts";
 import convertFile from "../utils/convertFile.ts";
 import deleteFile from "../utils/deleteFile.ts";
@@ -22,6 +22,8 @@ import sharp from "sharp";
 import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.ts";
 import { processImageForCell } from "../utils/collageFile.ts";
 import { logMemory } from "../utils/memoryCheck.ts";
+import { exiftool, type Tags } from "exiftool-vendored";
+import { splitMetadata } from "../utils/splitMetadata.ts";
 
 const { __dirname } = fileDirName(import.meta);
 
@@ -739,9 +741,6 @@ export const postCollageMaker = async (
   }
 };
 
-import { exiftool, type Tags } from "exiftool-vendored";
-import { splitMetadata } from "../utils/splitMetadata.ts";
-
 export const postExtractMetadata = async (
   req: Request,
   res: Response,
@@ -756,44 +755,9 @@ export const postExtractMetadata = async (
     }
 
     for (const file of files) {
-      // {
-      //         Title,
-      //         Description,
-      //         Author,
-      //         Copyright,
-      //         Keywords,
-      //         DateTimeOriginal,
-      //         CreateDate,
-      //         ModifyDate,
-      //         GPSLatitude,
-      //         GPSLongitude,
-      //         GPSAltitude,
-      //         Rating,
-      //         Quality,
-      //         Make,
-      //         Model,
-      //         FileSource,
-      //         Orientation,
-      //         ImageWidth,
-      //         ImageHeight,
-      //         ExifImageHeight,
-      //         ExifImageWidth,
-      //         Sharpness,
-      //         ExifByteOrder,
-      //         Mime,
-      //         FileName,
-      //       }
-
       const metadata = await exiftool.read(file.path);
       const { readOnly, editable } = splitMetadata(metadata, file.originalname);
 
-      // console.log("Full meta podaci ===> ", Object.entries(metadata).length);
-      // console.log(
-      //   "Formated meta podaci ===> ",
-      //   Object.entries({ ...readOnly, ...editable }).length
-      // );
-
-      // const metadataFormatted = {
       //   title: Title,
       //   description: Description,
       //   author: Author,
@@ -819,11 +783,53 @@ export const postExtractMetadata = async (
         editable: editable,
         fullData: metadata,
       });
+      await deleteFile(file.path);
     }
 
     res.status(200).json({ success: true, metadatas: metadatas });
   } catch (error) {
     console.log("Error while reading metadatas from images ===> ", error);
+    next(error);
+  }
+};
+
+export const postEditMetadata = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const files = req.files as Express.Multer.File[];
+  const { editableMetadata } = req.body;
+
+  try {
+    if (!files || files.length === 0 || !files[0]) {
+      throw new ErrorResponse("No file uploaded", 400);
+    }
+    if (!editableMetadata) {
+      throw new ErrorResponse("No metadata provided", 400);
+    }
+
+    const parsedData = JSON.parse(editableMetadata);
+
+    // Upisi metapodatke u originalni fajl
+    await exiftool.write(files[0].path, parsedData);
+
+    // Napravi kopiju u outputs folder
+    const outputsFolder = path.join(__dirname, "..", "outputs");
+    if (!fs.existsSync(outputsFolder)) fs.mkdirSync(outputsFolder);
+
+    const outputFileName = `${Date.now()}-${files[0].originalname}`;
+    const outputFilePath = path.join(outputsFolder, outputFileName);
+
+    fs.copyFileSync(files[0].path, outputFilePath);
+
+    res.status(200).json({
+      success: true,
+      fileId: outputFileName, // ovo ide u getDownloadFileById
+      message: "Metadata successfully edited",
+    });
+  } catch (error) {
+    console.log("Error while editing metadata ===>", error);
     next(error);
   }
 };

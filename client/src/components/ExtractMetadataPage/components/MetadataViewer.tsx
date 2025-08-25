@@ -71,7 +71,7 @@ export default function MetadataViewer({
       </section>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4  pb-2">
           Editable Metadata
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -3,7 +3,7 @@
 import { useExtractMetadata } from "@/hooks/useExtractMetadata";
 import { TransformedDownloadLinks } from "@/types/apiTypes";
 import { Toast } from "primereact/toast";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ServiceIntro from "../ServiceIntro";
 import UploadFile from "../UploadFile";
 import { useToast } from "@/context/ToastContext";
@@ -47,6 +47,10 @@ const ExtractMetadataClient = () => {
     });
   };
 
+  const submitEditMetadata = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="p-4 space-y-6">
       {/* 🎯 Toast na početku */}
@@ -81,10 +85,31 @@ const ExtractMetadataClient = () => {
       )}
 
       {metadata && (
-        <MetadataViewer
-          metadata={metadata}
-          onMetadataChange={(updated) => setMetadata(updated)}
-        />
+        <form onSubmit={submitEditMetadata} className="space-y-6">
+          <MetadataViewer
+            metadata={metadata}
+            onMetadataChange={(updated) => setMetadata(updated)}
+          />
+          <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm">
+            {/* Reset */}
+            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer rounded-lg font-medium saira-font">
+              Reset
+            </button>
+
+            {/* Cancel + Confirm */}
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors cursor-pointer rounded-lg font-medium saira-font">
+                Cancel
+              </button>
+              <button
+                className="cursor-pointer bg-[#1aac83] text-white hover:bg-[#159e77] transition-colors rounded-lg px-4 py-2 font-medium saira-font shadow-sm"
+                type="submit"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </form>
       )}
     </div>
   );

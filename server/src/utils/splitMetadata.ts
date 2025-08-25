@@ -118,5 +118,11 @@ export function splitMetadata(metadata: Tags, filename: string) {
     })
   );
 
+  for (const tag of IMPORTANT_EDITABLE_ORDER) {
+    if (!(tag in editable)) {
+      editable[tag] = ""; // korisniku će se prikazati prazan input
+    }
+  }
+
   return { readOnly, editable };
 }

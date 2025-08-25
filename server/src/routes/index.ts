@@ -8,6 +8,7 @@ import {
   postConvertImage,
   postCropFace,
   postCropImage,
+  postEditMetadata,
   postExtractMetadata,
   postResizeImage,
   // postTextRecognition,
@@ -101,6 +102,7 @@ router.post(
 router.post("/crop-face", uploadsMiddleware, postCropFace);
 router.post("/collage", uploadsMiddleware, postCollageMaker);
 router.post("/extract-metadata", uploadsMiddleware, postExtractMetadata);
+router.post("/edit-metadata", uploadsMiddleware, postEditMetadata);
 
 // router.post("/text-recognition", uploadsMiddleware, postTextRecognition);
 
