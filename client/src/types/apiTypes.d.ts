@@ -89,14 +89,17 @@ export type ExifData = {
 
 // Jedan set metapodataka za jednu sliku
 export type MetadataItem = {
+  metadata: ExifData;
+  filename: string;
   readOnly: ExifData;
-  editable: ExifData;
-  fullData: ExifData;
+  // editable: ExifData;
+  // fullData: ExifData;
 };
 
 // Odgovor backend-a za više fajlova
 export type ExtractMetadataResponse = {
   success: boolean;
+  message: string;
   metadatas: MetadataItem[];
 };
 

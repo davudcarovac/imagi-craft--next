@@ -750,43 +750,72 @@ export const postExtractMetadata = async (
   const metadatas: any = [];
 
   try {
-    if (!files) {
+    if (!files || files.length === 0) {
       throw new ErrorResponse("No file uploaded", 400);
     }
 
+    // polja koja želiš da podržavaš
+    const additionalFields = [
+      "Title",
+      "Description",
+      "Author",
+      "Copyright",
+      "Keywords",
+      "DateTimeOriginal",
+      "CreateDate",
+      "ModifyDate",
+      "GPSLatitude",
+      "GPSLongitude",
+      "GPSAltitude",
+      "Rating",
+    ];
+
     for (const file of files) {
       const metadata = await exiftool.read(file.path);
-      const { readOnly, editable } = splitMetadata(metadata, file.originalname);
 
-      //   title: Title,
-      //   description: Description,
-      //   author: Author,
-      //   copyright: Copyright,
-      //   keywords: Keywords,
-      //   dateTimeOriginal: DateTimeOriginal,
-      //   createDate: CreateDate,
-      //   modifyDate: ModifyDate,
-      //   gpsLatitude: GPSLatitude,
-      //   gpsLongitude: GPSLongitude,
-      //   gpsAltitude: GPSAltitude,
-      //   rating: Rating,
+      // napravi objekat sa svim poljima
+      const additionalFields = [
+        "Title",
+        "Description",
+        "Author",
+        "Copyright",
+        "Keywords",
+        "DateTimeOriginal",
+        "CreateDate",
+        "ModifyDate",
+        "GPSLatitude",
+        "GPSLongitude",
+        "GPSAltitude",
+        "Rating",
+      ];
 
-      //   quality: Quality,
-      //   make: Make,
-      //   model: Model,
-      // };
+      // Sastavi novi objekat koji sadrži sve
+      const fullMetadata: Record<string, any> = {
+        ...metadata, // originalna exif polja
+        FileName: file.originalname, // ubaci i fileName
+      };
 
-      // console.log("metadata formatted ===> ", metadataFormatted);
+      // Prođi kroz dodatna polja i osiguraj da postoje
+      additionalFields.forEach((field) => {
+        if (fullMetadata[field] === undefined || fullMetadata[field] === null) {
+          fullMetadata[field] = "";
+        }
+      });
 
       metadatas.push({
-        readOnly: readOnly,
-        editable: editable,
-        fullData: metadata,
+        fileName: file.originalname,
+        metadata: fullMetadata,
+        readOnly: splitMetadata(fullMetadata, file.originalname).readOnly,
       });
+
       await deleteFile(file.path);
     }
 
-    res.status(200).json({ success: true, metadatas: metadatas });
+    res.status(200).json({
+      success: true,
+      message: "Metadata extracted!",
+      metadatas: metadatas,
+    });
   } catch (error) {
     console.log("Error while reading metadatas from images ===> ", error);
     next(error);

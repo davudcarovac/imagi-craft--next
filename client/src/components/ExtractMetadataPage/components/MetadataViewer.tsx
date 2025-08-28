@@ -1,32 +1,35 @@
 "use client";
 
+import CustomMessage from "@/components/CustomMessage";
 import React, { useEffect } from "react";
 
 type MetadataProps = {
   metadata: {
+    metadata: Record<string, any>;
     readOnly: Record<string, any>;
-    editable: Record<string, any>;
-    fullData?: Record<string, any>;
+    filename: string;
+    // fullData?: Record<string, any>;
+    // readOnly: Record<string, any>;
   };
   onMetadataChange: (updated: Record<string, any>) => void;
+  showMetadata?: null | "readOnly" | "edit";
 };
 
 export default function MetadataViewer({
   metadata,
   onMetadataChange,
+  showMetadata,
 }: MetadataProps) {
   const handleEditableChange = (key: string, value: string) => {
-    const updatedEditable = { ...metadata.editable, [key]: value };
-    onMetadataChange({ ...metadata, editable: updatedEditable });
+    onMetadataChange({
+      ...metadata,
+      metadata: { ...metadata.metadata, [key]: value },
+    });
   };
 
-  // Object.entries(metadata.readOnly).forEach(([key, value]) => {
-  //   console.log(key);
-  // });
-
-  useEffect(() => {
-    console.log("metapodaci ===> ", metadata);
-  }, [metadata]);
+  // useEffect(() => {
+  //   console.log("metapodaci ===> ", metadata.metadata);
+  // }, [metadata]);
 
   function formatMetadataValue(value: any): string {
     if (value == null) return "";
@@ -51,10 +54,14 @@ export default function MetadataViewer({
       </h2>
 
       {/* Read-Only podaci */}
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4  pb-2">
-          Read-Only Metadata
-        </h3>
+      {/* <section className="mb-8">
+      
+        <CustomMessage
+          severity="info"
+          summary="Read only metadata"
+          detail="
+This data is read-only. Changing them is not recommended."
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Object.entries(metadata.readOnly || {}).map(([key, value]) => (
             <div
@@ -68,41 +75,70 @@ export default function MetadataViewer({
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4  pb-2">
+      {showMetadata === "edit" && (
+        <section className="mb-8">
+          {/* <h3 className="text-lg font-semibold text-gray-700 mb-4  pb-2">
           Editable Metadata
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {Object.entries(metadata.editable || {}).map(([key, value]) => (
-            <div
-              key={key}
-              className="flex flex-col sm:flex-row sm:items-center justify-between bg-white px-4 py-3 rounded-md shadow-sm"
-            >
-              <label className="font-medium text-gray-600 mb-2 sm:mb-0 sm:mr-4 sm:w-1/3">
-                {key}:
-              </label>
-              <input
-                type="text"
-                value={value ?? ""}
-                onChange={(e) => handleEditableChange(key, e.target.value)}
-                className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+        </h3> */}
+
+          <CustomMessage
+            closable={true}
+            severity="info"
+            summary="Data modification"
+            detail="
+Be careful with changing image metadata, not all data is recommended to change."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {Object.entries(metadata.metadata || {}).map(([key, value]) => (
+              <div
+                key={key}
+                className="flex flex-col sm:flex-row sm:items-center justify-between bg-white px-4 py-3 rounded-md shadow-sm"
+              >
+                <label className="font-medium text-gray-600 mb-2 sm:mb-0 sm:mr-4 sm:w-1/3">
+                  {key}:
+                </label>
+                <input
+                  type="text"
+                  value={formatMetadataValue(value) ?? ""}
+                  onChange={(e) => handleEditableChange(key, e.target.value)}
+                  className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1aac83] focus:border-[#1aac83]"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* FullData prikaz (opciono, npr. debug) */}
-      {/* {metadata.fullData && (
+      {showMetadata === "readOnly" && (
         <section>
-          <h3>Full Metadata (Debug)</h3>
-          <pre style={{ background: "#f4f4f4", padding: "10px" }}>
-            {JSON.stringify(metadata.fullData, null, 2)}
-          </pre>
+          <h3 className="py-5 text-gray-800 saira-font font-semibold text-2xl">
+            Read only
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {Object.entries(metadata.readOnly || {}).map(([key, value]) => (
+              <div
+                key={key}
+                className="flex flex-col sm:flex-row sm:items-center justify-between bg-white px-4 py-3 rounded-md shadow-sm"
+              >
+                <label className="font-medium text-gray-600 mb-2 sm:mb-0 sm:mr-4 sm:w-1/3">
+                  {key}:
+                </label>
+                <p>{formatMetadataValue(value)}</p>
+                {/* <input
+                  type="text"
+                  disabled
+                  value={formatMetadataValue(value) ?? ""}
+                  onChange={(e) => handleEditableChange(key, e.target.value)}
+                  className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1aac83] focus:border-[#1aac83]"
+                /> */}
+              </div>
+            ))}
+          </div>
         </section>
-      )} */}
+      )}
     </div>
   );
 }

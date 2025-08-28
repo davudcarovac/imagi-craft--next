@@ -49,6 +49,10 @@ const Header = () => {
     }
   }, [width, pathname]);
 
+  // useEffect(() => {
+  //   console.log("User ==> ", user);
+  // }, [user]);
+
   const renderUser = () => {
     if (isLoading) return <div className="w-10 h-10" />; // može i loader ako hoćeš
 

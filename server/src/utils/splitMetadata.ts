@@ -27,7 +27,7 @@ const READ_ONLY_TAGS: string[] = [
   "GPSLatitude",
   "GPSLongitude",
   "GPSPosition",
-  "Directory",
+  // "Directory",
   "FileName",
   "FileTypeExtension",
   "BitsPerSample",

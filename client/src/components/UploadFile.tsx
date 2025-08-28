@@ -36,11 +36,15 @@ type UploadFileType = {
   action: string;
   isMultiple: boolean;
   files?: FileType[];
+  metadataFile?: File;
   isPending?: boolean;
   globalFormat?: string | null;
   formatOptions?: { name: string; value: string }[];
   errorMessage?: string | null;
 
+  setShowMetadata?: React.Dispatch<
+    React.SetStateAction<null | "readOnly" | "edit">
+  >;
   handleGlobalFormatChange?: (newFormat: string | null) => void;
   setErrorMessage?: Dispatch<SetStateAction<string | null>>;
   setIsOpenCompressionSb?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,7 +62,9 @@ export default function UploadFile({
   isPending,
   formatOptions,
   globalFormat,
+  metadataFile,
   // setErrorMessage,
+  setShowMetadata,
   setImage,
   setFile,
   setFiles,
@@ -264,6 +270,31 @@ export default function UploadFile({
                 /> */}
               </button>
             )}
+          </div>
+
+          <div>
+            {action === "extract-metadata" &&
+              metadataFile &&
+              setShowMetadata && (
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    onClick={() => setShowMetadata("readOnly")}
+                    className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm bg-blue-500 text-white saira-font font-semibold"
+                  >
+                    <i className="pi pi-eye" />
+                    View
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => setShowMetadata("edit")}
+                    className="flex items-center gap-2 px-4 py-2 cursor-pointer  bg-[#1aac83] text-white rounded-md font-semibold saira-font"
+                  >
+                    <i className="pi pi-pencil" />
+                    Edit
+                  </button>
+                </div>
+              )}
           </div>
         </div>
       </div>

@@ -14,6 +14,9 @@ const ExtractMetadataClient = () => {
   const [image, setImage] = useState<string | null>(null);
   const [downloadItem, setDownloadItem] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<any>(null);
+  const [showMetadata, setShowMetadata] = useState<null | "readOnly" | "edit">(
+    null
+  );
 
   const [downloadLinks, setDownloadLinks] = useState<
     TransformedDownloadLinks[]
@@ -47,8 +50,19 @@ const ExtractMetadataClient = () => {
     });
   };
 
+  const cancelProcess = () => {
+    setShowMetadata(null);
+    setFile(undefined);
+    setMetadata(null);
+    formData.delete("files");
+  };
+
   const submitEditMetadata = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (file) {
+      formData.append("files", file);
+    }
   };
 
   return (
@@ -75,12 +89,12 @@ const ExtractMetadataClient = () => {
           <UploadFile
             tooltip="extract metadata image"
             action="extract-metadata"
+            setShowMetadata={setShowMetadata}
             setImage={setImage}
             isMultiple={false}
             setFile={setFile}
+            metadataFile={file}
           />
-
-          {file && <button type="submit">Submit</button>}
         </form>
       )}
 
@@ -88,26 +102,47 @@ const ExtractMetadataClient = () => {
         <form onSubmit={submitEditMetadata} className="space-y-6">
           <MetadataViewer
             metadata={metadata}
-            onMetadataChange={(updated) => setMetadata(updated)}
+            showMetadata={showMetadata}
+            onMetadataChange={(updated) => {
+              setMetadata(updated);
+            }}
           />
           <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm">
-            {/* Reset */}
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer rounded-lg font-medium saira-font">
-              Reset
-            </button>
+            {showMetadata === "edit" && (
+              <>
+                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer rounded-lg font-medium saira-font">
+                  Reset
+                </button>
 
-            {/* Cancel + Confirm */}
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors cursor-pointer rounded-lg font-medium saira-font">
-                Cancel
-              </button>
+                {/* Cancel + Confirm */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={cancelProcess}
+                    type="button"
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors cursor-pointer rounded-lg font-medium saira-font"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="cursor-pointer bg-[#1aac83] text-white hover:bg-[#159e77] transition-colors rounded-lg px-4 py-2 font-medium saira-font shadow-sm"
+                    type="submit"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </>
+            )}
+
+            {showMetadata === "readOnly" && (
               <button
-                className="cursor-pointer bg-[#1aac83] text-white hover:bg-[#159e77] transition-colors rounded-lg px-4 py-2 font-medium saira-font shadow-sm"
-                type="submit"
+                type="button"
+                onClick={() => setShowMetadata("edit")}
+                className="flex items-center gap-2 px-4 py-2 cursor-pointer  bg-[#1aac83] text-white rounded-md font-semibold saira-font"
               >
-                Confirm
+                <i className="pi pi-pencil" />
+                Edit
               </button>
-            </div>
+            )}
           </div>
         </form>
       )}

@@ -44,6 +44,8 @@ export const verifyToken = async (
 
     next();
   } catch (error) {
-    throw new ErrorResponse("Request is not authorized", 401);
+    console.log("error in verify token middleware ===> ", error);
+    // throw new ErrorResponse("Request is not authorized", 401);
+    next(error);
   }
 };
