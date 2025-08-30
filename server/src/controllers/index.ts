@@ -22,7 +22,7 @@ import sharp from "sharp";
 import { PROFESSIONAL_TEMPLATES } from "../configs/collagePresets.ts";
 import { processImageForCell } from "../utils/collageFile.ts";
 import { logMemory } from "../utils/memoryCheck.ts";
-import { exiftool, type Tags } from "exiftool-vendored";
+import { ExifDateTime, exiftool, type Tags } from "exiftool-vendored";
 import { splitMetadata } from "../utils/splitMetadata.ts";
 
 const { __dirname } = fileDirName(import.meta);
@@ -830,6 +830,8 @@ export const postEditMetadata = async (
   const files = req.files as Express.Multer.File[];
   const { editableMetadata } = req.body;
 
+  console.log("editableMetadata ===> ", editableMetadata);
+
   try {
     if (!files || files.length === 0 || !files[0]) {
       throw new ErrorResponse("No file uploaded", 400);
@@ -840,14 +842,32 @@ export const postEditMetadata = async (
 
     const parsedData = JSON.parse(editableMetadata);
 
+    function normalizeExifData(data: Record<string, any>) {
+      const result: Record<string, any> = {};
+
+      for (const [key, value] of Object.entries(data)) {
+        if (value instanceof ExifDateTime) {
+          // koristi rawValue ili formatiraj sam
+          result[key] = value.rawValue;
+          // ili: result[key] = value.toISOString(); (ako ti treba ISO)
+        } else {
+          result[key] = value;
+        }
+      }
+
+      return result;
+    }
+
+    const normalized = normalizeExifData(parsedData);
+
     // Upisi metapodatke u originalni fajl
-    await exiftool.write(files[0].path, parsedData);
+    await exiftool.write(files[0].path, normalized);
 
     // Napravi kopiju u outputs folder
     const outputsFolder = path.join(__dirname, "..", "outputs");
     if (!fs.existsSync(outputsFolder)) fs.mkdirSync(outputsFolder);
 
-    const outputFileName = `${Date.now()}-${files[0].originalname}`;
+    const outputFileName = `${files[0].originalname}`;
     const outputFilePath = path.join(outputsFolder, outputFileName);
 
     fs.copyFileSync(files[0].path, outputFilePath);

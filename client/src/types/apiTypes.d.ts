@@ -103,6 +103,12 @@ export type ExtractMetadataResponse = {
   metadatas: MetadataItem[];
 };
 
+export type EditMetadataResponse = {
+  success: boolean;
+  message: string;
+  fileId: string;
+};
+
 // user
 
 // Input podaci za signup

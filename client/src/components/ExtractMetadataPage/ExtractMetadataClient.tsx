@@ -1,33 +1,38 @@
 "use client";
 
 import { useExtractMetadata } from "@/hooks/useExtractMetadata";
-import { TransformedDownloadLinks } from "@/types/apiTypes";
+// import { TransformedDownloadLinks } from "@/types/apiTypes";
 import { Toast } from "primereact/toast";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ServiceIntro from "../ServiceIntro";
 import UploadFile from "../UploadFile";
 import { useToast } from "@/context/ToastContext";
 import MetadataViewer from "./components/MetadataViewer";
+import { useEditMetadata } from "@/hooks/useEditMetadata";
 
 const ExtractMetadataClient = () => {
   const [file, setFile] = useState<File>();
-  const [image, setImage] = useState<string | null>(null);
-  const [downloadItem, setDownloadItem] = useState<string | null>(null);
+  // const [image, setImage] = useState<string | null>(null);
+  // const [downloadItem, setDownloadItem] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<any>(null);
   const [showMetadata, setShowMetadata] = useState<null | "readOnly" | "edit">(
     null
   );
 
-  const [downloadLinks, setDownloadLinks] = useState<
-    TransformedDownloadLinks[]
-  >([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [changedMetadata, setChangedMetadata] = useState<Record<string, any>>(
+    {}
+  );
+
+  // const [downloadLinks, setDownloadLinks] = useState<
+  //   TransformedDownloadLinks[]
+  // >([]);
 
   const toast = useRef<Toast | null>(null);
   const { showToast } = useToast();
 
   const formData = new FormData();
-  const { mutate, isPending } = useExtractMetadata();
+  const { mutate } = useExtractMetadata();
+  const { mutate: mutateEditMetadata } = useEditMetadata();
 
   const submitExtraction = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,6 +68,35 @@ const ExtractMetadataClient = () => {
     if (file) {
       formData.append("files", file);
     }
+
+    // function normalizeMetadata(meta: any) {
+    //   const normalized: any = {};
+    //   for (const key in meta) {
+    //     const value = meta[key];
+    //     if (value && typeof value === "object" && value.rawValue) {
+    //       normalized[key] = value.rawValue; // koristi ExifTool raw string
+    //     } else {
+    //       normalized[key] = value;
+    //     }
+    //   }
+    //   return normalized;
+    // }
+
+    // formData.append(
+    //   "editableMetadata",
+    //   JSON.stringify(normalizeMetadata(metadata.metadata))
+    // );
+
+    formData.append("editableMetadata", JSON.stringify(changedMetadata));
+
+    mutateEditMetadata(formData, {
+      onSuccess: (response) => {
+        console.log("response edit metadata ===> ", response);
+      },
+      onError: (error) => {
+        console.log("Error during editing metadata ===> ", error);
+      },
+    });
   };
 
   return (
@@ -90,7 +124,7 @@ const ExtractMetadataClient = () => {
             tooltip="extract metadata image"
             action="extract-metadata"
             setShowMetadata={setShowMetadata}
-            setImage={setImage}
+            // setImage={setImage}
             isMultiple={false}
             setFile={setFile}
             metadataFile={file}
@@ -103,6 +137,8 @@ const ExtractMetadataClient = () => {
           <MetadataViewer
             metadata={metadata}
             showMetadata={showMetadata}
+            changedMetadata={changedMetadata}
+            setChangedMetadata={setChangedMetadata}
             onMetadataChange={(updated) => {
               setMetadata(updated);
             }}
@@ -134,14 +170,23 @@ const ExtractMetadataClient = () => {
             )}
 
             {showMetadata === "readOnly" && (
-              <button
-                type="button"
-                onClick={() => setShowMetadata("edit")}
-                className="flex items-center gap-2 px-4 py-2 cursor-pointer  bg-[#1aac83] text-white rounded-md font-semibold saira-font"
-              >
-                <i className="pi pi-pencil" />
-                Edit
-              </button>
+              <>
+                <button
+                  onClick={cancelProcess}
+                  type="button"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors cursor-pointer rounded-lg font-medium saira-font"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowMetadata("edit")}
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer  bg-[#1aac83] text-white rounded-md font-semibold saira-font"
+                >
+                  <i className="pi pi-pencil" />
+                  Edit
+                </button>
+              </>
             )}
           </div>
         </form>

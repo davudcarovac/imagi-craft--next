@@ -3,7 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 
 export const useExtractMetadata = () => {
   const { mutate, isPending, data } = useMutation({
-    mutationFn: (cropfaceData: FormData) => extractMetadataImage(cropfaceData),
+    mutationFn: (extractMetadataData: FormData) =>
+      extractMetadataImage(extractMetadataData),
   });
 
   return { mutate, isPending, data };
