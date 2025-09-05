@@ -770,37 +770,40 @@ export const postExtractMetadata = async (
       "Rating",
     ];
 
+    // helper za normalizaciju polja
+    const normalizeMetadata = (metadata: Record<string, any>) => {
+      return {
+        Title: metadata.Title || metadata.DocumentName || "",
+        Description:
+          metadata.Description ||
+          metadata.ImageDescription ||
+          metadata["Caption-Abstract"] ||
+          metadata.XPComment ||
+          "",
+        Author: metadata.Author || metadata.Creator || metadata.Artist || "",
+        Copyright: metadata.Copyright || "",
+        Keywords: metadata.Keywords || metadata.Subject || "",
+        DateTimeOriginal: metadata.DateTimeOriginal || "",
+        CreateDate: metadata.CreateDate || "",
+        ModifyDate: metadata.ModifyDate || "",
+        GPSLatitude: metadata.GPSLatitude || "",
+        GPSLongitude: metadata.GPSLongitude || "",
+        GPSAltitude: metadata.GPSAltitude || "",
+        Rating: metadata.Rating || "",
+      };
+    };
+
     for (const file of files) {
       const metadata = await exiftool.read(file.path);
+      console.log("RAW exiftool metadata ===>", metadata);
 
-      // napravi objekat sa svim poljima
-      const additionalFields = [
-        "Title",
-        "Description",
-        "Author",
-        "Copyright",
-        "Keywords",
-        "DateTimeOriginal",
-        "CreateDate",
-        "ModifyDate",
-        "GPSLatitude",
-        "GPSLongitude",
-        "GPSAltitude",
-        "Rating",
-      ];
+      const normalized = normalizeMetadata(metadata);
 
-      // Sastavi novi objekat koji sadrži sve
       const fullMetadata: Record<string, any> = {
-        ...metadata, // originalna exif polja
-        FileName: file.originalname, // ubaci i fileName
+        ...metadata, // sve originalno
+        ...normalized, // overwrite friendly polja
+        FileName: file.originalname,
       };
-
-      // Prođi kroz dodatna polja i osiguraj da postoje
-      additionalFields.forEach((field) => {
-        if (fullMetadata[field] === undefined || fullMetadata[field] === null) {
-          fullMetadata[field] = "";
-        }
-      });
 
       metadatas.push({
         fileName: file.originalname,

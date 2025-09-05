@@ -47,6 +47,7 @@ const ExtractMetadataClient = () => {
 
         if (response?.success) {
           setMetadata(response.metadatas[0]);
+          console.log(metadata);
         }
       },
       onError: (error) => {
@@ -68,24 +69,6 @@ const ExtractMetadataClient = () => {
     if (file) {
       formData.append("files", file);
     }
-
-    // function normalizeMetadata(meta: any) {
-    //   const normalized: any = {};
-    //   for (const key in meta) {
-    //     const value = meta[key];
-    //     if (value && typeof value === "object" && value.rawValue) {
-    //       normalized[key] = value.rawValue; // koristi ExifTool raw string
-    //     } else {
-    //       normalized[key] = value;
-    //     }
-    //   }
-    //   return normalized;
-    // }
-
-    // formData.append(
-    //   "editableMetadata",
-    //   JSON.stringify(normalizeMetadata(metadata.metadata))
-    // );
 
     formData.append("editableMetadata", JSON.stringify(changedMetadata));
 

@@ -74,6 +74,15 @@ export function splitMetadata(metadata: Tags, filename: string) {
   const readOnly: Record<string, unknown> = {};
   let editable: Record<string, unknown> = {};
 
+  const ALWAYS_INCLUDE = [
+    "Title",
+    "Description",
+    "Author",
+    "Copyright",
+    "Keywords",
+    "Rating",
+  ];
+
   for (const [key, value] of Object.entries(metadata)) {
     // Mapiraj alias odmah
     const normalizedKey = TAG_ALIASES[key] || key;
@@ -83,7 +92,7 @@ export function splitMetadata(metadata: Tags, filename: string) {
       if (key === "FileName") {
         readOnly[normalizedKey] = filename;
       } else if (value instanceof ExifDateTime) {
-        readOnly[normalizedKey] = value.toISOString(); // npr. "2025-08-24T17:38:43Z"
+        readOnly[normalizedKey] = value.toISOString();
       } else if (value instanceof BinaryField) {
         readOnly[normalizedKey] = "[Binary data]";
       } else {
@@ -100,6 +109,11 @@ export function splitMetadata(metadata: Tags, filename: string) {
         value.every((v) => typeof v === "string" || typeof v === "number"))
     ) {
       editable[normalizedKey] = value;
+
+      // Ako je u "uvek uključiti", kopiraj ga i u readOnly
+      if (ALWAYS_INCLUDE.includes(normalizedKey)) {
+        readOnly[normalizedKey] = value;
+      }
     } else {
       readOnly[normalizedKey] = value;
     }
@@ -118,9 +132,13 @@ export function splitMetadata(metadata: Tags, filename: string) {
     })
   );
 
+  // Dodaj prazna polja ako fale
   for (const tag of IMPORTANT_EDITABLE_ORDER) {
     if (!(tag in editable)) {
-      editable[tag] = ""; // korisniku će se prikazati prazan input
+      editable[tag] = "";
+    }
+    if (ALWAYS_INCLUDE.includes(tag) && !(tag in readOnly)) {
+      readOnly[tag] = "";
     }
   }
 
