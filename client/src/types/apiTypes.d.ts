@@ -73,14 +73,14 @@ export type NoDetectedFacesType = {
   error: string;
 };
 
-// extract metadata
+// osnovni tipovi
+export type ExifPrimitive = string | number | boolean | null;
+
+// rekurzivni tipovi
 export type ExifValue =
-  | string
-  | number
-  | boolean
-  | null
-  | Record<string, any>
-  | ExifValue[];
+  | ExifPrimitive
+  | { [key: string]: ExifValue } // ugnježdeni objekti
+  | ExifValue[]; // niz vrednosti
 
 // Generički tip za mapu EXIF podataka
 export type ExifData = {

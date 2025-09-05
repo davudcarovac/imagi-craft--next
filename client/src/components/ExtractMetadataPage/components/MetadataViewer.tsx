@@ -2,17 +2,26 @@
 
 import CustomMessage from "@/components/CustomMessage";
 import React, { useEffect } from "react";
+import { ExifValue } from "../ExtractMetadataClient";
+
+type MetadataValue = ExifValue; // importuj ili definiši ExifValue ovde
+
+type MetadataRecord = Record<string, MetadataValue>;
 
 type MetadataProps = {
   metadata: {
-    metadata: Record<string, any>;
-    readOnly: Record<string, any>;
+    metadata: MetadataRecord;
+    readOnly: MetadataRecord;
     filename: string;
   };
-  onMetadataChange: (updated: Record<string, any>) => void;
+  onMetadataChange: (updated: {
+    metadata: MetadataRecord;
+    readOnly: MetadataRecord;
+    filename: string;
+  }) => void;
   showMetadata?: null | "readOnly" | "edit";
-  changedMetadata: Record<string, any>;
-  setChangedMetadata: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  changedMetadata: MetadataRecord;
+  setChangedMetadata: React.Dispatch<React.SetStateAction<MetadataRecord>>;
 };
 
 export default function MetadataViewer({
@@ -22,19 +31,12 @@ export default function MetadataViewer({
   changedMetadata,
   setChangedMetadata,
 }: MetadataProps) {
-  // 🔑 samo polja koja su promenjena
-  // const [changedMetadata, setChangedMetadata] = useState<Record<string, any>>(
-  //   {}
-  // );
-
   const handleEditableChange = (key: string, value: string) => {
-    // update changed values
     setChangedMetadata((prev) => ({
       ...prev,
       [key]: value,
     }));
 
-    // update prikaz odmah
     onMetadataChange({
       ...metadata,
       metadata: { ...metadata.metadata, [key]: value },
@@ -43,17 +45,25 @@ export default function MetadataViewer({
 
   useEffect(() => console.log(changedMetadata), [changedMetadata]);
 
-  function formatMetadataValue(value: any): string {
+  function formatMetadataValue(value: ExifValue): string {
     if (value == null) return "";
 
-    if (typeof value === "object" && "rawValue" in value) {
-      return (value as any).rawValue;
+    if (typeof value === "object") {
+      // Ako je niz
+      if (Array.isArray(value)) {
+        return value.map((v) => formatMetadataValue(v)).join(", ");
+      }
+
+      // Ako je objekat sa rawValue
+      if ("rawValue" in value && typeof value.rawValue === "string") {
+        return value.rawValue;
+      }
+
+      // Ostali objekti
+      return JSON.stringify(value);
     }
 
-    if (Array.isArray(value)) {
-      return value.join(", ");
-    }
-
+    // string, number, boolean
     return String(value);
   }
 
@@ -113,7 +123,6 @@ export default function MetadataViewer({
         </section>
       )}
 
-      {/* samo za debug */}
       {showMetadata === "edit" && (
         <pre className="mt-4 bg-gray-100 p-2 rounded">
           {JSON.stringify(changedMetadata, null, 2)}

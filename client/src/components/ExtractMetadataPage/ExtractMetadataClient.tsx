@@ -1,31 +1,36 @@
 "use client";
 
 import { useExtractMetadata } from "@/hooks/useExtractMetadata";
-// import { TransformedDownloadLinks } from "@/types/apiTypes";
+import { useEditMetadata } from "@/hooks/useEditMetadata";
 import { Toast } from "primereact/toast";
 import React, { useRef, useState } from "react";
 import ServiceIntro from "../ServiceIntro";
 import UploadFile from "../UploadFile";
 import { useToast } from "@/context/ToastContext";
 import MetadataViewer from "./components/MetadataViewer";
-import { useEditMetadata } from "@/hooks/useEditMetadata";
 
-const ExtractMetadataClient = () => {
-  const [file, setFile] = useState<File>();
-  // const [image, setImage] = useState<string | null>(null);
-  // const [downloadItem, setDownloadItem] = useState<string | null>(null);
-  const [metadata, setMetadata] = useState<any>(null);
+// Tipovi za Exif vrednosti i Metadata
+export type ExifPrimitive = string | number | boolean | null;
+export type ExifValue =
+  | ExifPrimitive
+  | { [key: string]: ExifValue }
+  | ExifValue[];
+
+export type MetadataRecord = Record<string, ExifValue>;
+
+export type MetadataType = {
+  metadata: MetadataRecord;
+  readOnly: MetadataRecord;
+  fileName: string; // obavezno da bude kompatibilno sa MetadataViewer
+};
+
+const ExtractMetadataClient: React.FC = () => {
+  const [file, setFile] = useState<File | undefined>();
+  const [metadata, setMetadata] = useState<MetadataType | null>(null);
   const [showMetadata, setShowMetadata] = useState<null | "readOnly" | "edit">(
     null
   );
-
-  const [changedMetadata, setChangedMetadata] = useState<Record<string, any>>(
-    {}
-  );
-
-  // const [downloadLinks, setDownloadLinks] = useState<
-  //   TransformedDownloadLinks[]
-  // >([]);
+  const [changedMetadata, setChangedMetadata] = useState<MetadataRecord>({});
 
   const toast = useRef<Toast | null>(null);
   const { showToast } = useToast();
@@ -34,24 +39,38 @@ const ExtractMetadataClient = () => {
   const { mutate } = useExtractMetadata();
   const { mutate: mutateEditMetadata } = useEditMetadata();
 
-  const submitExtraction = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitExtraction = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (file) {
-      formData.append("files", file);
-    }
+    if (file) formData.append("files", file);
 
     mutate(formData, {
       onSuccess: (response) => {
-        console.log(response);
+        if (response?.success && response.metadatas?.length) {
+          const meta = response.metadatas[0];
 
-        if (response?.success) {
-          setMetadata(response.metadatas[0]);
-          console.log(metadata);
+          // filtriranje undefined vrednosti
+          const filteredMetadata: Record<string, ExifValue> = {};
+          Object.entries(meta.metadata).forEach(([k, v]) => {
+            if (v !== undefined) filteredMetadata[k] = v;
+          });
+
+          const filteredReadOnly: Record<string, ExifValue> = {};
+          Object.entries(meta.readOnly).forEach(([k, v]) => {
+            if (v !== undefined) filteredReadOnly[k] = v;
+          });
+
+          setMetadata({
+            metadata: filteredMetadata,
+            readOnly: filteredReadOnly,
+            fileName: file?.name || "unknown",
+          });
         }
       },
-      onError: (error) => {
-        showToast("error", "Cannot process", error.message, 5000);
+      onError: (error: unknown) => {
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        showToast("error", "Cannot process", message, 5000);
       },
     });
   };
@@ -63,35 +82,28 @@ const ExtractMetadataClient = () => {
     formData.delete("files");
   };
 
-  const submitEditMetadata = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitEditMetadata = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (file) {
-      formData.append("files", file);
-    }
-
+    if (file) formData.append("files", file);
     formData.append("editableMetadata", JSON.stringify(changedMetadata));
 
     mutateEditMetadata(formData, {
       onSuccess: (response) => {
         console.log("response edit metadata ===> ", response);
       },
-      onError: (error) => {
-        console.log("Error during editing metadata ===> ", error);
+      onError: (error: unknown) => {
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        console.log("Error during editing metadata ===> ", message);
       },
     });
   };
 
   return (
     <div className="p-4 space-y-6">
-      {/* 🎯 Toast na početku */}
       <Toast ref={toast} />
-      {/* <div className="flex items-center gap-2">
-        <span className="bg-white border border-solid border-slate-200 text-gray-500 font-semibold px-4 py-2 rounded-full text-md flex items-center gap-2 ">
-          <i className="pi pi-crown text-yellow-500"></i>
-          Premium
-        </span>
-      </div> */}
+
       {!metadata && (
         <ServiceIntro
           titleBeforeHighlight=""
@@ -107,7 +119,6 @@ const ExtractMetadataClient = () => {
             tooltip="extract metadata image"
             action="extract-metadata"
             setShowMetadata={setShowMetadata}
-            // setImage={setImage}
             isMultiple={false}
             setFile={setFile}
             metadataFile={file}
@@ -118,13 +129,21 @@ const ExtractMetadataClient = () => {
       {metadata && (
         <form onSubmit={submitEditMetadata} className="space-y-6">
           <MetadataViewer
-            metadata={metadata}
+            metadata={{
+              metadata: metadata.metadata,
+              readOnly: metadata.readOnly,
+              filename: metadata.fileName,
+            }}
             showMetadata={showMetadata}
             changedMetadata={changedMetadata}
             setChangedMetadata={setChangedMetadata}
-            onMetadataChange={(updated) => {
-              setMetadata(updated);
-            }}
+            onMetadataChange={(updated) =>
+              setMetadata({
+                metadata: updated.metadata,
+                readOnly: updated.readOnly,
+                fileName: updated.filename,
+              })
+            }
           />
           <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm">
             {showMetadata === "edit" && (
@@ -133,7 +152,6 @@ const ExtractMetadataClient = () => {
                   Reset
                 </button>
 
-                {/* Cancel + Confirm */}
                 <div className="flex items-center gap-3">
                   <button
                     onClick={cancelProcess}
