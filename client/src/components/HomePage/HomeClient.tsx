@@ -7,6 +7,7 @@ import { Crop, Wand2 } from "lucide-react";
 import HomePageVideo from "./HomePageVideo";
 import CollageFeaturesSection from "./CollageFeatures";
 import Link from "next/link";
+import Footer from "../Footer";
 
 const HomeClient = () => {
   return (
@@ -92,6 +93,7 @@ const HomeClient = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
