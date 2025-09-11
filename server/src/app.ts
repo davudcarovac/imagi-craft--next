@@ -8,7 +8,8 @@ import { Canvas, Image, ImageData } from "canvas";
 import { errorHandler } from "./middlewares/error.ts";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
-import fs from "fs";
+import fs from "fs/promises";
+import cron from "node-cron";
 
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
@@ -24,24 +25,10 @@ const allowedOrigins = [
   "http://localhost:3000", // za development
 ];
 
-// Dodajte pre svih ruta
-// app.options("*", (req, res) => {
-//   const origin = req.headers.origin;
-
-//   // Proverite da li origin postoji i da li je u allowedOrigins
-//   if (origin && allowedOrigins.includes(origin)) {
-//     res.header("Access-Control-Allow-Origin", origin);
-//     res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//     res.header("Access-Control-Allow-Credentials", "true");
-//   }
-//   res.sendStatus(200);
-// });
-
 app.use(
   cors({
     origin: allowedOrigins,
-    credentials: true, // Ovo je ključno za cookies
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -52,20 +39,53 @@ app.use(
   })
 );
 
-// app.options("*", cors());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(router);
 app.use(errorHandler);
 
-// const uploads = fs.readdirSync(path.join(__dirname, "uploads"));
-// const outputs = fs.readdirSync(path.join(__dirname, "outputs"));
-// const outputsZip = fs.readdirSync(path.join(__dirname, "zipOutput"));
+// ------------------ 🧹 CLEANUP CRON ------------------
+async function cleanOldFilesAsync(dir: string, maxAgeMs: number) {
+  try {
+    await fs.access(dir); // proverava da li postoji
+  } catch {
+    return;
+  }
 
-// console.log("Broj uploads fajlova:", uploads.length);
-// console.log("Broj outputs fajlova:", outputs.length);
-// console.log("Broj zip fajlova:", outputsZip.length);
+  const files = await fs.readdir(dir);
+
+  await Promise.all(
+    files.map(async (file) => {
+      if (file === ".gitkeep") return;
+      const filePath = path.join(dir, file);
+      try {
+        const stats = await fs.stat(filePath);
+        const age = Date.now() - stats.mtime.getTime();
+        if (age > maxAgeMs) {
+          await fs.unlink(filePath);
+          console.log(`🗑️ Deleted old file: ${filePath}`);
+        }
+      } catch (err) {
+        console.error(`❌ Error deleting file: ${filePath}`, err);
+      }
+    })
+  );
+}
+
+cron.schedule("0 * * * *", async () => {
+  console.log("🧹 Running hourly cleanup job...");
+
+  const oneHour = 60 * 60 * 1000; // 1 sat u milisekundama
+
+  await cleanOldFilesAsync(path.join(__dirname, "uploads"), oneHour);
+  await cleanOldFilesAsync(path.join(__dirname, "outputs"), oneHour);
+  await cleanOldFilesAsync(path.join(__dirname, "outputsForZip"), oneHour);
+  await cleanOldFilesAsync(path.join(__dirname, "uploadsWm"), oneHour);
+
+  console.log("✅ Cleanup job finished");
+});
+// -----------------------------------------------------
 
 // ✅ Učitaj modele i zatim pokreni server
 (async () => {
@@ -73,20 +93,9 @@ app.use(errorHandler);
     const modelsPath = path.join(__dirname, "models");
 
     await Promise.all([
-      // Osnovni detektor lica (SSD Mobilenet)
       faceapi.nets.ssdMobilenetv1.loadFromDisk(
         path.join(modelsPath, "ssd_mobilenetv1")
       ),
-
-      // Model za landmarke (68 tačaka)
-      // faceapi.nets.faceLandmark68Net.loadFromDisk(
-      //   path.join(modelsPath, "face_landmark_68")
-      // ),
-
-      // Model za prepoznavanje lica (neophodan za landmarke)
-      // faceapi.nets.faceRecognitionNet.loadFromDisk(
-      //   path.join(modelsPath, "face_recognition")
-      // ),
     ]);
 
     console.log("Svi modeli su uspešno učitani!");
@@ -103,6 +112,6 @@ app.use(errorHandler);
     });
   } catch (error) {
     console.error("Error loading face-api model:", error);
-    process.exit(1); // zaustavi proces ako model nije učitan
+    process.exit(1);
   }
 })();

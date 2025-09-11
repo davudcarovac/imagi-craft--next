@@ -874,10 +874,10 @@ export const postEditMetadata = async (
     const outputFilePath = path.join(outputsFolder, outputFileName);
 
     fs.copyFileSync(files[0].path, outputFilePath);
-
+    await deleteFile(files[0].path);
     res.status(200).json({
       success: true,
-      fileId: outputFileName, // ovo ide u getDownloadFileById
+      fileId: outputFileName,
       message: "Metadata successfully edited",
     });
   } catch (error) {

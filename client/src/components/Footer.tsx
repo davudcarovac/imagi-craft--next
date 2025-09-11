@@ -229,12 +229,12 @@ const Footer = () => {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <span>Novi Pazar, Serbia</span>
+              <span>Serbia</span>
             </li>
           </ul>
 
           {/* Newsletter Signup */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <h4 className="text-md font-semibold text-white mb-2">
               Stay Updated
             </h4>
@@ -248,7 +248,7 @@ const Footer = () => {
                 Subscribe
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -260,7 +260,7 @@ const Footer = () => {
           </p>
 
           {/* Payment Methods */}
-          <div className="flex items-center space-x-4">
+          {/* <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">We accept:</span>
             <div className="flex space-x-2">
               <div className="bg-white p-1 rounded-sm">
@@ -326,7 +326,7 @@ const Footer = () => {
                 </svg>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

@@ -70,10 +70,12 @@ const TermsClient = () => {
                 </h2>
                 <p className="text-gray-700 mb-2">
                   We are <span className="font-semibold">FrostyImage</span>{" "}
-                  ("Company", "we", "us", or "our"), a company registered in
-                  Serbia at __________, Korzo - Gradsko Šetalište 55, Novi
-                  Pazar, Serbia 36300.
+                  (&quot;Company&quot;, &quot;we&quot;, &quot;us&quot;, or
+                  &quot;our&quot;), a company registered in Serbia at
+                  __________, Korzo - Gradsko Šetalište 55, Novi Pazar, Serbia
+                  36300.
                 </p>
+
                 <p className="text-gray-700 mb-2">
                   We operate the website{" "}
                   <a
@@ -100,8 +102,8 @@ const TermsClient = () => {
                 <p className="text-gray-700">
                   These Legal Terms constitute a legally binding agreement made
                   between you, whether personally or on behalf of an entity
-                  ("you"), and FrostyImage, concerning your access to and use of
-                  the Services.
+                  (&quot;you&quot;), and FrostyImage, concerning your access to
+                  and use of the Services.
                 </p>
               </section>
 
