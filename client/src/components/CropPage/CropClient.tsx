@@ -141,7 +141,7 @@ const CropClient = () => {
       deleteAllFiles();
       resetAll();
     } catch (error) {
-      console.log("This is Error ===> ", error);
+      console.log("error while deleting all ===> ", error);
     }
   };
 

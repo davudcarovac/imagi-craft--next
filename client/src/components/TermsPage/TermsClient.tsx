@@ -84,9 +84,10 @@ const TermsClient = () => {
                   >
                     https://www.frostyimage.com/
                   </a>{" "}
-                  (the "Site"), as well as any other related products and
-                  services that refer or link to these legal terms (the "Legal
-                  Terms") (collectively, the "Services").
+                  (the &quot;Site&quot;), as well as any other related products
+                  and services that refer or link to these legal terms (the
+                  &quot;Legal Terms&quot;) (collectively, the
+                  &quot;Services&quot;).
                 </p>
                 <p className="text-gray-700 mb-2">
                   You can contact us by email at{" "}
@@ -139,8 +140,9 @@ const TermsClient = () => {
                     property rights in our Services, including all source code,
                     databases, functionality, software, website designs, audio,
                     video, text, photographs, and graphics in the Services
-                    (collectively, the "Content"), as well as the trademarks,
-                    service marks, and logos contained therein (the "Marks").
+                    (collectively, the &quot;Content&quot;), as well as the
+                    trademarks, service marks, and logos contained therein (the
+                    &quot;Marks&quot;).
                   </p>
                   <p className="text-gray-700">
                     Our Content and Marks are protected by copyright and
@@ -156,8 +158,9 @@ const TermsClient = () => {
                   </h3>
                   <p className="text-gray-700 mb-2">
                     Subject to your compliance with these Legal Terms, including
-                    the "PROHIBITED ACTIVITIES" section below, we grant you a
-                    non-exclusive, non-transferable, revocable license to:
+                    the &quot;PROHIBITED ACTIVITIES&quot; section below, we
+                    grant you a non-exclusive, non-transferable, revocable
+                    license to:
                   </p>
                   <ul className="list-disc pl-4 mb-2 text-gray-700 space-y-1">
                     <li>access the Services; and</li>
@@ -285,22 +288,22 @@ const TermsClient = () => {
                 </p>
                 <p className="text-gray-700">
                   WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR
-                  COMPLETENESS OF THE SERVICES' CONTENT OR THE CONTENT OF ANY
-                  WEBSITES OR MOBILE APPLICATIONS LINKED TO THE SERVICES AND WE
-                  WILL ASSUME NO LIABILITY OR RESPONSIBILITY FOR ANY (1) ERRORS,
-                  MISTAKES, OR INACCURACIES OF CONTENT AND MATERIALS, (2)
-                  PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE WHATSOEVER,
-                  RESULTING FROM YOUR ACCESS TO AND USE OF THE SERVICES, (3) ANY
-                  UNAUTHORIZED ACCESS TO OR USE OF OUR SECURE SERVERS AND/OR ANY
-                  AND ALL PERSONAL INFORMATION AND/OR FINANCIAL INFORMATION
-                  STORED THEREIN, (4) ANY INTERRUPTION OR CESSATION OF
-                  TRANSMISSION TO OR FROM THE SERVICES, (5) ANY BUGS, VIRUSES,
-                  TROJAN HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR
-                  THROUGH THE SERVICES BY ANY THIRD PARTY, AND/OR (6) ANY ERRORS
-                  OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR
-                  DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF ANY
-                  CONTENT POSTED, TRANSMITTED, OR OTHERWISE MADE AVAILABLE VIA
-                  THE SERVICES.
+                  COMPLETENESS OF THE SERVICES&apos; CONTENT OR THE CONTENT OF
+                  ANY WEBSITES OR MOBILE APPLICATIONS LINKED TO THE SERVICES AND
+                  WE WILL ASSUME NO LIABILITY OR RESPONSIBILITY FOR ANY (1)
+                  ERRORS, MISTAKES, OR INACCURACIES OF CONTENT AND MATERIALS,
+                  (2) PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE
+                  WHATSOEVER, RESULTING FROM YOUR ACCESS TO AND USE OF THE
+                  SERVICES, (3) ANY UNAUTHORIZED ACCESS TO OR USE OF OUR SECURE
+                  SERVERS AND/OR ANY AND ALL PERSONAL INFORMATION AND/OR
+                  FINANCIAL INFORMATION STORED THEREIN, (4) ANY INTERRUPTION OR
+                  CESSATION OF TRANSMISSION TO OR FROM THE SERVICES, (5) ANY
+                  BUGS, VIRUSES, TROJAN HORSES, OR THE LIKE WHICH MAY BE
+                  TRANSMITTED TO OR THROUGH THE SERVICES BY ANY THIRD PARTY,
+                  AND/OR (6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND
+                  MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A
+                  RESULT OF THE USE OF ANY CONTENT POSTED, TRANSMITTED, OR
+                  OTHERWISE MADE AVAILABLE VIA THE SERVICES.
                 </p>
               </section>
 

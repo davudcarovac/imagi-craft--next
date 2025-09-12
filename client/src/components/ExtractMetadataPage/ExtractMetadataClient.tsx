@@ -8,6 +8,9 @@ import ServiceIntro from "../ServiceIntro";
 import UploadFile from "../UploadFile";
 import { useToast } from "@/context/ToastContext";
 import MetadataViewer from "./components/MetadataViewer";
+import DownloadArea from "../DownloadArea";
+import { deleteAllFiles } from "@/api/deleteAllApi";
+import LetsTryActions from "../LetsTryActions/LetsTryActions";
 
 // Tipovi za Exif vrednosti i Metadata
 export type ExifPrimitive = string | number | boolean | null;
@@ -30,6 +33,7 @@ const ExtractMetadataClient: React.FC = () => {
   const [showMetadata, setShowMetadata] = useState<null | "readOnly" | "edit">(
     null
   );
+  const [downloadLink, setDownloadLink] = useState<string>();
   const [changedMetadata, setChangedMetadata] = useState<MetadataRecord>({});
 
   const toast = useRef<Toast | null>(null);
@@ -80,6 +84,7 @@ const ExtractMetadataClient: React.FC = () => {
     setFile(undefined);
     setMetadata(null);
     formData.delete("files");
+    setDownloadLink(undefined);
   };
 
   const submitEditMetadata = (e: React.FormEvent<HTMLFormElement>) => {
@@ -91,6 +96,7 @@ const ExtractMetadataClient: React.FC = () => {
     mutateEditMetadata(formData, {
       onSuccess: (response) => {
         console.log("response edit metadata ===> ", response);
+        setDownloadLink(response?.fileId);
       },
       onError: (error: unknown) => {
         const message =
@@ -100,11 +106,29 @@ const ExtractMetadataClient: React.FC = () => {
     });
   };
 
+  const resetAll = () => {
+    setDownloadLink(undefined);
+    formData.delete("files");
+    setFile(undefined);
+    setMetadata(null);
+    setShowMetadata(null);
+    setChangedMetadata({});
+  };
+
+  const deleteAll = () => {
+    try {
+      deleteAllFiles();
+      resetAll();
+    } catch (error) {
+      console.log("error while deleting all ===> ", error);
+    }
+  };
+
   return (
     <div className="p-4 space-y-6">
       <Toast ref={toast} />
 
-      {!metadata && (
+      {!metadata && !downloadLink && (
         <ServiceIntro
           titleBeforeHighlight=""
           highlightedWord="Image metadata"
@@ -113,7 +137,21 @@ const ExtractMetadataClient: React.FC = () => {
         />
       )}
 
-      {!metadata && (
+      {downloadLink && (
+        <DownloadArea
+          deleteAll={deleteAll}
+          downloadLinks={[]}
+          handleDisableLink={null}
+          text="Your image has been edited. Download it!"
+          resetAll={resetAll}
+          isSingle={true}
+          downloadItem={downloadLink}
+        />
+      )}
+
+      {downloadLink && <LetsTryActions />}
+
+      {!metadata && !downloadLink && (
         <form onSubmit={submitExtraction}>
           <UploadFile
             tooltip="extract metadata image"
@@ -126,7 +164,7 @@ const ExtractMetadataClient: React.FC = () => {
         </form>
       )}
 
-      {metadata && (
+      {metadata && !downloadLink && (
         <form onSubmit={submitEditMetadata} className="space-y-6">
           <MetadataViewer
             metadata={{

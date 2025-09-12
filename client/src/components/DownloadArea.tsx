@@ -8,6 +8,7 @@ import { TransformedDownloadLinks } from "../types/apiTypes";
 import DownloadCard from "./DownloadCard";
 import DownloadAllButton from "./DownloadAllButton";
 import Image from "next/image";
+import { Tooltip } from "primereact/tooltip";
 
 type DownloadAreaType = {
   text: string;
@@ -36,7 +37,16 @@ const DownloadArea = ({
         <h1 className="py-3  text-xl">{text}</h1>
         {isSingle && downloadItem ? (
           <div className="flex items-center justify-center flex-row gap-3">
-            <div className="py-2">
+            <i
+              className="pi pi-info-circle "
+              style={{ marginLeft: 10, color: "#949494", fontSize: 20 }}
+            ></i>
+            <Tooltip
+              target=".pi-info-circle"
+              content="Processed image will be automatically deleted after 1 hour of processing."
+              position="top"
+            />
+            <div className="py-2 ">
               <SingleDownloadButton link={downloadItem} resetAll={resetAll}>
                 Download image
               </SingleDownloadButton>
@@ -63,7 +73,16 @@ const DownloadArea = ({
                 />
               ))}
             </div>
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-between items-center">
+              <i
+                className="pi pi-info-circle"
+                style={{ marginLeft: 10, color: "#949494", fontSize: 20 }}
+              ></i>
+              <Tooltip
+                target=".pi-info-circle"
+                content="Processed images will be automatically deleted after 1 hour of processing."
+                position="right"
+              />
               <div className="flex items-center gap-2 ">
                 <DownloadAllButton resetAll={resetAll} />
                 <DeleteAllButton deleteAll={deleteAll} className="px-3 py-2">

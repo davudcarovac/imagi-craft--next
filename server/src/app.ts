@@ -76,7 +76,7 @@ async function cleanOldFilesAsync(dir: string, maxAgeMs: number) {
 cron.schedule("0 * * * *", async () => {
   console.log("🧹 Running hourly cleanup job...");
 
-  const oneHour = 60 * 60 * 1000; // 1 sat u milisekundama
+  const oneHour = 60 * 60 * 1000;
 
   await cleanOldFilesAsync(path.join(__dirname, "uploads"), oneHour);
   await cleanOldFilesAsync(path.join(__dirname, "outputs"), oneHour);
