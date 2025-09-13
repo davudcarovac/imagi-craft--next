@@ -161,7 +161,7 @@ export default function CollageFeaturesSection() {
                           </p>
                         </div>
                         <button
-                          className="cursor-pointer self-start bg-[#1aac83] hover:bg-[#148a6a] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-md"
+                          className="cursor-pointer self-start bg-[#1aac83] hover:bg-[#148a6a] text-white px-4 py-2 saira-font text-sm font-medium transition-colors shadow-md"
                           aria-label={`Apply ${template.templateName} template`}
                         >
                           <Link href={"/collage-image"}>Apply Template</Link>

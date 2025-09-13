@@ -438,20 +438,25 @@ export async function changePassword(
   }
 }
 
+function getClientIp(req: Request): string {
+  // prvo pokušaj x-real-ip (Vercel)
+  let ip =
+    req.headers["x-real-ip"]?.toString() ||
+    req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
+    req.socket?.remoteAddress ||
+    null;
+
+  // fallback za lokalni dev
+  if (!ip || ip === "::1" || ip === "127.0.0.1") {
+    ip = "93.86.114.32"; // test IP (Srbija)
+  }
+
+  return ip;
+}
+
 export async function getGeo(req: Request, res: Response, next: NextFunction) {
   try {
-    let ip =
-      req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
-      req.socket?.remoteAddress ||
-      null;
-
-    if (!ip) {
-      throw new ErrorResponse("Ip not available", 400);
-    }
-
-    if (!ip || ip === "::1" || ip === "127.0.0.1") {
-      ip = "93.86.114.32"; // ili neka IP iz Srbije npr. "93.86.114.32"
-    }
+    const ip = getClientIp(req);
 
     const geo = geoip.lookup(ip);
 
