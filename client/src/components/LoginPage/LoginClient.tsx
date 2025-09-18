@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LoginResponse } from "@/types/apiTypes";
 import { useVerifyLoginTwoFactor } from "@/hooks/useVerifyLoginTwoFactor";
 import { InputOtp } from "primereact/inputotp";
+import LoadingButton from "../LoadingButton";
 
 const loginSchema = Yup.object({
   email: Yup.string()
@@ -191,15 +192,12 @@ const LoginClient = () => {
                       />
                     </div>
 
-                    <button
+                    <LoadingButton
+                      text="Log In"
+                      loadingText="Logging in..."
+                      isPending={isPending}
                       type="submit"
-                      disabled={isPending}
-                      className={` ${
-                        isPending ? "opacity-65" : "opacity-100"
-                      } w-full mt-3 bg-[#1aac83] text-white py-2 hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
-                    >
-                      Log In
-                    </button>
+                    />
                   </Form>
                 )}
               </Formik>

@@ -11,6 +11,7 @@ import { useSignup } from "@/hooks/useSignup";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
+import LoadingButton from "../LoadingButton";
 
 const signupSchema = Yup.object({
   name: Yup.string()
@@ -211,16 +212,12 @@ const SignupClient = () => {
                     className="text-red-500 text-[13px]"
                   />
                 </div>
-
-                <button
+                <LoadingButton
+                  text="Sign Up"
+                  loadingText="Signing up..."
+                  isPending={isPending}
                   type="submit"
-                  disabled={isPending}
-                  className={` ${
-                    isPending ? "opacity-65" : "opacity-100"
-                  } w-full mt-3 bg-[#1aac83] text-white py-2  hover:bg-[#159a74] saira-font cursor-pointer transition-all duration-300 transform hover:scale-105`}
-                >
-                  Sign Up
-                </button>
+                />
               </Form>
             )}
           </Formik>
