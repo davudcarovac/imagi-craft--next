@@ -2,7 +2,7 @@
 
 const HomePageVideo = () => {
   return (
-    <main className="relative w-[85%]">
+    <main className="relative w-[70%]">
       {/* Video */}
       <video
         src="/intro-video.mp4"

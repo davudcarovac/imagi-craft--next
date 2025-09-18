@@ -83,7 +83,7 @@ const ConvertClient = () => {
   };
 
   return (
-    <div>
+    <div className="bg-[#f9f9f9] min-h-screen w-full flex justify-center flex-col  px-4 sm:px-6 lg:px-8 py-10">
       <ServiceIntro
         titleBeforeHighlight=""
         highlightedWord="Convert"

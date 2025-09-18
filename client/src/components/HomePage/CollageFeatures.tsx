@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function CollageFeaturesSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg">
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg rounded-2xl">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">

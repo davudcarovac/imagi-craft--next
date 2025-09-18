@@ -13,17 +13,17 @@ const HomeClient = () => {
   return (
     <div className="min-h-screen w-full  flex justify-center flex-col">
       <div className="flex justify-center py-10 flex-col items-center">
-        <div className="max-w-6xl mx-auto px-6 py-10 text-center">
-          <h1 className="text-4xl md:text-[68px] md:leading-[76px] font-extrabold  text-[#22C7A8] mb-4 drop-shadow-lg saira-font">
-            Transform your images effortlessly with Frosty Image
+        <div className="max-w-6xl mx-auto px-6 py-[75px] text-center">
+          <h1 className="text-4xl md:text-[55px] md:leading-[60px] font-extrabold  text-[#1aac83] mb-4 drop-shadow-lg saira-font">
+            Transform your images <br /> effortlessly with Frosty Image
           </h1>
-          <p className="text-gray-700 max-w-3xl mx-auto  text-md md:text-xl  mb-8">
+          <p className="text-gray-700 max-w-3xl mx-auto  text-[17px] md:text-lg  mb-8">
             If you want to create quality images, choosing the right software is
             the first step. Unlock your image processing potential with
             FrostyImg.
           </p>
           <button
-            className="bg-[#22C7A8] hover:bg-[#1a9a82] text-white font-semibold px-8 py-3 text-lg shadow-md hover:shadow-lg saira-font 
+            className="bg-[#1aac83] hover:bg-[#1aac83] text-white font-semibold px-8 py-3 text-lg shadow-md hover:shadow-lg saira-font 
              transition-all duration-300 transform hover:scale-105 cursor-pointer"
             onClick={() => alert("Get Started clicked!")}
           >
@@ -54,7 +54,7 @@ const HomeClient = () => {
             </div>
 
             {/* Premium plan section */}
-            <section className="relative bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+            <section className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-lg ">
               {/* Dekorativni blur krugovi */}
 
               <div className="relative z-10 p-8 md:p-12">
@@ -73,7 +73,7 @@ const HomeClient = () => {
                   </h2>
 
                   {/* Opis */}
-                  <p className="text-lg text-gray-600">
+                  <p className="text-[16px] md:text-lg  text-gray-600">
                     Automatically detect and perfectly crop faces with our
                     AI-powered tool. Ideal for profile pictures, passports, and
                     social media.

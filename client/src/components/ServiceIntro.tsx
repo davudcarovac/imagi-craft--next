@@ -26,7 +26,11 @@ export default function ServiceIntro({
         <span className="text-[#1aac83] saira-font">{highlightedWord}</span>{" "}
         {titleAfterHighlight}
       </h1>
-      <p className={`text-[#555] text-base ${page === "home" && "py-3"}`}>
+      <p
+        className={`text-[#555]  ${
+          page === "home" && "py-3"
+        } text-[17px] md:text-lg `}
+      >
         {description}
       </p>
     </div>

@@ -82,7 +82,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 px-6 sm:px-8 h-20 flex justify-between items-center bg-white border-b border-slate-200">
+    <header className="sticky top-0 z-50 px-6 sm:px-8 h-20 flex justify-between items-center bg-[#ffffff] ">
       <Toast ref={toast} />
 
       <Link href="/">
