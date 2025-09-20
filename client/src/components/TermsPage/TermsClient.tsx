@@ -12,6 +12,7 @@ const TermsClient = () => {
     { id: "userreps", title: "User Representations" },
     { id: "prohibited", title: "Prohibited Activities" },
     { id: "userdata", title: "User Data" },
+    { id: "refund", title: "Refund Policy" },
     { id: "disclaimer", title: "Disclaimer" },
     { id: "contact", title: "Contact Us" },
   ];
@@ -271,6 +272,46 @@ const TermsClient = () => {
                   any loss or corruption of any such data, and you hereby waive
                   any right of action against us arising from any such loss or
                   corruption of such data.
+                </p>
+              </section>
+
+              {/* Refund policy */}
+
+              <section id="refund" className="mb-6">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">
+                  Refund policy
+                </h2>
+                <p className="text-gray-700 mb-2">
+                  This Refund Policy applies to all subscription services
+                  provided through our platform. By purchasing a subscription,
+                  you acknowledge and agree to the following terms: service.{" "}
+                  <span className="font-semibold">No Refunds </span>
+                  All subscription fees are final and non-refundable. Once a
+                  payment has been processed, no refunds will be issued,
+                  regardless of usage, cancellation, or failure to utilize the
+                  service.{" "}
+                  <span className="font-semibold">
+                    Subscription Period
+                  </span>{" "}
+                  Each subscription plan is valid for a period of 30 days from
+                  the date of purchase. During this period, you will retain full
+                  access to the features included in your selected plan. At the
+                  end of the subscription term, the plan will automatically
+                  expire unless renewed.
+                  <span className="font-semibold">Cancellation </span>
+                  Subscriptions cannot be canceled before the end of the billing
+                  period. You will continue to have access to the service until
+                  the subscription expires.
+                  <span className="font-semibold">Plan Upgrades </span>
+                  You may upgrade your plan at any time during your active
+                  subscription period, provided a higher-tier plan is available.
+                  Downgrades and partial refunds for unused time are not
+                  permitted.
+                  <span className="font-semibold">Automatic Expiration </span>
+                  Once the subscription term expires, continued use of the
+                  service will require the purchase of a new subscription. By
+                  purchasing and using our services, you confirm that you have
+                  read, understood, and agreed to this Refund Policy.
                 </p>
               </section>
 
