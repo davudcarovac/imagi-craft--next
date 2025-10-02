@@ -1,5 +1,5 @@
 import { getCookie } from "@/utils/getCookie";
-import axios from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_NODE_ENV === "production"
@@ -35,7 +35,7 @@ function hideServerSleepAlert() {
 }
 
 // request interceptor
-axiosInstance.interceptors.request.use((config) => {
+axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (config.url?.startsWith("http")) {
     throw new Error("Absolute URLs are not allowed!");
   }
@@ -49,11 +49,13 @@ axiosInstance.interceptors.request.use((config) => {
       config.method.toLocaleLowerCase()
     )
   ) {
+    // Axios headers sada ne mogu biti undefined
+    config.headers = config.headers ?? {};
     config.headers["x-csrf-token"] = csrfToken;
   }
 
-  // ⏳ ako zahtev traje duže od 5 sekundi, pokaži alert
-  (config as any)._sleepTimeout = setTimeout(() => {
+  // ⏳ dodaj "_sleepTimeout" preko type assertion
+  (config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> })._sleepTimeout = setTimeout(() => {
     showServerSleepAlert();
   }, 5000);
 
@@ -62,13 +64,15 @@ axiosInstance.interceptors.request.use((config) => {
 
 // response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => {
-    clearTimeout((response.config as any)._sleepTimeout);
+  (response: AxiosResponse) => {
+    const cfg = response.config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> };
+    if (cfg._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
     return response;
   },
   (error) => {
-    clearTimeout((error.config as any)._sleepTimeout);
+    const cfg = error.config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> };
+    if (cfg?._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
     return Promise.reject(error);
   }
