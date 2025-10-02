@@ -15,7 +15,7 @@ function showServerSleepAlert() {
   if (!document.getElementById("server-sleep-alert")) {
     const div = document.createElement("div");
     div.id = "server-sleep-alert";
-    div.innerText = "⏳ Server se budi, molimo sačekajte...";
+    div.innerText = "⏳ The server is waking up, please wait...";
     div.style.position = "fixed";
     div.style.bottom = "20px";
     div.style.left = "50%";
