@@ -1,5 +1,5 @@
 import { getCookie } from "@/utils/getCookie";
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_NODE_ENV === "production"
