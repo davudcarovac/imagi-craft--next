@@ -80,7 +80,7 @@ const LoginClient = () => {
   };
 
   return (
-    <div className="min-h-[80vh] bg-[#f0f4f8] flex items-center justify-center px-4">
+    <div className="min-h-[89vh] bg-[#f0f4f8] flex items-center justify-center px-4">
       <Toast ref={toast} />
       <div className="w-full max-w-6xl bg-white shadow-lg rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
         <div className="p-10">
