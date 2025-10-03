@@ -22,13 +22,13 @@ const HomeClient = () => {
             the first step. Unlock your image processing potential with
             FrostyImg.
           </p>
-          <button
+          <Link
+            href={"/login"}
             className="bg-[#1aac83] hover:bg-[#1aac83] text-white font-semibold px-8 py-3 text-lg shadow-md hover:shadow-lg saira-font 
              transition-all duration-300 transform hover:scale-105 cursor-pointer"
-            onClick={() => alert("Get Started clicked!")}
           >
             Get Started
-          </button>
+          </Link>
         </div>
 
         <HomePageVideo />

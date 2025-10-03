@@ -278,42 +278,35 @@ const TermsClient = () => {
               {/* Refund policy */}
 
               <section id="refund" className="mb-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-2">
-                  Refund policy
-                </h2>
-                <p className="text-gray-700 mb-2">
-                  This Refund Policy applies to all subscription services
-                  provided through our platform. By purchasing a subscription,
-                  you acknowledge and agree to the following terms: service.{" "}
-                  <span className="font-semibold">No Refunds </span>
-                  All subscription fees are final and non-refundable. Once a
-                  payment has been processed, no refunds will be issued,
-                  regardless of usage, cancellation, or failure to utilize the
-                  service.{" "}
-                  <span className="font-semibold">
-                    Subscription Period
-                  </span>{" "}
-                  Each subscription plan is valid for a period of 30 days from
-                  the date of purchase. During this period, you will retain full
-                  access to the features included in your selected plan. At the
-                  end of the subscription term, the plan will automatically
-                  expire unless renewed.
-                  <span className="font-semibold">Cancellation </span>
-                  Subscriptions cannot be canceled before the end of the billing
-                  period. You will continue to have access to the service until
-                  the subscription expires.
-                  <span className="font-semibold">Plan Upgrades </span>
-                  You may upgrade your plan at any time during your active
-                  subscription period, provided a higher-tier plan is available.
-                  Downgrades and partial refunds for unused time are not
-                  permitted.
-                  <span className="font-semibold">Automatic Expiration </span>
-                  Once the subscription term expires, continued use of the
-                  service will require the purchase of a new subscription. By
-                  purchasing and using our services, you confirm that you have
-                  read, understood, and agreed to this Refund Policy.
-                </p>
-              </section>
+  <h2 className="text-lg font-bold text-gray-900 mb-2">Refund policy</h2>
+  <p className="text-gray-700 mb-2">
+    This Refund Policy applies to all subscription services provided through
+    our platform. By purchasing a subscription, you acknowledge and agree to
+    the following terms:{" "}
+    <span className="font-semibold">Refund Eligibility </span>
+    Users are entitled to request a refund within{" "}
+    <span className="font-semibold">14 days</span> of the subscription payment,
+    provided the request is submitted in writing to our support team. Refunds
+    will not be granted after this 14-day period has expired.{" "}
+    <span className="font-semibold">Subscription Period</span> Each
+    subscription plan is valid for a period of 30 days from the date of
+    purchase. During this period, you will retain full access to the features
+    included in your selected plan. At the end of the subscription term, the
+    plan will automatically expire unless renewed.{" "}
+    <span className="font-semibold">Cancellation </span> Subscriptions cannot
+    be canceled before the end of the billing period. You will continue to
+    have access to the service until the subscription expires.{" "}
+    <span className="font-semibold">Plan Upgrades </span> You may upgrade your
+    plan at any time during your active subscription period, provided a
+    higher-tier plan is available. Downgrades and partial refunds for unused
+    time are not permitted.{" "}
+    <span className="font-semibold">Automatic Expiration </span> Once the
+    subscription term expires, continued use of the service will require the
+    purchase of a new subscription. By purchasing and using our services, you
+    confirm that you have read, understood, and agreed to this Refund Policy.
+  </p>
+</section>
+
 
               {/* Disclaimer Section */}
               <section id="disclaimer" className="mb-6">
