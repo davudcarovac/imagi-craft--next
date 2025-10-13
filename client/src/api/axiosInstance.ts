@@ -1,5 +1,9 @@
 import { getCookie } from "@/utils/getCookie";
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_NODE_ENV === "production"
@@ -55,7 +59,11 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   }
 
   // ⏳ dodaj "_sleepTimeout" preko type assertion
-  (config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> })._sleepTimeout = setTimeout(() => {
+  (
+    config as InternalAxiosRequestConfig & {
+      _sleepTimeout?: ReturnType<typeof setTimeout>;
+    }
+  )._sleepTimeout = setTimeout(() => {
     showServerSleepAlert();
   }, 5000);
 
@@ -63,17 +71,26 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 // response interceptor
+
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    const cfg = response.config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> };
+    const cfg = response.config as any;
     if (cfg._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
     return response;
   },
-  (error) => {
-    const cfg = error.config as InternalAxiosRequestConfig & { _sleepTimeout?: ReturnType<typeof setTimeout> };
+  (error: AxiosError) => {
+    const cfg = error.config as any;
     if (cfg?._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
+
+    // AUTOMATSKA ODJAVA na 401
+    if (error.response?.status === 401) {
+      console.warn("Token istekao ili nevažeći — automatska odjava");
+      localStorage.removeItem("user"); // ili bilo koji state koji čuvaš
+      window.location.href = "/login"; // preusmeri korisnika
+    }
+
     return Promise.reject(error);
   }
 );

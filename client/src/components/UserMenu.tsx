@@ -15,15 +15,16 @@ const UserMenu = () => {
   // const toast = useRef<Toast>(null);
   const router = useRouter();
   const { dispatch } = useAuthContext();
-  const { user } = useGetUser();
   const { mutate } = useLogout();
+  const { user } = useGetUser();
+
   const [profileImage, setProfileImg] = useState(
     user?.profileImage || defaultProfileImage
   );
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // console.log("user from request ===> ", user);
+    console.log("user from request ===> ", user);
 
     if (user) {
       setProfileImg(user.profileImage || defaultProfileImage);

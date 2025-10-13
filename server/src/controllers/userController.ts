@@ -20,7 +20,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
 const NODE_ENV = process.env.NODE_ENV;
 
 const createToken = (userId: string, plan: string) => {
-  return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: "3d" });
+  return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: "1d" });
 };
 
 export const registerSchema = z
@@ -84,7 +84,7 @@ export async function signupUser(
       httpOnly: true,
       secure: NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 dan
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     const safeUser = {
