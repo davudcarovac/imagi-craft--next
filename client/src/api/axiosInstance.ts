@@ -1,6 +1,7 @@
 import { getCookie } from "@/utils/getCookie";
 import axios, {
   AxiosError,
+  AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
@@ -72,22 +73,26 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 // response interceptor
 
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  _sleepTimeout?: ReturnType<typeof setTimeout>;
+}
+
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    const cfg = response.config as any;
+    const cfg = response.config as CustomAxiosRequestConfig;
     if (cfg._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
     return response;
   },
   (error: AxiosError) => {
-    const cfg = error.config as any;
+    const cfg = error.config as CustomAxiosRequestConfig;
     if (cfg?._sleepTimeout) clearTimeout(cfg._sleepTimeout);
     hideServerSleepAlert();
 
     // AUTOMATSKA ODJAVA na 401
     if (error.response?.status === 401) {
       console.warn("Token istekao ili nevažeći — automatska odjava");
-      localStorage.removeItem("user"); // ili bilo koji state koji čuvaš
+      localStorage.removeItem("user"); // očisti user state
       window.location.href = "/login"; // preusmeri korisnika
     }
 
