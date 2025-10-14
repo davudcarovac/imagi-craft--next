@@ -24,7 +24,7 @@ const UserMenu = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    console.log("user from request ===> ", user);
+    // console.log("user from request ===> ", user);
 
     if (user) {
       setProfileImg(user.profileImage || defaultProfileImage);

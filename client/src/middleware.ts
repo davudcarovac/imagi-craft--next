@@ -18,8 +18,18 @@ async function verifyJWT(token: string) {
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const pathname = request.nextUrl.pathname;
-  console.log("auth token middleware ===> ", token);
 
+  if (pathname === "/login" || pathname === "/signup") {
+    if (token) {
+      const decoded = await verifyJWT(token);
+      if (decoded) {
+        return NextResponse.redirect(new URL("/profile/overview", request.url));
+      }
+    }
+    return NextResponse.next();
+  }
+
+  // ✅ 2️⃣ Za /profile obavezno mora imati token
   if (pathname.startsWith("/profile")) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
@@ -27,21 +37,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ✅ 3️⃣ Za premium stranice — collage i crop
   if (pathname === "/collage-image" || pathname === "/crop-face") {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
     const decoded = await verifyJWT(token);
-
     if (!decoded) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
     const plan = decoded.plan;
-
-    // console.log("User plan ===> ", plan === "PROFESSIONAL");
-
     if (plan === "PROFESSIONAL" || plan === "BUSINESS") {
       return NextResponse.next();
     } else {
@@ -49,9 +56,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // ✅ 4️⃣ Sve ostalo — slobodan prolaz
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/collage-image", "/crop-face"],
+  matcher: [
+    "/profile/:path*",
+    "/collage-image",
+    "/crop-face",
+    "/login",
+    "/signup",
+  ],
 };
