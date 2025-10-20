@@ -23,6 +23,7 @@ import {
   forgotPassword,
   getCsrfToken,
   getGeo,
+  getRefreshToken,
   getUser,
   getUsers,
   loginUser,
@@ -59,6 +60,8 @@ router.get("/user", verifyToken, getUser);
 router.get("/csrf-token", csrfProtection, getCsrfToken);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
+router.post("/refresh-token", getRefreshToken);
+
 router.post("/logout", csrfProtection, verifyToken, logoutUser);
 router.post(
   "/upload-profile-image",

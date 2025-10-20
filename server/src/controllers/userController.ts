@@ -14,8 +14,11 @@ import prisma from "../lib/prisma.ts";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 import type { User } from "@prisma/client";
+import { generateRefreshToken } from "../utils/refreshToken.ts";
+import type { TokenPayload } from "../types/output.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secr3t";
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "secr3tTkn";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -23,8 +26,7 @@ const createToken = (userId: string, plan: string) => {
   return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: "1d" });
 };
 
-export const registerSchema = z
-  .object({
+export const registerSchema = z .object({
     email: z.string().email(),
     name: z.string().min(4, "Name must be at least 4 characters"),
     password: z
@@ -76,6 +78,17 @@ export async function signupUser(
         password: hashedPassword,
         name,
       },
+    });
+
+
+const refreshToken = generateRefreshToken(user.id, user.plan)
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
+      // sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60, // 7 dana ✅
     });
 
     const token = createToken(user.id, user.plan);
@@ -142,6 +155,17 @@ export async function loginUser(
       return;
     }
 
+const refreshToken = generateRefreshToken(user.id, user.plan)
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
+      // sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60, // 7 dana ✅
+    });
+
+
     const authToken = createToken(user.id, user.plan);
     res.cookie("auth_token", authToken, {
       httpOnly: true,
@@ -181,6 +205,32 @@ export async function loginUser(
     next(error);
   }
 }
+
+
+export  async function getRefreshToken(req: Request, res: Response, next: NextFunction) {
+
+const tokenFromCookies = req.cookies.refresh_token
+
+if (!tokenFromCookies) {
+  throw new ErrorResponse("No refresh token found", 401)
+}
+
+    const decoded = jwt.verify(tokenFromCookies, JWT_REFRESH_SECRET) as TokenPayload;
+
+    if (!decoded) {
+      throw new ErrorResponse("Invalid refresh token", 400)
+    }
+
+const newAccessToken = createToken(decoded.userId, decoded.plan)
+
+console.log("user id, plan ===> ", decoded.userId, decoded.plan)
+console.log("Novi token ===> ", newAccessToken)
+
+
+res.status(200).json({message: "Access token generated!", accessToken: newAccessToken})
+
+}
+
 
 export async function logoutUser(
   req: Request,
