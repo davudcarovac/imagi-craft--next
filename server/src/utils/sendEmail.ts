@@ -29,9 +29,23 @@ export async function sendEmail(
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log(info);
+    console.log("Email sent:", info.response);
     return info;
   } catch (error: any) {
-    throw new ErrorResponse(error.message, 500);
+    if (error.code === "EENVELOPE") {
+      // Greška ako adresa primaoca nije validna (sintaksno)
+      throw new ErrorResponse("Invalid email address format.", 400);
+    }
+
+    if (error.code === "EAUTH") {
+      throw new ErrorResponse("Email authentication failed.", 500);
+    }
+
+    if (error.code === "ECONNECTION" || error.code === "ETIMEDOUT") {
+      throw new ErrorResponse("Could not connect to email server.", 500);
+    }
+
+    // Default fallback
+    throw new ErrorResponse("Failed to send email: " + error.message, 500);
   }
 }

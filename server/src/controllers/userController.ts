@@ -26,7 +26,8 @@ const createToken = (userId: string, plan: string) => {
   return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: "1d" });
 };
 
-export const registerSchema = z .object({
+export const registerSchema = z
+  .object({
     email: z.string().email(),
     name: z.string().min(4, "Name must be at least 4 characters"),
     password: z
@@ -71,56 +72,112 @@ export async function signupUser(
     if (existingUser) throw new ErrorResponse("User already registred", 400);
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationExpires = new Date(Date.now() + 60 * 60 * 1000);
 
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
+        isVerified: false,
+        verificationToken,
+        verificationExpires,
       },
     });
 
+    const verifyEmailURL = `${
+      NODE_ENV === "development" ? "http://localhost:3000" : process.env.DOMAIN
+    }/verify-email?vtoken=${user.verificationToken}`;
+    const message = `
+      <h1>You have requested a email verification</h1>
+      <p>Click the link below to verify your email:</p>
+      <a href="${verifyEmailURL}" target="_blank">${verifyEmailURL}</a>
+    `;
 
-const refreshToken = generateRefreshToken(user.id, user.plan)
-
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
-      // sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60, // 7 dana ✅
+    await sendEmail({
+      to: user.email,
+      subject: "Email verification",
+      text: message,
     });
-
-    const token = createToken(user.id, user.plan);
-
-    res.cookie("auth_token", token, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    const safeUser = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      plan: user.plan,
-      planExpires: user.planExpires,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      role: user.role,
-      profileImage: user.profileImage,
-    };
 
     res.status(201).json({
-      success: true,
-      message: "User created!",
-      // token: token,
-      user: safeUser,
+      message: "Account created! Email verification sent, check email.",
     });
+    // const refreshToken = generateRefreshToken(user.id, user.plan)
+
+    //     res.cookie("refresh_token", refreshToken, {
+    //       httpOnly: true,
+    //       secure: NODE_ENV === "production",
+    //         sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
+    //       // sameSite: "strict",
+    //     maxAge: 7 * 24 * 60 * 60, // 7 dana ✅
+    //     });
+
+    //     const token = createToken(user.id, user.plan);
+
+    //     res.cookie("auth_token", token, {
+    //       httpOnly: true,
+    //       secure: NODE_ENV === "production",
+    //       sameSite: "strict",
+    //       maxAge: 24 * 60 * 60 * 1000,
+    //     });
+
+    //     const safeUser = {
+    //       id: user.id,
+    //       email: user.email,
+    //       name: user.name,
+    //       plan: user.plan,
+    //       planExpires: user.planExpires,
+    //       createdAt: user.createdAt,
+    //       updatedAt: user.updatedAt,
+    //       role: user.role,
+    //       profileImage: user.profileImage,
+    //     };
+
+    //     res.status(201).json({
+    //       success: true,
+    //       message: "User created!",
+    //       // token: token,
+    //       user: safeUser,
+    //     });
   } catch (error) {
     next(error);
   }
+}
+
+// export async function sendVerificationEmail(req: Request, res: Response, next: NextFunction) {
+
+// }
+
+export async function verifyEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { verificationToken } = req.body;
+
+  const user = await prisma.user.findFirst({
+    where: {
+      verificationToken: verificationToken,
+      verificationExpires: { gt: new Date() },
+    },
+  });
+
+  if (!user) {
+    throw new ErrorResponse("Invalid or expired verification token", 400);
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      isVerified: true,
+      verificationExpires: null,
+      verificationToken: null,
+    },
+  });
+
+  res.status(200).json({ message: "Email verified!" });
 }
 
 export async function loginUser(
@@ -142,6 +199,41 @@ export async function loginUser(
     const isMatch = await comparePasswords(password, user.password);
     if (!isMatch) throw new ErrorResponse("Invalid credentials", 401);
 
+    if (!user.isVerified) {
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      const verificationExpires = new Date(Date.now() + 60 * 60 * 1000);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          verificationToken,
+          verificationExpires,
+        },
+      });
+
+      const verifyEmailURL = `${
+        NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : process.env.DOMAIN
+      }/verify-email?vtoken=${verificationToken}`;
+      const message = `
+      <h1>You have requested a email verification</h1>
+      <p>Click the link below to verify your email:</p>
+      <a href="${verifyEmailURL}" target="_blank">${verifyEmailURL}</a>
+    `;
+
+      await sendEmail({
+        to: user.email,
+        subject: "Email verification",
+        text: message,
+      });
+
+      res
+        .status(403)
+        .json({ message: "Email not verified, verification mail sent" });
+      return;
+    }
+
     // console.log(user);
 
     if (user.twoFactorEnabled) {
@@ -155,16 +247,15 @@ export async function loginUser(
       return;
     }
 
-const refreshToken = generateRefreshToken(user.id, user.plan)
+    const refreshToken = generateRefreshToken(user.id, user.plan);
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
       // sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60, // 7 dana ✅
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dana u milisekundama ✅
     });
-
 
     const authToken = createToken(user.id, user.plan);
     res.cookie("auth_token", authToken, {
@@ -184,7 +275,7 @@ const refreshToken = generateRefreshToken(user.id, user.plan)
       email: user.email,
       name: user.name,
       plan: user.plan,
-      planExpires: user,
+      planExpires: user.planExpires,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       role: user.role,
@@ -206,31 +297,35 @@ const refreshToken = generateRefreshToken(user.id, user.plan)
   }
 }
 
+export async function getRefreshToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const tokenFromCookies = req.cookies.refresh_token;
 
-export  async function getRefreshToken(req: Request, res: Response, next: NextFunction) {
+  if (!tokenFromCookies) {
+    throw new ErrorResponse("No refresh token found", 401);
+  }
 
-const tokenFromCookies = req.cookies.refresh_token
+  const decoded = jwt.verify(
+    tokenFromCookies,
+    JWT_REFRESH_SECRET
+  ) as TokenPayload;
 
-if (!tokenFromCookies) {
-  throw new ErrorResponse("No refresh token found", 401)
+  if (!decoded) {
+    throw new ErrorResponse("Invalid refresh token", 400);
+  }
+
+  const newAccessToken = createToken(decoded.userId, decoded.plan);
+
+  console.log("user id, plan ===> ", decoded.userId, decoded.plan);
+  console.log("Novi token ===> ", newAccessToken);
+
+  res
+    .status(200)
+    .json({ message: "Access token generated!", accessToken: newAccessToken });
 }
-
-    const decoded = jwt.verify(tokenFromCookies, JWT_REFRESH_SECRET) as TokenPayload;
-
-    if (!decoded) {
-      throw new ErrorResponse("Invalid refresh token", 400)
-    }
-
-const newAccessToken = createToken(decoded.userId, decoded.plan)
-
-console.log("user id, plan ===> ", decoded.userId, decoded.plan)
-console.log("Novi token ===> ", newAccessToken)
-
-
-res.status(200).json({message: "Access token generated!", accessToken: newAccessToken})
-
-}
-
 
 export async function logoutUser(
   req: Request,
@@ -323,7 +418,9 @@ export async function forgotPassword(
       },
     });
 
-    const resetURL = `http://localhost:3000/reset-password/${resetPasswordToken}`;
+    const resetURL = `${
+      NODE_ENV === "development" ? "http://localhost:3000" : process.env.DOMAIN
+    }/reset-password/${resetPasswordToken}`;
     const message = `
       <h1>You have requested a password reset</h1>
       <p>Click the link below to reset your password:</p>

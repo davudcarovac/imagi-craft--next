@@ -33,6 +33,7 @@ import {
   setupTwoFactor,
   signupUser,
   uploadProfileImg,
+  verifyEmail,
   verifyEnableTwoFactor,
   verifyLoginTwoFactor,
 } from "../controllers/userController.ts";
@@ -60,6 +61,8 @@ router.get("/user", verifyToken, getUser);
 router.get("/csrf-token", csrfProtection, getCsrfToken);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
+router.post("/verify-email", verifyEmail);
+
 router.post("/refresh-token", getRefreshToken);
 
 router.post("/logout", csrfProtection, verifyToken, logoutUser);

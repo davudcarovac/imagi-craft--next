@@ -23,19 +23,23 @@ model User {
   email                 String     @unique
   password              String
   name                  String?
-  plan        String     @default("STARTER") @map("plan")
-  planExpires DateTime?  @db.Timestamp(6) @map("plan_expires")
+  plan                  String     @default("STARTER") @map("plan")
+  planExpires           DateTime?  @db.Timestamp(6) @map("plan_expires")
   createdAt             DateTime?  @default(now()) @db.Timestamp(6)
   updatedAt             DateTime   @default(now()) @db.Timestamp(6) @map("updatedat")
   resetPasswordToken    String?    @map("resetpasswordtoken")
   resetPasswordExpire   DateTime?  @map("resetpasswordexpire")
-  profileImage          String?    @map("profileimage")  
-  profileImagePublicId  String?    @map("profileimagepublicid")  
+  profileImage          String?    @map("profileimage")
+  profileImagePublicId  String?    @map("profileimagepublicid")
   role                  Role       @default(USER)
   twoFactorEnabled      Boolean    @default(false) @map("twofactorenabled")
   twoFactorSecret       String?    @map("twofactorsecret")
 
   isVerified            Boolean    @default(false) @map("isverified")
-  
+
+  // ✅ Dodaj ovo:
+  verificationToken     String?    @map("verificationtoken")
+  verificationExpires   DateTime?  @map("verificationexpires")
+
   @@map("user")
 }
