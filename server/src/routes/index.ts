@@ -29,6 +29,7 @@ import {
   loginUser,
   logoutUser,
   removeProfileImg,
+  resendVerificationEmail,
   resetPassword,
   setupTwoFactor,
   signupUser,
@@ -62,6 +63,7 @@ router.get("/csrf-token", csrfProtection, getCsrfToken);
 router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/verify-email", verifyEmail);
+router.post("/resend-verification-email", resendVerificationEmail);
 
 router.post("/refresh-token", getRefreshToken);
 

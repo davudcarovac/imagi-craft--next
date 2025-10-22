@@ -137,8 +137,9 @@ export type User = {
 export type SignupResponse = {
   success: boolean;
   message: string;
+  email: string;
   // token: string;
-  user: User;
+  // user: User;
 };
 
 export type GetCsrfTokenResponse = {
@@ -196,6 +197,10 @@ export type VerifyLoginTwoFactorData = {
   id: string | null;
 };
 
+export type ResendVerificationEmailData = {
+  email: string;
+};
+
 export type getUserResponse = {
   message: string;
   success: boolean;
@@ -221,6 +226,11 @@ export type DisableTwoFactorResponse = VerifyEnableTwoFactorResponse;
 
 export type VerifyLoginTwoFactorResponse = SignupResponse;
 export type ErrorResponse = {
+  success: boolean;
+  message: string;
+};
+
+export type ResendVerificationEmailResponse = {
   success: boolean;
   message: string;
 };

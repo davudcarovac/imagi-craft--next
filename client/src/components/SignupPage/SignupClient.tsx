@@ -8,7 +8,7 @@ import InputComponent from "../InputComponent";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useSignup } from "@/hooks/useSignup";
-import { useAuthContext } from "@/hooks/useAuthContext";
+// import { useAuthContext } from "@/hooks/useAuthContext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
 import LoadingButton from "../LoadingButton";
@@ -49,7 +49,7 @@ const SignupClient = () => {
     confirmPassword: "",
   };
 
-  const { dispatch } = useAuthContext();
+  // const { dispatch } = useAuthContext();
   const { mutate, isPending } = useSignup();
 
   return (
@@ -80,6 +80,9 @@ const SignupClient = () => {
               mutate(values, {
                 onSuccess: (response) => {
                   console.log("Response from signup ===> ", response);
+                  router.push(
+                    `/check-email?email=${encodeURIComponent(response.email)}`
+                  );
 
                   // const { name, email, id, ispremium, role } = response.user;
                   // const user: User = {
@@ -90,8 +93,8 @@ const SignupClient = () => {
                   //   token: response.token,
                   //   role,
                   // };
-                  localStorage.setItem("user", JSON.stringify(response.user));
-                  dispatch({ type: "LOGIN", payload: response.user });
+                  // localStorage.setItem("user", JSON.stringify(response.user));
+                  // dispatch({ type: "LOGIN", payload: response.user });
                   toast.current?.show({
                     severity: "success",
                     summary: "Success",
@@ -100,8 +103,6 @@ const SignupClient = () => {
                   });
 
                   resetForm();
-
-                  router.push("/");
                 },
                 onError: (error) => {
                   toast.current?.show({

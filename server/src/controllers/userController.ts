@@ -102,6 +102,8 @@ export async function signupUser(
     });
 
     res.status(201).json({
+      success: true,
+      email: user.email,
       message: "Account created! Email verification sent, check email.",
     });
     // const refreshToken = generateRefreshToken(user.id, user.plan)
@@ -149,6 +151,68 @@ export async function signupUser(
 // export async function sendVerificationEmail(req: Request, res: Response, next: NextFunction) {
 
 // }
+
+export async function resendVerificationEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      throw new ErrorResponse("Please provide an email address.", 400);
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new ErrorResponse("User with this email does not exist.", 404);
+    }
+
+    if (user.isVerified) {
+      throw new ErrorResponse("This account is already verified.", 400);
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationExpires = new Date(Date.now() + 60 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verificationToken: verificationToken,
+        verificationExpires,
+      },
+    });
+
+    const domain =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : process.env.DOMAIN;
+
+    const verifyEmailURL = `${domain}/verify-email?vtoken=${verificationToken}`;
+
+    const htmlMessage = `
+      <h1>Email Verification</h1>
+      <p>Click the link below to verify your email address:</p>
+      <a href="${verifyEmailURL}" target="_blank">${verifyEmailURL}</a>
+      <p>This link will expire in 1 hour.</p>
+    `;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Verify Your Email Address",
+      text: htmlMessage,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Verification email resent. Please check your inbox.",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function verifyEmail(
   req: Request,
