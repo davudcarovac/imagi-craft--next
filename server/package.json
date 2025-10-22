@@ -10,7 +10,8 @@
     "create-dirs": "mkdir -p dist/models dist/outputs dist/outputsForZip dist/uploads dist/uploadsWm dist/zipOutput",
     "copy-assets": "cp -R src/models/* dist/models/ || true && ( [ -d src/outputs ] && cp -R src/outputs/* dist/outputs/ || true ) && ( [ -d src/outputsForZip ] && cp -R src/outputsForZip/* dist/outputsForZip/ || true ) && ( [ -d src/uploads ] && cp -R src/uploads/* dist/uploads/ || true ) && ( [ -d src/uploadsWm ] && cp -R src/uploadsWm/* dist/uploadsWm/ || true ) && ( [ -d src/zipOutput ] && cp -R src/zipOutput/* dist/zipOutput/ || true )",
     "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
