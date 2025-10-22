@@ -83,7 +83,6 @@ export async function signupUser(
         isVerified: false,
         verificationToken: verificationToken,
         verificationExpires: verificationExpires,
-        // test
       },
     });
 
