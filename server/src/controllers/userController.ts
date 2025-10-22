@@ -81,7 +81,7 @@ export async function signupUser(
         password: hashedPassword,
         name,
         isVerified: false,
-        verificationToken,
+        verificationToken: verificationToken,
         verificationExpires,
       },
     });
@@ -172,8 +172,8 @@ export async function verifyEmail(
     where: { id: user.id },
     data: {
       isVerified: true,
-      verificationExpires: null,
       verificationToken: null,
+      verificationExpires: null,
     },
   });
 
