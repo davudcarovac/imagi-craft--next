@@ -82,7 +82,7 @@ export async function signupUser(
         name,
         isVerified: false,
         verificationToken: verificationToken,
-        verificationExpires,
+        verificationExpires: verificationExpires,
       },
     });
 
