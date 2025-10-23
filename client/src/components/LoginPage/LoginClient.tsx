@@ -16,6 +16,7 @@ import { LoginResponse } from "@/types/apiTypes";
 import { useVerifyLoginTwoFactor } from "@/hooks/useVerifyLoginTwoFactor";
 import { InputOtp } from "primereact/inputotp";
 import LoadingButton from "../LoadingButton";
+import { useToast } from "@/context/ToastContext";
 
 const loginSchema = Yup.object({
   email: Yup.string()
@@ -41,6 +42,7 @@ const LoginClient = () => {
   const { mutate: mutateVerifyLogin } = useVerifyLoginTwoFactor();
   const { dispatch } = useAuthContext();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const initialValues: InitialValuesType = {
     email: "",
@@ -57,23 +59,14 @@ const LoginClient = () => {
           queryClient.invalidateQueries({ queryKey: ["user"] });
           localStorage.setItem("user", JSON.stringify(response.user));
           dispatch({ type: "LOGIN", payload: response.user });
-          toast.current?.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Logged in via 2FA",
-            life: 4000,
-          });
+          showToast("success", "Success", "Logged in via 2FA", 4000);
           setErrorMsg2FA("");
           router.push("/");
         },
         onError: (error) => {
           console.log("Verify login error ===> ", error);
           setErrorMsg2FA(error.message);
-          toast.current?.show({
-            severity: "error",
-            summary: "2FA Error",
-            detail: error.message,
-          });
+          showToast("error", "2FA error", error.message);
         },
       }
     );

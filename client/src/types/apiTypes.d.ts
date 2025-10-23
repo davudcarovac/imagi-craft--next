@@ -150,9 +150,12 @@ export type GetCsrfTokenResponse = {
 };
 
 export type LoginResponse =
-  | SignupResponse
+  | { message: string }
+  | { message: string; user: User; success: boolean }
   | { success: boolean; message: string; twoFactor: boolean; userId: string };
+
 export type ForgotPasswordResponse = SignupResponse;
+
 export type ResetPasswordResponse = {
   success: boolean;
   // token: string;
@@ -185,6 +188,10 @@ export type ResetPasswordUserData = {
   resetToken: string;
   newPassword: string;
   confirmNewPassword: string;
+};
+
+export type VerifyEmailData = {
+  verificationToken: string;
 };
 
 export type verifyEnableTwoFactorData = {
@@ -224,7 +231,11 @@ export type VerifyEnableTwoFactorResponse = {
 
 export type DisableTwoFactorResponse = VerifyEnableTwoFactorResponse;
 
-export type VerifyLoginTwoFactorResponse = SignupResponse;
+export type VerifyLoginTwoFactorResponse = {
+  message: string;
+  success: boolean;
+  user: User;
+};
 export type ErrorResponse = {
   success: boolean;
   message: string;
@@ -232,5 +243,9 @@ export type ErrorResponse = {
 
 export type ResendVerificationEmailResponse = {
   success: boolean;
+  message: string;
+};
+
+export type VerifyEmailResponse = {
   message: string;
 };
