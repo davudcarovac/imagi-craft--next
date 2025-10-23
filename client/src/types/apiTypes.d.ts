@@ -248,4 +248,5 @@ export type ResendVerificationEmailResponse = {
 
 export type VerifyEmailResponse = {
   message: string;
+  success: boolean;
 };

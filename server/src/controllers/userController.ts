@@ -160,6 +160,8 @@ export async function resendVerificationEmail(
   try {
     const { email } = req.body;
 
+    console.log(email);
+
     if (!email) {
       throw new ErrorResponse("Please provide an email address.", 400);
     }
@@ -221,6 +223,8 @@ export async function verifyEmail(
 ) {
   const { verificationToken } = req.body;
 
+  console.log(verificationToken);
+
   const user = await prisma.user.findFirst({
     where: {
       verificationToken: verificationToken,
@@ -241,7 +245,7 @@ export async function verifyEmail(
     },
   });
 
-  res.status(200).json({ message: "Email verified!" });
+  res.status(200).json({ success: true, message: "Email verified!" });
 }
 
 export async function loginUser(
