@@ -1,8 +1,12 @@
 import VerifyEmailClient from "@/components/VerifyEmail/VerifyEmailClient";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
-  return <VerifyEmailClient />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailClient />;{" "}
+    </Suspense>
+  );
 };
 
 export default page;
