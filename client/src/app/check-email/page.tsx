@@ -1,8 +1,12 @@
 import CheckYourEmail from "@/components/CheckEmail/CheckEmailClient";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
-  return <CheckYourEmail />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckYourEmail />;
+    </Suspense>
+  );
 };
 
 export default page;
