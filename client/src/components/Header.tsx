@@ -25,7 +25,7 @@ const navItems = [
 const profileMenuItems = [
   {
     label: "Profile",
-    href: "/profile",
+    href: "/profile/overview",
   },
   {
     label: "Security",

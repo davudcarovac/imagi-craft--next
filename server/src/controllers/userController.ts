@@ -221,31 +221,36 @@ export async function verifyEmail(
   res: Response,
   next: NextFunction
 ) {
-  const { verificationToken } = req.body;
+  try {
+    const { verificationToken } = req.body;
 
-  console.log(verificationToken);
+    if (!verificationToken) {
+      throw new ErrorResponse("Verification token is not provided", 400);
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        verificationToken: verificationToken,
+        verificationExpires: { gt: new Date() },
+      },
+    });
 
-  const user = await prisma.user.findFirst({
-    where: {
-      verificationToken: verificationToken,
-      verificationExpires: { gt: new Date() },
-    },
-  });
+    if (!user) {
+      throw new ErrorResponse("Invalid or expired verification token", 400);
+    }
 
-  if (!user) {
-    throw new ErrorResponse("Invalid or expired verification token", 400);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isVerified: true,
+        verificationToken: null,
+        verificationExpires: null,
+      },
+    });
+
+    res.status(200).json({ success: true, message: "Email verified!" });
+  } catch (error) {
+    next(error);
   }
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      isVerified: true,
-      verificationToken: null,
-      verificationExpires: null,
-    },
-  });
-
-  res.status(200).json({ success: true, message: "Email verified!" });
 }
 
 export async function loginUser(
@@ -370,29 +375,34 @@ export async function getRefreshToken(
   res: Response,
   next: NextFunction
 ) {
-  const tokenFromCookies = req.cookies.refresh_token;
+  try {
+    const tokenFromCookies = req.cookies.refresh_token;
 
-  if (!tokenFromCookies) {
-    throw new ErrorResponse("No refresh token found", 401);
+    if (!tokenFromCookies) {
+      throw new ErrorResponse("No refresh token found", 401);
+    }
+
+    const decoded = jwt.verify(
+      tokenFromCookies,
+      JWT_REFRESH_SECRET
+    ) as TokenPayload;
+
+    if (!decoded) {
+      throw new ErrorResponse("Invalid refresh token", 400);
+    }
+
+    const newAccessToken = createToken(decoded.userId, decoded.plan);
+
+    console.log("user id, plan ===> ", decoded.userId, decoded.plan);
+    console.log("Novi token ===> ", newAccessToken);
+
+    res.status(200).json({
+      message: "Access token generated!",
+      accessToken: newAccessToken,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  const decoded = jwt.verify(
-    tokenFromCookies,
-    JWT_REFRESH_SECRET
-  ) as TokenPayload;
-
-  if (!decoded) {
-    throw new ErrorResponse("Invalid refresh token", 400);
-  }
-
-  const newAccessToken = createToken(decoded.userId, decoded.plan);
-
-  console.log("user id, plan ===> ", decoded.userId, decoded.plan);
-  console.log("Novi token ===> ", newAccessToken);
-
-  res
-    .status(200)
-    .json({ message: "Access token generated!", accessToken: newAccessToken });
 }
 
 export async function logoutUser(
@@ -461,7 +471,6 @@ export async function forgotPassword(
   let user: User | null = null;
 
   try {
-    // 1. Nađi korisnika
     user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
