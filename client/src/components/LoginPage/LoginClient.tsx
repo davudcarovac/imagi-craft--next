@@ -59,14 +59,15 @@ const LoginClient = () => {
           queryClient.invalidateQueries({ queryKey: ["user"] });
           localStorage.setItem("user", JSON.stringify(response.user));
           dispatch({ type: "LOGIN", payload: response.user });
-          showToast("success", "Success", "Logged in via 2FA", 4000);
+          showToast("success", "2FA Log in", response.message, 4000);
           setErrorMsg2FA("");
           router.push("/");
         },
         onError: (error) => {
           console.log("Verify login error ===> ", error);
           setErrorMsg2FA(error.message);
-          showToast("error", "2FA error", error.message);
+
+          showToast("error", "2FA Log in", error.message, 4000);
         },
       }
     );
@@ -107,14 +108,9 @@ const LoginClient = () => {
                           JSON.stringify(response.user)
                         );
                         dispatch({ type: "LOGIN", payload: response.user });
-                        toast.current?.show({
-                          severity: "success",
-                          summary: "Success",
-                          detail: response.message,
-                          life: 4000,
-                        });
+                        showToast("success", "Log in", response.message, 4000);
                         resetForm();
-                        router.push("/");
+                        // router.push("/");
                       } else if (
                         "twoFactor" in response &&
                         response.twoFactor === true
@@ -126,11 +122,8 @@ const LoginClient = () => {
                       }
                     },
                     onError: (error) => {
-                      toast.current?.show({
-                        severity: "error",
-                        summary: "Error",
-                        detail: error.message,
-                      });
+                      console.log(error);
+                      showToast("error", "Log in", error.message, 4000);
                     },
                   });
                 }}
