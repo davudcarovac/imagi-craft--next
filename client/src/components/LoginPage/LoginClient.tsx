@@ -110,7 +110,7 @@ const LoginClient = () => {
                         dispatch({ type: "LOGIN", payload: response.user });
                         showToast("success", "Log in", response.message, 4000);
                         resetForm();
-                        // router.push("/");
+                        router.push("/");
                       } else if (
                         "twoFactor" in response &&
                         response.twoFactor === true
