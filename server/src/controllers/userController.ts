@@ -238,6 +238,13 @@ export async function verifyEmail(
       throw new ErrorResponse("Invalid or expired verification token", 400);
     }
 
+    if (user.isVerified) {
+      res
+        .status(200)
+        .json({ success: true, message: "Email already verified" });
+      return;
+    }
+
     await prisma.user.update({
       where: { id: user.id },
       data: {
