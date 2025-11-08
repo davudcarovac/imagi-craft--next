@@ -18,7 +18,7 @@ export default function PrivacyPolicyClient({
   lastUpdated = "September 20, 2025",
 }: PrivacyPolicyClientProps) {
   const [activeSection, setActiveSection] = useState<string>("owner");
-  const [_, setIsMobile] = useState<boolean>(false);
+  const [_isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const checkMobile = () => {
