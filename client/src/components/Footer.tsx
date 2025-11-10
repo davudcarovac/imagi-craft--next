@@ -89,14 +89,15 @@ const Footer = () => {
                   d="M9 5l7 7-7 7"
                 />
               </svg>
-              <a
-                href="https://www.iubenda.com/privacy-policy/14894198"
+              <Link
+                // href="https://www.iubenda.com/privacy-policy/14894198"
+                href="/privacy-policy"
                 className="hover:text-[#daf0ea] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li className="flex items-center gap-2">
               <svg

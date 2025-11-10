@@ -101,7 +101,7 @@ export default function PrivacyPolicyClient({
         <div className="p-6 lg:p-8">
           {/* Updated Header */}
           <div className="mb-10 text-center lg:text-left">
-            <div className="w-16 h-16  rounded-2xl flex items-center justify-center mx-auto lg:mx-0 mb-4 shadow-lg">
+            {/* <div className="w-16 h-16  rounded-2xl flex items-center justify-center mx-auto lg:mx-0 mb-4 shadow-lg">
               <svg
                 className="w-8 h-8 text-[#1aac83]"
                 fill="none"
@@ -118,7 +118,7 @@ export default function PrivacyPolicyClient({
             </div>
             <h1 className="text-2xl lg:text-3xl font-bold text-[#1aac83] saira-font">
               Privacy Policy
-            </h1>
+            </h1> */}
             <p className="text-gray-600 text-sm mt-3 saira-font">
               for{" "}
               <span className="font-semibold text-gray-800">{companyName}</span>
@@ -191,10 +191,10 @@ export default function PrivacyPolicyClient({
           </nav>
 
           {/* Updated Quick Actions */}
-          <div className="mt-10 p-6 bg-[#1aac83] rounded-2xl shadow-lg text-white">
+          <div className="mt-10 p-6 bg-[#ebf6f2] rounded-2xl shadow-md border border-[#dce9e3] text-[#2f4a40]">
             <h4 className="text-lg font-semibold mb-3 flex items-center saira-font">
               <svg
-                className="w-5 h-5 mr-2"
+                className="w-5 h-5 mr-2 text-[#2f4a40]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -208,16 +208,18 @@ export default function PrivacyPolicyClient({
               </svg>
               Need Help?
             </h4>
-            <p className="text-white/80 text-sm mb-4 saira-font">
+
+            <p className="text-[#3a5d4f]/80 text-sm mb-4 saira-font">
               Contact our Data Protection Officer for any privacy-related
               questions.
             </p>
+
             <button
               onClick={() => window.open("mailto:carovacdavud6@gmail.com")}
-              className="w-full bg-white/20 backdrop-blur-sm text-white border border-white/30 py-3 px-4 rounded-xl text-sm font-medium hover:bg-white/30 transition-all duration-300 hover:shadow-lg flex items-center justify-center group saira-font"
+              className="w-full bg-[#ffffff]/60 text-[#2f4a40] border border-[#dce9e3] py-3 px-4 rounded-xl text-sm font-medium hover:bg-[#ffffff]/80 hover:shadow-md transition-all duration-300 flex items-center justify-center group saira-font"
             >
               <svg
-                className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform"
+                className="w-4 h-4 mr-2 text-[#2f4a40] group-hover:scale-110 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -339,30 +341,33 @@ export default function PrivacyPolicyClient({
             <section
               key={section.id}
               id={section.id}
-              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-200/60 p-8 transition-all duration-500 hover:shadow-xl scroll-mt-32 group"
+              className="bg-white/80 backdrop-blur-md rounded-3xl shadow-md border border-gray-100 p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 scroll-mt-32 group"
             >
-              {/* Updated Section Header */}
+              {/* Header */}
               <div className="flex items-start mb-8">
-                <div className="flex-shrink-0 w-14 h-14 bg-[#1aac83] rounded-2xl flex items-center justify-center mr-5 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-white font-bold text-lg">
+                {/* Number Badge */}
+                <div className="flex-shrink-0 w-14 h-14 bg-[#ebf6f2] rounded-2xl flex items-center justify-center mr-5 shadow-md transform group-hover:scale-110 transition-transform duration-300 border border-[#dce9e3]">
+                  <span className="text-[#2f4a40] font-semibold text-lg">
                     {index + 1}
                   </span>
                 </div>
+
+                {/* Title and Sub */}
                 <div className="flex-1">
                   <div className="flex items-center flex-wrap gap-2 mb-2">
-                    <h2 className="text-2xl lg:text-3xl font-bold text-[#1aac83] pr-4 saira-font">
+                    <h2 className="text-2xl lg:text-3xl font-bold text-[#2f4a40] pr-4 saira-font tracking-tight">
                       {section.title}
                     </h2>
-                    <span className="px-3 py-1 bg-[#1aac83]/10 text-[#1aac83] rounded-full text-xs font-medium border border-[#1aac83]/20 saira-font">
+                    <span className="px-3 py-1 bg-[#ebf6f2]/60 text-[#2f4a40] rounded-full text-xs font-medium border border-[#dce9e3] saira-font">
                       Section {index + 1} of {sections.length}
                     </span>
                   </div>
-                  <div className="w-20 h-1 bg-[#1aac83] rounded-full"></div>
+                  <div className="w-20 h-[3px] bg-[#ebf6f2] rounded-full"></div>
                 </div>
               </div>
 
-              {/* Updated Content */}
-              <div className="pl-0 lg:pl-4">
+              {/* Content */}
+              <div className="pl-0 lg:pl-4 text-gray-700 leading-relaxed">
                 {renderSectionContent(section.content)}
               </div>
             </section>
@@ -394,9 +399,8 @@ export default function PrivacyPolicyClient({
               privacy and ensuring transparency in our data practices.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              <button
+              {/* <button
                 onClick={() => {
-                  /* PDF download logic */
                 }}
                 className="flex items-center px-6 py-3 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 hover:shadow-md group saira-font"
               >
@@ -414,7 +418,7 @@ export default function PrivacyPolicyClient({
                   />
                 </svg>
                 Download PDF
-              </button>
+              </button> */}
               <button
                 onClick={() => window.open("mailto:carovacdavud6@gmail.com")}
                 className="flex items-center px-6 py-3 bg-[#1aac83] text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-300 group saira-font"
