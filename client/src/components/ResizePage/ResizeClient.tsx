@@ -146,12 +146,14 @@ const ResizeClient = () => {
 
   return (
     <div>
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Resize"
-        titleAfterHighlight="your images quickly"
-        description="Scale your images up or down to fit your desired dimensions without losing quality."
-      />
+      <div className="pt-16">
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Resize"
+          titleAfterHighlight="your images quickly"
+          description="Scale your images up or down to fit your desired dimensions without losing quality."
+        />
+      </div>
 
       {files.length > 0 && downloadLinks && downloadLinks.length === 0 && (
         <ResizeOptions

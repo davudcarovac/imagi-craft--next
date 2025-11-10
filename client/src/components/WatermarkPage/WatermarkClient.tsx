@@ -188,12 +188,14 @@ const WatermarkClient = () => {
       {/* Faza 1: Uvod i Upload */}
       {!backgroundSrc && !downloadItem && (
         <>
-          <ServiceIntro
-            titleBeforeHighlight="Add a custom"
-            highlightedWord="Watermark"
-            titleAfterHighlight="to your images"
-            description="Upload an image and apply a personalized watermark to protect your content. Adjust position, opacity, and size with ease."
-          />
+          <div className="pt-16">
+            <ServiceIntro
+              titleBeforeHighlight="Add a custom"
+              highlightedWord="Watermark"
+              titleAfterHighlight="to your images"
+              description="Upload an image and apply a personalized watermark to protect your content. Adjust position, opacity, and size with ease."
+            />
+          </div>
           <UploadFile
             setFile={setFile}
             setErrorMessage={setErrorMessage}

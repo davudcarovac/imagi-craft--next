@@ -83,13 +83,15 @@ const ConvertClient = () => {
   };
 
   return (
-    <div className="bg-[#f9f9f9] min-h-screen w-full flex justify-center flex-col  px-4 sm:px-6 lg:px-8 py-10">
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Convert"
-        titleAfterHighlight="your images to different formats"
-        description="Easily change your images between popular formats like PNG, JPG, WEBP, AVIF, and more, to suit your needs and optimize performance."
-      />
+    <div className=" w-full flex justify-center flex-col  px-4 sm:px-6 lg:px-8 ">
+      <div className="pt-16 ">
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Convert"
+          titleAfterHighlight="your images to different formats"
+          description="Easily change your images between popular formats like PNG, JPG, WEBP, AVIF, and more, to suit your needs and optimize performance."
+        />
+      </div>
 
       {/* Global format dropdown — samo kad je action "convert" */}
       {files &&

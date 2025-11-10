@@ -58,7 +58,7 @@ const ToolsDropdown = () => {
       onMouseLeave={handleMouseLeave}
     >
       {/* Dropdown toggle button */}
-      <div className="flex items-center gap-1 px-4 py-2 text-gray-700 hover:text-[#1aac83] cursor-pointer transition-colors">
+      <div className="flex items-center gap-1 py-2 text-gray-700 hover:text-[#1aac83]  cursor-pointer transition-colors font-medium saira-font">
         Tools
         <ChevronDown
           className={`w-4 h-4 transition-transform duration-200 ${
@@ -75,7 +75,7 @@ const ToolsDropdown = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-[#1aac83] transition-colors"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-[#1aac83] transition-colors font-medium saira-font"
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}

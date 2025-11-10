@@ -129,12 +129,14 @@ const ExtractMetadataClient: React.FC = () => {
       <Toast ref={toast} />
 
       {!metadata && !downloadLink && (
-        <ServiceIntro
-          titleBeforeHighlight=""
-          highlightedWord="Image metadata"
-          titleAfterHighlight=""
-          description="View and edit image metadata with ease — from technical details to custom fields, giving you full control over your image information."
-        />
+        <div className="pt-16">
+          <ServiceIntro
+            titleBeforeHighlight=""
+            highlightedWord="Image metadata"
+            titleAfterHighlight=""
+            description="View and edit image metadata with ease — from technical details to custom fields, giving you full control over your image information."
+          />
+        </div>
       )}
 
       {downloadLink && (

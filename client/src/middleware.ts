@@ -38,7 +38,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // ✅ 3️⃣ Za premium stranice — collage i crop
-  if (pathname === "/collage-image" || pathname === "/crop-face") {
+  if (
+    pathname.startsWith("/collage-image") ||
+    pathname.startsWith("/crop-face") ||
+    pathname.startsWith("/image-metadata")
+  ) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
@@ -49,6 +53,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const plan = decoded.plan;
+    console.log(plan);
     if (plan === "PROFESSIONAL" || plan === "BUSINESS") {
       return NextResponse.next();
     } else {
@@ -65,6 +70,7 @@ export const config = {
     "/profile/:path*",
     "/collage-image",
     "/crop-face",
+    "/image-metadata/:path*",
     "/login",
     "/signup",
   ],

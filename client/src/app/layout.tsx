@@ -7,6 +7,7 @@ import "primereact/resources/themes/saga-green/theme.css"; // ili druga tema po 
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css"; // ikone
 import CsrfInitializer from "./CsrfInitializer";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "FrostyImage - Transform your images effortlessly",
@@ -27,7 +28,6 @@ export default function RootLayout({
       <body className={`${saira.variable} ${inter.variable}`}>
         <Providers>
           <div className="flex flex-col min-h-screen">
-            {/* Header je fiksiran na vrhu sa poznatom visinom */}
             <Header />
             <CsrfInitializer />
             {/* Main sadržaj ima padding-top da ne bi bio ispod headera */}

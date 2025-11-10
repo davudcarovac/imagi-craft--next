@@ -97,12 +97,14 @@ const CompressClient = () => {
   return (
     <div className="flex flex-col items-center w-full px-4">
       {/* Introductory text */}
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Compress"
-        titleAfterHighlight="your images easily and quickly"
-        description="Upload one or more images and reduce their file size with adjustable quality, format, and greyscale options. Once compressed, you can download your images directly from here."
-      />
+      <div className="pt-16">
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Compress"
+          titleAfterHighlight="your images easily and quickly"
+          description="Upload one or more images and reduce their file size with adjustable quality, format, and greyscale options. Once compressed, you can download your images directly from here."
+        />
+      </div>
 
       {/* Options section */}
       {files.length > 0 && downloadLinks && downloadLinks.length === 0 && (

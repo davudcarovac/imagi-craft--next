@@ -185,12 +185,14 @@ const CropClient = () => {
     // <div className="w-full ">
     <div>
       {!image && !downloadItem && (
-        <ServiceIntro
-          titleBeforeHighlight=""
-          highlightedWord="Crop"
-          titleAfterHighlight="your images precisely"
-          description="Trim your images to focus on the most important parts. Adjust the crop area with an intuitive interface to get the perfect framing."
-        />
+        <div className="pt-16">
+          <ServiceIntro
+            titleBeforeHighlight=""
+            highlightedWord="Crop"
+            titleAfterHighlight="your images precisely"
+            description="Trim your images to focus on the most important parts. Adjust the crop area with an intuitive interface to get the perfect framing."
+          />
+        </div>
       )}
 
       {!image && !isCropped && (

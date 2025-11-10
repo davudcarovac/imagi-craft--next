@@ -132,13 +132,14 @@ const CropfaceClient = () => {
           Premium
         </span>
       </div>
-
-      <ServiceIntro
-        titleBeforeHighlight=""
-        highlightedWord="Crop"
-        titleAfterHighlight=" face from image"
-        description="Automatically detect and crop faces with professional accuracy. Save time and get perfectly framed portraits for profiles, team photos, or creative projects — all in just a few clicks."
-      />
+      <div>
+        <ServiceIntro
+          titleBeforeHighlight=""
+          highlightedWord="Crop"
+          titleAfterHighlight=" face from image"
+          description="Automatically detect and crop faces with professional accuracy. Save time and get perfectly framed portraits for profiles, team photos, or creative projects — all in just a few clicks."
+        />
+      </div>
 
       {downloadLinks.length === 0 && (
         <form onSubmit={submitCropface}>

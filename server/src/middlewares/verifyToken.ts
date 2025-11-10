@@ -40,6 +40,9 @@ export const verifyToken = async (
       throw new ErrorResponse("No user found", 400);
     }
 
+    // console.log(user);
+    // console.log(decoded);
+
     req.userData = user;
 
     next();
