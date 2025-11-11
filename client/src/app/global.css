@@ -153,6 +153,11 @@ h3 {
 }
 
 /* Tab menu */
+
+/* .p-tabmenu-nav {
+  background-color: #f7f8f9;
+} */
+
 /* Aktivni tab - koristi data atribut highlight */
 .p-tabmenuitem[data-p-highlight="true"] > .p-menuitem-link {
   color: #1aac83 !important;
@@ -163,7 +168,7 @@ h3 {
 
 /* Hover efekat za sve tabove */
 .p-tabmenuitem > .p-menuitem-link:hover {
-  opacity: 0.9;
+  /* opacity: 0.9; */
   transition: all 0.3s ease; /* smooth animacija svih stilova */
 }
 

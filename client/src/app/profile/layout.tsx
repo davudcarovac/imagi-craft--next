@@ -28,10 +28,10 @@ export default function ProfileLayout({
           command: () => router.push(item.to),
         }))}
         activeIndex={activeIndex}
-        className="max-w-[800px] mx-auto mt-10 rounded-t-md "
+        className="max-w-[800px] mx-auto mt-10 rounded-t-md bg-[#f7f8f9] "
       />
 
-      <div className="max-w-[800px] mx-auto mt-2 mb-10 bg-white p-5 rounded-md">
+      <div className="max-w-[800px] mx-auto mt-2 mb-10 bg-[#f7f8f9] p-5 rounded-md">
         {children}
       </div>
     </div>
