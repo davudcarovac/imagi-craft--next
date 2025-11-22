@@ -16,7 +16,6 @@ export default function ProfileLayout({
     { label: "Security", icon: "pi pi-lock", to: "/profile/security" },
   ];
 
-  // Nađi index aktivnog taba prema URL-u
   const activeIndex = items.findIndex((item) => pathname === item.to);
 
   return (
