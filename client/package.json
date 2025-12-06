@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@paddle/paddle-js": "^1.5.1",
     "@tanstack/react-query": "^5.80.7",
     "@uiw/react-color": "^2.7.1",
     "axios": "^1.10.0",
