@@ -148,9 +148,7 @@ export async function signupUser(
   }
 }
 
-// export async function sendVerificationEmail(req: Request, res: Response, next: NextFunction) {
 
-// }
 
 export async function resendVerificationEmail(
   req: Request,
@@ -332,9 +330,9 @@ export async function loginUser(
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // ✅ 'lax' lokalno, da ne blokira testove
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // 'lax' samo lokalno
       // sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dana u milisekundama ✅
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const authToken = createToken(user.id, user.plan);
@@ -634,7 +632,7 @@ export async function changePassword(
     const isSamePassword = await comparePasswords(newPassword, user.password);
     if (isSamePassword) {
       throw new ErrorResponse(
-        "Nova lozinka ne može biti ista kao trenutna",
+        "The new password cannot be the same as the current password",
         400
       );
     }
@@ -677,9 +675,9 @@ function getClientIp(req: Request): string {
     req.socket?.remoteAddress ||
     null;
 
-  // fallback za lokalni dev
+  // fallback za lokalni dev a na produkciji uzima korisnikov ip
   if (!ip || ip === "::1" || ip === "127.0.0.1") {
-    ip = "93.86.114.32"; // test IP (Srbija)
+    ip = "93.86.114.32"; // test IP Srbija
   }
 
   return ip;
@@ -774,7 +772,7 @@ async function removeImage(userId: string) {
             profileImagePublicId: null,
           },
         });
-        return true; // uspešno obrisano
+        return true; 
       }
       return false;
     }
